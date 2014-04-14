@@ -2,8 +2,8 @@
 #include "mysql_connection.h"
 #include "mysqlcpp.cpp"
 using namespace std;
-int writenString( string &fileName, const string& buffer, size_t count);
-int readString(string &fileName, string* str);
+int writeFromString( string &fileName, const string& buffer, size_t count);
+int readToString(string &fileName, string* str);
 int main(int argc, char *argv[])
 {
 	/*
@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 					cout<<endl;
 			    }
 	
-	writenString(file,str,str.length());
+	writeFromString(file,str,str.length());
 
 	sqlconn->closeSQL();
 /*
@@ -53,15 +53,15 @@ int main(int argc, char *argv[])
 		string str = "jialin' demo this's good\n";
 	
 	string file= "./in";
-	writenString(file,str,str.length());
+	writeFromString(file,str,str.length());
 	string nstr;
-	readString(file,&nstr);
+	readToString(file,&nstr);
 	cout<<"length of nstr: "<<nstr.length()<<endl;
 	cout<<nstr<<endl;
 */
 	return 0;
 }
-int readString(string &fileName, string* str){
+int readToString(string &fileName, string* str){
 
 	FILE *fd = fopen(fileName.c_str(),"rb");
 	char c;
@@ -72,7 +72,7 @@ int readString(string &fileName, string* str){
 	return (*str).length();
 
 }
-int writenString( string &fileName, const string& buffer, size_t count){
+int writeFromString( string &fileName, const string& buffer, size_t count){
 	FILE *fd = fopen(fileName.c_str(),"wb+");
     const char*p = buffer.c_str();
 //cout<<"*c_str: "<<buffer.c_str();
