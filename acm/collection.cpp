@@ -4,15 +4,15 @@
 using namespace std;
 class Collection{
 	private:
-		int _timeLimit;
-		int _memoryLimit;
+		long int _timeLimit;
+		long int _memoryLimit;
 		int  _fileSizeLimit;
 		int _state;
 		int _judgeState;
-		int _runId;
+		long int _runId;
 		int _languageId;
-		int _timeComsupted;
-		int _memoryComsupted;
+		long int _timeComsupted;
+		long int _memoryComsupted;
 		int _userId;
 		int _problemId;
 
@@ -28,14 +28,14 @@ class Collection{
 		void setTimeLimit(const int &id){
 			_timeLimit= id;
 		}
-		int getTimeLimit(){
+		long int getTimeLimit(){
 			return _timeLimit;
 		}
 
 		void setMemoryLimit(const int &id){
 			_memoryLimit= id;
 		}
-		int getMemoryLimit(){
+		long int getMemoryLimit(){
 			return _memoryLimit;
 		}
 
@@ -57,7 +57,7 @@ class Collection{
 		void setRunId(const int &id){
 			_runId= id;
 		}
-		int getRunId(){
+		long int getRunId(){
 			return _runId;
 		}
 		void setLanguageId(const int &id){
@@ -70,14 +70,14 @@ class Collection{
 		void setTimeComsupted(const int &id){
 			_timeComsupted = id;
 		}
-		int getTimeComsupted(){
+		long int getTimeComsupted(){
 			return _timeComsupted;
 		}
 
 		void setMemoryComsupted(const int &id){
 			_memoryComsupted = id;
 		}
-		int getMemoryComsupted(){
+		long int getMemoryComsupted(){
 			return _memoryComsupted;
 		}
 
