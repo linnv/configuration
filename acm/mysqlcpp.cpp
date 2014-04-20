@@ -9,13 +9,15 @@ class SQL{
 		int numColunm;
 		int numRow;
 	sql::Driver *driver;
- 	sql::Connection *con;
+ 	//sql::Connection *con;
   	//sql::Statement *stmt;
   	sql::ResultSet *res;
  	sql::PreparedStatement *pstmt;
 	
 	public:
 		
+ 	sql::Connection *con;
+
   	sql::ResultSet* getResultSet(){
 		return res;
 	}

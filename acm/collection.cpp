@@ -17,6 +17,8 @@ class Collection{
 		int _problemId;
 
 		string _compilerName;
+		string _compilerOption;
+		string _compileError;
 		string _sCodeSuffix;
 		string _executeSuffix;
 		string _sCode;
@@ -25,6 +27,12 @@ class Collection{
 		string _userOutput;
 		vector<string> _testCase;
 	public:
+		Collection(){
+			_judgeState = 100000;
+			_timeComsupted = 0;
+			_memoryComsupted=0;
+			_compileError="";
+		}
 		void setTimeLimit(const int &id){
 			_timeLimit= id;
 		}
@@ -109,6 +117,22 @@ class Collection{
 		string getCompilerName(){
 			return _compilerName;
 		}
+
+		void setCompilerOption(const string &id){
+			_compilerOption = id;
+		}
+		string getCompilerOption(){
+			return _compilerOption;
+		}
+
+		void setCompilerError(const string &id){
+			_compileError = id;
+		}
+		string getCompilerError(){
+			return _compileError;
+		}
+
+
 
 
 		void setProblemId(const int &id){
