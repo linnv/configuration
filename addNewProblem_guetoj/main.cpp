@@ -19,16 +19,40 @@ int main(int argc, char *argv[])
 	sqlconn->setUser("root");
 	sqlconn->setPasswd("a");
 	sqlconn->connectSQL();
-	sqlconn->useDatabase("test");
+	sqlconn->useDatabase("goj");
 	
+	/*
 	sqlconn->querySQL("select * from id");
 	sql::ResultSet *res = sqlconn->getResultSet();
 	cout<<"colunm num: "<<sqlconn->getColunmsCount()<<endl;
 	cout<<"row count:"<<sqlconn->getRowsCount()<<endl;
-		
+
+	*/
+	string file = "./code.txt";
+	string nstr;
+	//string sql = "update tbl_testcase_problem  set input = '"+nstr+"' where problem_id =1042";
+	readToString(file,&nstr);
+	//java
+//	string sql = "INSERT INTO `tbl_run` (`run_id`, `problem_id`, `user_id`, `language_id`, `time_used`, `memory_used`, `source_code`, `submit_date`, `status`, `auto_judge`, `compile_error`) VALUES (NULL, '1000', '1000000', '4', '0', '0', '"+nstr+"', '2014-04-18 00:02:01', '100000', '1', NULL)";
+//	//cpp
+	string sql = "INSERT INTO `tbl_run` (`run_id`, `problem_id`, `user_id`, `language_id`, `time_used`, `memory_used`, `source_code`, `submit_date`, `status`, `auto_judge`, `compile_error`) VALUES (NULL, '1000', '1000000', '2', '0', '0', '"+nstr+"', '2014-04-18 00:02:01', '100000', '1', NULL)";
+	//wrong
+	//string sql = "INSERT INTO `tbl_run` (`run_id`, `problem_id`, `user_id`, `language_id`, `time_used`, `memory_used`, `source_code`, `submit_date`, `status`, `auto_judge`, `compile_error`) VALUES (NULL, '1000', '1000000', '1', '0', '0', '"+nstr+"', '2014-04-18 00:02:01', '100000', '1', NULL)";
+	//
+	for (int i = 0; i < 3; ++i)
+	{
+	}
+	//sqlconn->updateSQL("insert into id set id = 27,name = 'jialin'");
+	int i =10;
+	while(i){
+		i--;
+	
+		cout<<"push record"<<endl;
+	sqlconn->updateSQL(sql);
+	//sleep(10);
+	}	
 	/*
 	//insert
-	sqlconn->updateSQL("insert into id set id = 27,name = 'jialin'");
 	//update
        	sqlconn->updateSQL("update id set name = 'new name' where id =8");
 	*/
