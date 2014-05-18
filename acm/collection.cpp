@@ -11,8 +11,8 @@ class Collection{
 		int _judgeState; //state after diff judge
 		long int _runId;
 		int _languageId;
-		long int _timeComsupted;
-		long int _memoryComsupted;
+		long int _timeConsumpted;
+		long int _memoryConsumpted;
 		int _userId;
 		int _problemId;
 
@@ -29,8 +29,8 @@ class Collection{
 	public:
 		Collection(){
 			_judgeState = 100000;
-			_timeComsupted = 0;
-			_memoryComsupted=0;
+			_timeConsumpted = 0;
+			_memoryConsumpted=0;
 			_compileError="";
 		}
 		void setTimeLimit(const int &id){
@@ -75,19 +75,19 @@ class Collection{
 			return _languageId;
 		}
 
-		void setTimeComsuption(const int &id){
+		void setTimeConsumption(const int &id){
 
-			_timeComsupted = (id>_timeComsupted?id：_timeComsupted);
+			_timeConsumpted = (id>_timeConsumpted?id:_timeConsumpted);
 		}
-		long int getTimeComsuption(){
-			return _timeComsupted;
+		long int getTimeConsumption(){
+			return _timeConsumpted;
 		}
 
-		void setMemoryComsuption(const int &id){
-			_memoryComsupted = (id>_memoryComsupted?id:_memoryComsupted);
+		void setMemoryConsumption(const int &id){
+			_memoryConsumpted = (id>_memoryConsumpted?id:_memoryConsumpted);
 		}
-		long int getMemoryComsuption(){
-			return _memoryComsupted;
+		long int getMemoryConsumption(){
+			return _memoryConsumpted;
 		}
 
 		void setUserId(const int &id){

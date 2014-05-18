@@ -2,12 +2,24 @@
 #include "mysql_connection.h"
 #include "mysqlcpp.cpp"
 #include "collection.cpp"
+#include "disabled_syscall.h"
+
 #include <iostream>
+
+#include <sys/syscall.h>
+#include <sys/resource.h>
+#include <sys/ptrace.h>
+#include <sys/user.h>
+#include <sys/reg.h>
+#include <string.h>
+#include <fcntl.h>
+
 //#include "judge_environment.cpp"
 using namespace std;
 
 int ReadTimeConsumption(pid_t pid);
 int ReadMemoryConsumption(pid_t pid);
+void updateConsumption(pid_t pid,Collection* col);
 
 int writeFromString( string &fileName, const string& buffer, size_t count);
 int readToString(string &fileName, string* str);
@@ -250,7 +262,7 @@ int main(int argc, char *argv[])
 					cout<<"userOut: "<<strReadFromFile<<endl;
 					if ( col[i]->getLastState() != EXIT_NORMALLY)
 					{
-                        
+
 						//
 					}
 					else
@@ -259,17 +271,17 @@ int main(int argc, char *argv[])
 						 * ok the app can run normally now check the app's answer with the std answer: comparing the conten of  userOut and the conten of stdOut
 						 *
 						 */
-                        
+
 						diffCasesJudge(col[i]);
-                        
-                        if (col[i]->getJudgeState() !=ACCEPTED) {
-                            
-                            /*
-                             *insert into tbl_run_testcase
-                             *set last statu to WA
-                             */
-                            col[i]->setLastState(col[i]->getJudgeState());
-                        }
+
+						if (col[i]->getJudgeState() !=ACCEPTED) {
+
+							/*
+							 *insert into tbl_run_testcase
+							 *set last statu to WA
+							 */
+							col[i]->setLastState(col[i]->getJudgeState());
+						}
 					}
 					/*
 					 * get the exection condicton data:time comsuption memory cumsuption etc.
@@ -279,15 +291,15 @@ int main(int argc, char *argv[])
 					delteComand="rm ./stdIn userOut stdOut";
 					system(delteComand.c_str());
 					/*
-                     * use the max consumiption
-                     
+					 * use the max consumiption
+
 					 *if choose the max consumption, the following will not need anymore,just
 					 modiry the colleciont's setTimeConsumption() and setMemoryConsumption()
 					 *
-					totolTimeconsumption +=col[i]->getTimeComsupted();
-					totolMemoryConsumption +=col[i]->getMemoryComsupted();
-                    */
-					cout<<"test case time used:"<<col[i]->getTimeComsupted()<<"ms   memory used:"<<col[i]->getMemoryComsupted()<<"kb state: "<<col[i]->getLastState()<<endl;
+					 totolTimeconsumption +=col[i]->getTimeComsupted();
+					 totolMemoryConsumption +=col[i]->getMemoryComsupted();
+					 */
+					cout<<"test case time used:"<<col[i]->getTimeConsumption()<<"ms   memory used:"<<col[i]->getMemoryConsumption()<<"kb execut state: "<<col[i]->getLastState()<<endl;
 				}
 				/*
 				 * delete the source code file error file and execute file when they are needless
@@ -304,14 +316,14 @@ int main(int argc, char *argv[])
 				sql::PreparedStatement *pstm=sqlconn->con->prepareStatement("UPDATE tbl_run SET Status = ?, Time_Used = ?, Memory_Used = ? ,compile_error =?  WHERE Run_ID = ?");
 				//	cout<<"error coneten:   "<<col[i]->getCompilerError()<<endl;
 				pstm->setInt(1,col[i]->getLastState());
-                /*
-				pstm->setInt(2,totolTimeconsumption);
-				pstm->setInt(3,totolMemoryConsumption);
-                */
-                pstm->setInt(2,col[i]->getTimeComsupted());
-                pstm->setInt(3,col[i]->getMemoryComsupted());
-				
-                
+				/*
+				   pstm->setInt(2,totolTimeconsumption);
+				   pstm->setInt(3,totolMemoryConsumption);
+				   */
+				pstm->setInt(2,col[i]->getTimeConsumption());
+				pstm->setInt(3,col[i]->getMemoryConsumption());
+
+
 				pstm->setString(4,col[i]->getCompilerError());
 				pstm->setInt(5,col[i]->getRunId());
 				pstm->executeUpdate();
@@ -369,278 +381,280 @@ int writeFromString( string &fileName, const string& buffer, size_t count){
 
 
 int startExecution(Collection * col){
-{
-
-	int pid;
-	int status;
-	long tmp;
-
-	struct rlimit executableLimit;
-
-	pid = fork();
-	if (pid)
 	{
-		timeConsumption=0;
-		memoryConsumption=0;	
 
-		struct user_regs_struct regs;
-		int firstExecute = 1;
-		/*
-		 * comment by: Jialin Wu
-		 * refer to ZOJ,but not completely same with ZOJ.[https://code.google.com/p/zoj/source/browse/trunk/judge_client/client/tracer.c]
-		 * judge time exceedance by signal SIGXCPU,if time consumption exceexed,set time consumption to zero and memory consumption to zero.
-		 * judge memory exceedance by comparing memory consumption and memoryLimitaion every time getting memory consumption  from proc/$pid/status,if memory consumption is greater than the memoryLimitaion,use ptrace(PTRACE_KILL,pid,NULL,NULL) to stop the user app, and set time consumption to zero and memory consumption to zero.
-		 */
-		while(waitpid(pid,&status,0) > 0){
-            updateConsumption(pid,col);
-            
-			if (WIFSIGNALED(status))
-			{
-				if(WTERMSIG(status) == SIGKILL){
-                    col->setLastState(RUNTIME_ERROR);
-					
-				}
-				break;
-			}
-			if(!WIFSTOPPED(status)){
-				if (WTERMSIG(status))
-				{
-                    col->setLastState(RUNTIME_ERROR);
-					
-				}	
-				break;
-			}
+		int pid;
+		int status;
+		long tmp;
+
+		struct rlimit executableLimit;
+
+		pid = fork();
+		if (pid)
+		{
+			//timeConsumption=0;
+			//memoryConsumption=0;	
+
+			struct user_regs_struct regs;
+			int firstExecute = 1;
 			/*
 			 * comment by: Jialin Wu
-			 *copy from referrence manual: While being traced, the tracee will stop each time a signal is delivered, even if the signal is being ignored. (An exception is SIGKILL, which has its usual effect.) The tracer will be notified at its next call to waitpid(2) (or one of the related "wait" system calls); that call will return a status value containing information that indicates the cause of the stop in the tracee. While the tracee is stopped, the tracer can use various ptrace requests to inspect and modify the tracee. The tracer then causes the tracee to continue, optionally ignoring the delivered signal (or even delivering a different signal instead).
+			 * refer to ZOJ,but not completely same with ZOJ.[https://code.google.com/p/zoj/source/browse/trunk/judge_client/client/tracer.c]
+			 * judge time exceedance by signal SIGXCPU,if time consumption exceexed,set time consumption to zero and memory consumption to zero.
+			 * judge memory exceedance by comparing memory consumption and memoryLimitaion every time getting memory consumption  from proc/$pid/status,if memory consumption is greater than the memoryLimitaion,use ptrace(PTRACE_KILL,pid,NULL,NULL) to stop the user app, and set time consumption to zero and memory consumption to zero.
 			 */
-			int sig =  WSTOPSIG(status);
-			if (sig != SIGTRAP)
-			{
-				updateConsumption(pid);	
-				if (sig == SIGXCPU)
+			while(waitpid(pid,&status,0) > 0){
+				updateConsumption(pid,col);
+
+				if (WIFSIGNALED(status))
 				{
-                    col->setLastState(TIME_LIMIT_ERROR);
-					
-					printf("time exceeded\n");
-					//timeConsumption =(timeLimitation)*1000+1;
-					col[i]->setTimeConsumption(col[i]->getTimeLimit()+1);
+					if(WTERMSIG(status) == SIGKILL){
+						col->setLastState(RUNTIME_ERROR);
+
+					}
+					break;
 				}
-				else if( sig == SIGXFSZ){
-                    col->setLastState(OUTPUT_LIMIT_ERROR);
-					
+				if(!WIFSTOPPED(status)){
+					if (WTERMSIG(status))
+					{
+						col->setLastState(RUNTIME_ERROR);
+
+					}	
+					break;
 				}
 				/*
-				   else if( sig == SIGKILL){
-				   programStatus = RUNTIME_ERROR;
-
-				   }	
-				   */
-				else if( sig == SIGILL){
-                    col->setLastState(RUNTIME_ERROR);
-					
-				}
-				else if( sig == SIGSEGV){
-                  
-                    col->setLastState(SEGMENTATION_FAULT);
-
-				}
-				else{
-                    col->setLastState(RUNTIME_ERROR);
-			
-				}
-				break;
-				//	ptrace(PTRACE_SYSCALL, pid, NULL, sig);
-			}
-			if (ReadMemoryConsumption(pid) >= col[i]->getMemoryLimit())
-			{
-                col->setLastState(MEMORY_LIMIT_ERROR);
-				
-				//memoryConsumption = memoryLimitation+1;
-                /*
-                 * don't use ptrace_kill wati fix
-                 */
-				ptrace(PTRACE_KILL,pid,NULL,NULL);	
-				break;
-			}
-			ptrace(PTRACE_GETREGS,pid,NULL,&regs);
-			/*
-			 *comment by: Jialin Wu
-			 *regs.orig_rax(in ubuntu_64bit) or regs.orig_eax(int centOS_32bit) will hold the syscall num that was invoked.
-			 *
-			 *compare with the diabled_syscall array in "disabled_syscall.h" to judge whether the syscall invoked is permitted or not,if the values of disabled_syscall[regs.orig_rax]==1,the syscall is forbidden.
-			 */
-			/*
-			 * for x32
-			 if (disabled_syscall[regs.orig_eax]==1)
-			 * for x64
-			 if (disabled_syscall[regs.orig_rax]==1)
-			 */
-			if (disabled_syscall[regs.orig_eax]==1)
-			{
-				if (firstExecute)
+				 * comment by: Jialin Wu
+				 *copy from referrence manual: While being traced, the tracee will stop each time a signal is delivered, even if the signal is being ignored. (An exception is SIGKILL, which has its usual effect.) The tracer will be notified at its next call to waitpid(2) (or one of the related "wait" system calls); that call will return a status value containing information that indicates the cause of the stop in the tracee. While the tracee is stopped, the tracer can use various ptrace requests to inspect and modify the tracee. The tracer then causes the tracee to continue, optionally ignoring the delivered signal (or even delivering a different signal instead).
+				 */
+				int sig =  WSTOPSIG(status);
+				if (sig != SIGTRAP)
 				{
+					updateConsumption(pid,col);	
+					if (sig == SIGXCPU)
+					{
+						col->setLastState(TIME_LIMIT_ERROR);
+
+						printf("time exceeded\n");
+						//timeConsumption =(timeLimitation)*1000+1;
+						col->setTimeConsumption(col->getTimeLimit());
+						//col->setTimeConsumption((col[i]->getTimeLimit()+1));
+					}
+					else if( sig == SIGXFSZ){
+						col->setLastState(OUTPUT_LIMIT_ERROR);
+
+					}
 					/*
-					 *comment by: Jialin Wu
-					 * the first execv comes from from parent process
-					 * so first exec is permitted to run user app
-					 */
-					firstExecute =0;
-					ptrace(PTRACE_SYSCALL,pid,NULL,NULL);	
+					   else if( sig == SIGKILL){
+					   programStatus = RUNTIME_ERROR;
+
+					   }	
+					   */
+					else if( sig == SIGILL){
+						col->setLastState(RUNTIME_ERROR);
+
+					}
+					else if( sig == SIGSEGV){
+
+						col->setLastState(SEGMENTATION_FAULT);
+
+					}
+					else{
+						col->setLastState(RUNTIME_ERROR);
+
+					}
+					break;
+					//	ptrace(PTRACE_SYSCALL, pid, NULL, sig);
 				}
-				else{
-					//the app is do somethin evil,so kill it!
-                    col->setLastState(SYSCALL_RESTRICTION);
-					
+				if (ReadMemoryConsumption(pid) >= col->getMemoryLimit())
+				{
+					col->setLastState(MEMORY_LIMIT_ERROR);
+
+					//memoryConsumption = memoryLimitation+1;
+					/*
+					 * don't use ptrace_kill wati fix
+					 */
 					ptrace(PTRACE_KILL,pid,NULL,NULL);	
 					break;
 				}
-
-			}	
-			if (regs.orig_eax == SYS_exit ||regs.orig_eax ==SYS_exit_group)
-			{
-
+				ptrace(PTRACE_GETREGS,pid,NULL,&regs);
 				/*
-				 * comment by:Jialin Wu
-				 * if the user app is exit normally,it will call SYS_exit or SYS_exit_group
-				 * detect these two syscall to judge the app is exit normally or not
+				 *comment by: Jialin Wu
+				 *regs.orig_rax(in ubuntu_64bit) or regs.orig_ax(int centOS_32bit) will hold the syscall num that was invoked.
+				 *
+				 *compare with the diabled_syscall array in "disabled_syscall.h" to judge whether the syscall invoked is permitted or not,if the values of disabled_syscall[regs.orig_rax]==1,the syscall is forbidden.
 				 */
+				/*
+				 * for x32
+				 if (disabled_syscall[regs.orig_eax]==1)
+				 * for x64
+				 if (disabled_syscall[regs.orig_rax]==1)
+				 */
+				if (disabled_syscall[regs.orig_rax]==1)
+				{
+					if (firstExecute)
+					{
+						/*
+						 *comment by: Jialin Wu
+						 * the first execv comes from from parent process
+						 * so first exec is permitted to run user app
+						 */
+						firstExecute =0;
+						ptrace(PTRACE_SYSCALL,pid,NULL,NULL);	
+					}
+					else{
+						//the app is do somethin evil,so kill it!
+						col->setLastState(SYSCALL_RESTRICTION);
 
-				updateConsumption(pid,col);
-                 col->setLastState(EXIT_NORMALLY);
-				
+						ptrace(PTRACE_KILL,pid,NULL,NULL);	
+						break;
+					}
 
+				}	
+				if (regs.orig_rax == SYS_exit ||regs.orig_rax ==SYS_exit_group)
+				{
+
+					/*
+					 * comment by:Jialin Wu
+					 * if the user app is exit normally,it will call SYS_exit or SYS_exit_group
+					 * detect these two syscall to judge the app is exit normally or not
+					 */
+
+					updateConsumption(pid,col);
+					col->setLastState(EXIT_NORMALLY);
+
+
+				}
+				ptrace(PTRACE_SYSCALL,pid,NULL,NULL);
 			}
-			ptrace(PTRACE_SYSCALL,pid,NULL,NULL);
-		}
 
 
 		}
-	else
-	{
-		ptrace(PTRACE_TRACEME,0,NULL,NULL);
-		freopen("./stdIn", "r", stdin);
-		freopen("./userOut", "w+", stdout);
-
-		if (col->getLanguageId() ==4)
+		else
 		{
-			execl("/usr/java/bin/java", "/usr/java/bin/java","Main", (char *) NULL);
-		}
-		else{
-			/*
-			if ( getrlimit(RLIMIT_AS,&executableLimit) == 0)
+			ptrace(PTRACE_TRACEME,0,NULL,NULL);
+			freopen("./stdIn", "r", stdin);
+			freopen("./userOut", "w+", stdout);
+
+			if (col->getLanguageId() ==4)
 			{
-				executableLimit.rlim_cur = 2 * col->getMemoryLimit() * 1024;
+				execl("/usr/java/bin/java", "/usr/java/bin/java","Main", (char *) NULL);
+			}
+			else{
+				/*
+				   if ( getrlimit(RLIMIT_AS,&executableLimit) == 0)
+				   {
+				   executableLimit.rlim_cur = 2 * col->getMemoryLimit() * 1024;
 				//	if (setrlimit(RLIMIT_AS, &executableLimit) == 0)
 				{
-					//	cout<<"set memory limit done!"<<endl;
+				//	cout<<"set memory limit done!"<<endl;
 				}
-			}
-			if ( getrlimit(RLIMIT_CPU,&executableLimit) == 0)
-			{
+				}
+				if ( getrlimit(RLIMIT_CPU,&executableLimit) == 0)
+				{
 				//	cout<<"time limit:"<<col->getTimeLimit()<<endl;
 				executableLimit.rlim_cur = 2 * col->getTimeLimit()/1000 ;
 				if (setrlimit(RLIMIT_CPU, &executableLimit) == 0)
 				{
-					//		cout<<"set time limit done!"<<endl;
+				//		cout<<"set time limit done!"<<endl;
 				}
-			}
-			*/
+				}
+				*/
 
-			execl("./Main", "./Main", (char *) NULL);
+				execl("./Main", "./Main", (char *) NULL);
+			}
 		}
 	}
 }
 
-/*
-int startExecution(Collection * col){
+	/*
+	   int startExecution(Collection * col){
 
-	int pid;
-	int status;
-	float passTime;
-	long tmp;
-	struct rusage executableResourceUsage;
-	struct rlimit executableLimit;
+	   int pid;
+	   int status;
+	   float passTime;
+	   long tmp;
+	   struct rusage executableResourceUsage;
+	   struct rlimit executableLimit;
 
-	struct timeval before, after;
-	struct timeval before1, after1;
-	pid = fork();
-	if (pid)
+	   struct timeval before, after;
+	   struct timeval before1, after1;
+	   pid = fork();
+	   if (pid)
+	   {
+
+	   gettimeofday(&before1, NULL);
+	   wait(&status);
+
+	//cout<<"status:"<<status<<endl;
+	// col->setLastState(RUNTIME_ERROR);
+	if (WIFEXITED(status))
 	{
+	col->setLastState(EXIT_NORMALLY);
+	}
+	else if (WIFSIGNALED(status))
+	{
+	if (SIGXCPU == WTERMSIG(status))
+	{
+	col->setLastState(TIME_LIMIT_ERROR);
+	}
+	else if ( SIGSEGV == WTERMSIG(status))
+	{
+	col->setLastState(MEMORY_LIMIT_ERROR);
+	}
+	else if ( SIGKILL == WTERMSIG(status))
+	{
+	col->setLastState(SYSTEM_ERROR);
+	}
 
-		gettimeofday(&before1, NULL);
-		wait(&status);
+	}
 
-		//cout<<"status:"<<status<<endl;
-		// col->setLastState(RUNTIME_ERROR);
-		if (WIFEXITED(status))
-		{
-			col->setLastState(EXIT_NORMALLY);
-		}
-		else if (WIFSIGNALED(status))
-		{
-			if (SIGXCPU == WTERMSIG(status))
-			{
-				col->setLastState(TIME_LIMIT_ERROR);
-			}
-			else if ( SIGSEGV == WTERMSIG(status))
-			{
-				col->setLastState(MEMORY_LIMIT_ERROR);
-			}
-			else if ( SIGKILL == WTERMSIG(status))
-			{
-				col->setLastState(SYSTEM_ERROR);
-			}
-
-		}
-
-		gettimeofday(&after1, NULL);
-		//microseconds:us
-		tmp = ((long long)after1.tv_sec)*1000*1000 +
-			((long long)after1.tv_usec) -
-			((long long)before1.tv_sec)*1000*1000 -
-			((long long)before1.tv_usec);
-		col->setTimeComsupted(tmp);
-		getrusage(RUSAGE_CHILDREN, &executableResourceUsage);
-		col->setMemoryComsupted(executableResourceUsage.ru_maxrss);
+	gettimeofday(&after1, NULL);
+	//microseconds:us
+	tmp = ((long long)after1.tv_sec)*1000*1000 +
+	((long long)after1.tv_usec) -
+	((long long)before1.tv_sec)*1000*1000 -
+	((long long)before1.tv_usec);
+	col->setTimeComsupted(tmp);
+	getrusage(RUSAGE_CHILDREN, &executableResourceUsage);
+	col->setMemoryComsupted(executableResourceUsage.ru_maxrss);
 	}
 	else
 	{
-		freopen("./stdIn", "r", stdin);
-		freopen("./userOut", "w+", stdout);
+	freopen("./stdIn", "r", stdin);
+	freopen("./userOut", "w+", stdout);
 
-		if (col->getLanguageId() ==4)
+	if (col->getLanguageId() ==4)
+	{
+	execl("/usr/java/bin/java", "/usr/java/bin/java","Main", (char *) NULL);
+	}
+	else{
+	if ( getrlimit(RLIMIT_AS,&executableLimit) == 0)
+	{
+	executableLimit.rlim_cur = 2 * col->getMemoryLimit() * 1024;
+	//	if (setrlimit(RLIMIT_AS, &executableLimit) == 0)
+	{
+	//	cout<<"set memory limit done!"<<endl;
+	}
+	}
+	if ( getrlimit(RLIMIT_CPU,&executableLimit) == 0)
+	{
+		//	cout<<"time limit:"<<col->getTimeLimit()<<endl;
+		executableLimit.rlim_cur = 2 * col->getTimeLimit()/1000 ;
+		if (setrlimit(RLIMIT_CPU, &executableLimit) == 0)
 		{
-			execl("/usr/java/bin/java", "/usr/java/bin/java","Main", (char *) NULL);
-		}
-		else{
-			if ( getrlimit(RLIMIT_AS,&executableLimit) == 0)
-			{
-				executableLimit.rlim_cur = 2 * col->getMemoryLimit() * 1024;
-				//	if (setrlimit(RLIMIT_AS, &executableLimit) == 0)
-				{
-					//	cout<<"set memory limit done!"<<endl;
-				}
-			}
-			if ( getrlimit(RLIMIT_CPU,&executableLimit) == 0)
-			{
-				//	cout<<"time limit:"<<col->getTimeLimit()<<endl;
-				executableLimit.rlim_cur = 2 * col->getTimeLimit()/1000 ;
-				if (setrlimit(RLIMIT_CPU, &executableLimit) == 0)
-				{
-					//		cout<<"set time limit done!"<<endl;
-				}
-			}
-			execl("./Main", "./Main", (char *) NULL);
+			//		cout<<"set time limit done!"<<endl;
 		}
 	}
+	execl("./Main", "./Main", (char *) NULL);
+}
+}
 }
 */
 
 int diffCasesJudge(Collection* col){
 
 	FILE *stdf, *usrf;
-    col->setJudgeState(ACCEPTED);
+	col->setJudgeState(ACCEPTED);
 	//col->setLastState(ACCEPTED); //puzzle whern comment this line state become 10011
 	stdf = fopen("./stdOut", "r");
 	usrf = fopen("./userOut", "r");
@@ -769,104 +783,104 @@ void find_next_nonspace(int * c1, int * c2, FILE * stdf, FILE * usrf,Collection 
 		}
 	}
 }
-	int ReadTimeConsumption(pid_t pid){
-		char buffer[64];
-		sprintf(buffer,"/proc/%d/stat",pid);
-		FILE* fp = fopen(buffer,"r");
-		if (fp == NULL)
-		{
-			printf("no stat found in proc\n");
-			return -1;
-		}
-		int stime,utime;
-		int d1;
-		char buff[24],c1;
-		//	fgetc(fp);
-		if (fscanf(fp,"%d %s %c %*d %*d %*d %*d %*d %*u %*u %*u %*u %*u %d %d",&d1,buff,&c1,&utime,&stime) < 2)
-		{
-			printf("fail read time\n");
-			fclose(fp);
-			return -1;
-			/* code */
-		}
-		//	printf("%d,%s,%c,%d,%d\n",d1,buff,c1,utime,stime );
-		fclose(fp);
-		static int clktck = 0;
-		if (clktck == 0)
-		{
-			//Inquire about the number of clock ticks per second
-			//the number of clock ticks per second
-			clktck = sysconf(_SC_CLK_TCK); 
-		}
-		//unit: million second
-		return (int) (((double)(stime + utime + 0.0) / clktck) * 1000);
+int ReadTimeConsumption(pid_t pid){
+	char buffer[64];
+	sprintf(buffer,"/proc/%d/stat",pid);
+	FILE* fp = fopen(buffer,"r");
+	if (fp == NULL)
+	{
+		printf("no stat found in proc\n");
+		return -1;
 	}
+	int stime,utime;
+	int d1;
+	char buff[24],c1;
+	//	fgetc(fp);
+	if (fscanf(fp,"%d %s %c %*d %*d %*d %*d %*d %*u %*u %*u %*u %*u %d %d",&d1,buff,&c1,&utime,&stime) < 2)
+	{
+		printf("fail read time\n");
+		fclose(fp);
+		return -1;
+		/* code */
+	}
+	//	printf("%d,%s,%c,%d,%d\n",d1,buff,c1,utime,stime );
+	fclose(fp);
+	static int clktck = 0;
+	if (clktck == 0)
+	{
+		//Inquire about the number of clock ticks per second
+		//the number of clock ticks per second
+		clktck = sysconf(_SC_CLK_TCK); 
+	}
+	//unit: million second
+	return (int) (((double)(stime + utime + 0.0) / clktck) * 1000);
+}
 
-	int ReadMemoryConsumption(pid_t pid){
-		char buffer[64];
-		sprintf(buffer,"/proc/%d/status",pid);
-		FILE* fp = fopen(buffer, "r");
-		if (fp == NULL) {   
-			return -1;
-		}
-		int vmPeak = 0,
-		    vmSize = 0,
-		    vmExe = 0,
-		    vmLib = 0,
-		    vmStack = 0;
+int ReadMemoryConsumption(pid_t pid){
+	char buffer[64];
+	sprintf(buffer,"/proc/%d/status",pid);
+	FILE* fp = fopen(buffer, "r");
+	if (fp == NULL) {   
+		return -1;
+	}
+	int vmPeak = 0,
+	    vmSize = 0,
+	    vmExe = 0,
+	    vmLib = 0,
+	    vmStack = 0;
 
 
-		while (fgets(buffer, 32, fp)) 
+	while (fgets(buffer, 32, fp)) 
+	{ 
+		if (!strncmp(buffer, "VmPeak:", 7)) 
 		{ 
-			if (!strncmp(buffer, "VmPeak:", 7)) 
-			{ 
-				sscanf(buffer + 7, "%d", &vmPeak);
+			sscanf(buffer + 7, "%d", &vmPeak);
 
-			} else if (!strncmp(buffer, "VmSize:", 7)) 
-			{
-				sscanf(buffer + 7, "%d", &vmSize);
-
-			} else if (!strncmp(buffer, "VmExe:", 6)) 
-			{ 
-				sscanf(buffer + 6, "%d", &vmExe);
-
-			} else if (!strncmp(buffer, "VmLib:", 6)) 
-			{           
-				sscanf(buffer + 6, "%d", &vmLib);
-
-			} else if (!strncmp(buffer, "VmStk:", 6)) 
-			{            
-				sscanf(buffer + 6, "%d", &vmStack);
-
-			}
-
-		}
-		//		printf("VmPeak:%d VmSize:%d\n",vmPeak,vmSize );
-		fclose(fp);
-		if(vmPeak){
-			vmSize = vmPeak;	
-		}
-		//		printf("vmsize:%d,vmExe:%d,vmLib:%d,vmStack:%d\n",
-		//vmSize,vmExe,vmLib,vmStack );
-		//unit:kb
-		return vmSize - vmExe -vmLib -vmStack;
-	}
-
-	void updateConsumption(pid_t pid,Collection* col){
-        col->setMemoryConsumption(ReadMemoryConsumption(pid));
-        col->setTimeConsumption(ReadTimeConsumption(pid));
-
-		/*
-		if (ReadMemoryConsumption(pid) > memoryConsumption)
+		} else if (!strncmp(buffer, "VmSize:", 7)) 
 		{
-			memoryConsumption = ReadMemoryConsumption(pid);
-		}
+			sscanf(buffer + 7, "%d", &vmSize);
 
-		if (ReadTimeConsumption(pid) > timeConsumption)
-		{
-			timeConsumption = ReadTimeConsumption(pid);
-		}	
-		*/
+		} else if (!strncmp(buffer, "VmExe:", 6)) 
+		{ 
+			sscanf(buffer + 6, "%d", &vmExe);
+
+		} else if (!strncmp(buffer, "VmLib:", 6)) 
+		{           
+			sscanf(buffer + 6, "%d", &vmLib);
+
+		} else if (!strncmp(buffer, "VmStk:", 6)) 
+		{            
+			sscanf(buffer + 6, "%d", &vmStack);
+
+		}
 
 	}
+	//		printf("VmPeak:%d VmSize:%d\n",vmPeak,vmSize );
+	fclose(fp);
+	if(vmPeak){
+		vmSize = vmPeak;	
+	}
+	//		printf("vmsize:%d,vmExe:%d,vmLib:%d,vmStack:%d\n",
+	//vmSize,vmExe,vmLib,vmStack );
+	//unit:kb
+	return vmSize - vmExe -vmLib -vmStack;
+}
+
+void updateConsumption(pid_t pid,Collection* col){
+
+	col->setMemoryConsumption(ReadMemoryConsumption(pid));
+	col->setTimeConsumption(ReadTimeConsumption(pid));
+
+	/*
+	   if (ReadMemoryConsumption(pid) > memoryConsumption)
+	   {
+	   memoryConsumption = ReadMemoryConsumption(pid);
+	   }
+
+	   if (ReadTimeConsumption(pid) > timeConsumption)
+	   {
+	   timeConsumption = ReadTimeConsumption(pid);
+	   }	
+	   */
+}
 
