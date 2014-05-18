@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
 			/*
 			 *now dealing with one by one
 			 */
-			cout<<i<<"user id:"<<col[i]->getUserId()<<" run id:"<<col[i]->getRunId()<<" problem id:"<<col[i]->getProblemId()<<endl;//" source code: \n"<<col[i]->getSourceCode()<<endl;
+			cout<<"dealing with the "<<i<<"th "<<"user id:"<<col[i]->getUserId()<<" run id:"<<col[i]->getRunId()<<" problem id:"<<col[i]->getProblemId()<<endl;//" source code: \n"<<col[i]->getSourceCode()<<endl;
 			sqlconn->querySQL("SELECT * FROM tbl_language  WHERE language_id = "+std::to_string(col[i]->getLanguageId()));
 			res = sqlconn->getResultSet();
 			while(res->next()){
@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
 				 * get compiler_name,language fix,compiler_option, only one set
 				 */
 				tmp = res->getString("compiler_name");
-				//	cout<<"compiler name:"<<tmp<<endl;
+					cout<<"compiler name:"<<tmp<<endl;
 				col[i]->setCompilerName(tmp);
 				tmp = res->getString("source_suffix");
 				col[i]->setSCodeSuffix(tmp);
@@ -134,14 +134,18 @@ int main(int argc, char *argv[])
 			/*
 			 * write souce code to file Main.suffix (mainName)
 			 */
+			//cout<<"source code: "<<endl<<content<<endl;
 			writeFromString(file,content,content.length());
+				//cout<<"demo"<<endl;
 			if (col[i]->getLanguageId() == 4)// java
 			{
 				compileCommand = col[i]->getCompilerName() +" "+ file +" "+  col[i]->getCompilerOption() + " 2>" + errorfile;
 			}
 			else{
-				compileCommand = col[i]->getCompilerName() +" "+ file +" "+  col[i]->getCompilerOption()+" -o "+  mainName +"  2>" +errorfile;
-				cout<<"compile command is: "<<endl<<compileCommand<<endl;
+				//cout<<"start compiling "<<endl;
+compileCommand = col[i]->getCompilerName() +" -o "+ mainName+" "+ file +" 2>" +errorfile;
+				//compileCommand = col[i]->getCompilerName() +" "+ file +" "+  col[i]->getCompilerOption()+" -o "+  mainName +"  2>" +errorfile;
+				//cout<<"compile command is: "<<endl<<compileCommand<<endl;
 			}
 
 			/*
@@ -171,8 +175,10 @@ int main(int argc, char *argv[])
 
 			generateFile =fopen(mainName.c_str(),"r");
 
+			cout<<"finish exectue compile command"<<endl;
 			if(generateFile == NULL)
 			{
+				cout<<"error compiling"<<endl;
 				/*
 				 *compile failed
 				 *
@@ -188,6 +194,8 @@ int main(int argc, char *argv[])
 				delteComand="rm "+file + " " +errorfile;
 				system(delteComand.c_str());
 				//cout<<"time used:"<<col[i]->getTimeComsupted()<<"ns   memory used:"<<col[i]->getMemoryComsupted()<<"kb state: "<<col[i]->getLastState()<<endl;
+				//cout<<"last result of run ID "<<col[i]->getRunId()<<" time consumption:"<<col[i]->getTimeConsumption()<<" memory consumption: "<<
+				//	col[i]->getMemoryConsumption()<<" status: "<<col[i]->getLastState()<<endl<<endl;
 
 				sql::PreparedStatement *pstm=sqlconn->con->prepareStatement("UPDATE tbl_run SET Status = ?,compile_error = ?  WHERE Run_ID = ?");
 				pstm->setInt(1,col[i]->getLastState());
@@ -200,6 +208,8 @@ int main(int argc, char *argv[])
 				pstm->setInt(3,col[i]->getRunId());
 				pstm->executeUpdate();
 				delete pstm;
+
+							//totolTimeconsumption = 0;
 
 				/*
 				//sprintf(tmpsql,"UPDATE tbl_run SET Status = %d, Time_Used = %ld, Memory_Used = %ld ,compile_error = '%s'  WHERE Run_ID = %ld",col[i]->getLastState(),col[i]->getTimeComsupted(),col[i]->getMemoryComsupted(),col[i]->getCompilerError().c_str(),col[i]->getRunId());
@@ -231,6 +241,7 @@ int main(int argc, char *argv[])
 				res = sqlconn->getResultSet();
 				caseCount = sqlconn->getRowsCount();
 				cout<<"there are "<<caseCount<<"cases to test"<<endl;
+				bool testCaseError = false;
 				while(res->next()){
 					/*
 					 * use every test data to test the executive app
@@ -239,6 +250,7 @@ int main(int argc, char *argv[])
 					 * stdOut:file stored std answer
 					 * userOut:file stored the answer redirect from executive app's stdout
 					 */
+					col[i]->setTestcaseID(res->getInt("testcase_id"));
 					tmp = res->getString("input");
 					col[i]->setSTDIput(tmp);
 					tmp = res->getString("output");
@@ -247,7 +259,8 @@ int main(int argc, char *argv[])
 					writeFromString(stdFile,col[i]->getSTDIput(),col[i]->getSTDIput().length());
 					stdFile = "./stdOut";
 					writeFromString(stdFile,col[i]->getSTDOutput(),col[i]->getSTDOutput().length());
-					cout<<"stdOut: "<<col[i]->getSTDOutput()<<endl;
+
+					//cout<<"stdOut: "<<col[i]->getSTDOutput()<<endl;
 					/*
 					 *compile done start to  run user app and redirect the stdout to the file userOut file
 					 *here will get the time consumption and the memory consumption etc.
@@ -259,8 +272,8 @@ int main(int argc, char *argv[])
 					stdFile = "./userOut";
 					strReadFromFile.clear();
 					readToString(stdFile,&strReadFromFile);
-					cout<<"userOut: "<<strReadFromFile<<endl;
-					if ( col[i]->getLastState() != EXIT_NORMALLY)
+					//cout<<"userOut: "<<strReadFromFile<<endl;
+					if ( col[i]->getJudgeState() != EXIT_NORMALLY)
 					{
 
 						//
@@ -272,20 +285,35 @@ int main(int argc, char *argv[])
 						 *
 						 */
 
+						//cout<<"befor diff judge status: "<<col[i]->getJudgeState()<<endl;
+
 						diffCasesJudge(col[i]);
+
+						//cout<<"after diff judge status: "<<col[i]->getJudgeState()<<endl;
 
 						if (col[i]->getJudgeState() !=ACCEPTED) {
 
 							/*
+							 * judge statu now can not be exit normally
+							 * just check it's AC or not
 							 *insert into tbl_run_testcase
 							 *set last statu to WA
 							 */
 							col[i]->setLastState(col[i]->getJudgeState());
-
-
-
-
+							testCaseError = true;
 						}
+						/*
+						 * already set last state and the last is not AC or exit normally
+						 */
+						if (testCaseError)
+						{
+							/* skip setting last state keeping last to unAC*/
+						}
+						else{
+							col[i]->setLastState(col[i]->getJudgeState());
+						
+						}
+
 					}
 					/*
 					 * get the exection condicton data:time comsuption memory cumsuption etc.
@@ -303,8 +331,9 @@ int main(int argc, char *argv[])
 					 totolTimeconsumption +=col[i]->getTimeComsupted();
 					 totolMemoryConsumption +=col[i]->getMemoryComsupted();
 					 */
-					cout<<"test case time used:"<<col[i]->getTimeConsumption()<<"ms   memory used:"<<col[i]->getMemoryConsumption()<<"kb execut state: "<<col[i]->getLastState()<<endl;
-				}
+					cout<<"run ID:"<<col[i]->getRunId()<<" testcase ID:"<<col[i]->getTestcaseID()<<" time used:"<<col[i]->getTimeConsumption()<<"ms   memory used:"<<col[i]->getMemoryConsumption()<<"kb judge state: "<<col[i]->getJudgeState()<<endl;
+				}//all testcases are tested
+
 				/*
 				 * delete the source code file error file and execute file when they are needless
 				 * for example: rm ./Main main.cpp error
@@ -332,7 +361,8 @@ int main(int argc, char *argv[])
 				pstm->setInt(5,col[i]->getRunId());
 				pstm->executeUpdate();
 				delete pstm;
-				//cout<<"tTime: "<<totolTimeconsumption<<"ms tMemory: "<<totolMemoryConsumption<<"M"<<endl;
+				cout<<"last result of run ID "<<col[i]->getRunId()<<" time consumption:"<<col[i]->getTimeConsumption()<<" memory consumption: "<<
+					col[i]->getMemoryConsumption()<<" status: "<<col[i]->getLastState()<<endl<<endl;
 				//totolTimeconsumption = 0;
 				//totolMemoryConsumption=0;
 			}
@@ -368,6 +398,11 @@ int readToString(string &fileName, string* str){
 }
 int writeFromString( string &fileName, const string& buffer, size_t count){
 	FILE *fd = fopen(fileName.c_str(),"wb+");
+	if (fd == NULL)
+	{
+		cout<<"open file to write faild"<<endl;
+//		return 1;
+	}
 	const char*p = buffer.c_str();
 	//cout<<"*c_str: "<<buffer.c_str();
 	while (count > 0 ) {
@@ -408,7 +443,7 @@ int startExecution(Collection * col){
 			 * judge memory exceedance by comparing memory consumption and memoryLimitaion every time getting memory consumption  from proc/$pid/status,if memory consumption is greater than the memoryLimitaion,use ptrace(PTRACE_KILL,pid,NULL,NULL) to stop the user app, and set time consumption to zero and memory consumption to zero.
 			 */
 			while(waitpid(pid,&status,0) > 0){
-				updateConsumption(pid,col);
+				//updateConsumption(pid,col);
 
 				if (WIFSIGNALED(status))
 				{
@@ -524,7 +559,8 @@ int startExecution(Collection * col){
 					 */
 
 					updateConsumption(pid,col);
-					col->setLastState(EXIT_NORMALLY);
+					//col->setLastState(EXIT_NORMALLY);
+					col->setJudgeState(EXIT_NORMALLY);
 
 
 				}
@@ -544,10 +580,10 @@ int startExecution(Collection * col){
 				execl("/usr/java/bin/java", "/usr/java/bin/java","Main", (char *) NULL);
 			}
 			else{
-				/*
 				   if ( getrlimit(RLIMIT_AS,&executableLimit) == 0)
 				   {
-				   executableLimit.rlim_cur = 2 * col->getMemoryLimit() * 1024;
+				   executableLimit.rlim_cur = 2 * 1024;
+				   //executableLimit.rlim_cur = 2 * col->getMemoryLimit() * 1024;
 				//	if (setrlimit(RLIMIT_AS, &executableLimit) == 0)
 				{
 				//	cout<<"set memory limit done!"<<endl;
@@ -556,13 +592,13 @@ int startExecution(Collection * col){
 				if ( getrlimit(RLIMIT_CPU,&executableLimit) == 0)
 				{
 				//	cout<<"time limit:"<<col->getTimeLimit()<<endl;
-				executableLimit.rlim_cur = 2 * col->getTimeLimit()/1000 ;
+				executableLimit.rlim_cur = 2;
+				//executableLimit.rlim_cur = 2 * col->getTimeLimit()/1000 ;
 				if (setrlimit(RLIMIT_CPU, &executableLimit) == 0)
 				{
 				//		cout<<"set time limit done!"<<endl;
 				}
 				}
-				*/
 
 				execl("./Main", "./Main", (char *) NULL);
 			}

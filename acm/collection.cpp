@@ -15,6 +15,7 @@ class Collection{
 		long int _memoryConsumpted;
 		int _userId;
 		int _problemId;
+		int _testCaseId;
 
 		string _compilerName;
 		string _compilerOption;
@@ -176,6 +177,13 @@ class Collection{
 		}
 		string getUserOutput(){
 			return _userOutput;	
+		}
+
+		void setTestcaseID(const int &id){
+			_testCaseId = id;	
+		}
+		int getTestcaseID(){
+			return _testCaseId;	
 		}
 
 };
