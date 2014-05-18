@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
 				//cout<<"demo"<<endl;
 			if (col[i]->getLanguageId() == 4)// java
 			{
-				compileCommand = col[i]->getCompilerName() +" "+ file +" "+  col[i]->getCompilerOption() + " 2>" + errorfile;
+				compileCommand = col[i]->getCompilerName() +" -Wall "+ file +" "+  col[i]->getCompilerOption() + " 2>" + errorfile;
 			}
 			else{
 				//cout<<"start compiling "<<endl;
@@ -231,6 +231,7 @@ compileCommand = col[i]->getCompilerName() +" -o "+ mainName+" "+ file +" 2>" +e
 				sql::ResultSet *res = sqlconn->getResultSet();
 				while(res->next()){
 					tmpInt = res->getInt("Time_Limit");
+					
 					col[i]->setTimeLimit(tmpInt);
 					tmpInt = res->getInt("Memory_Limit");
 					col[i]->setMemoryLimit(tmpInt);
@@ -241,7 +242,7 @@ compileCommand = col[i]->getCompilerName() +" -o "+ mainName+" "+ file +" 2>" +e
 				res = sqlconn->getResultSet();
 				caseCount = sqlconn->getRowsCount();
 				cout<<"there are "<<caseCount<<"cases to test"<<endl;
-				bool testCaseError = false;
+				bool dontSetAccptedNextTime = false;
 				while(res->next()){
 					/*
 					 * use every test data to test the executive app
@@ -255,9 +256,9 @@ compileCommand = col[i]->getCompilerName() +" -o "+ mainName+" "+ file +" 2>" +e
 					col[i]->setSTDIput(tmp);
 					tmp = res->getString("output");
 					col[i]->setSTDOutput(tmp);
-					stdFile = "./stdIn";
+					stdFile = "./tmp/stdIn";
 					writeFromString(stdFile,col[i]->getSTDIput(),col[i]->getSTDIput().length());
-					stdFile = "./stdOut";
+					stdFile = "./tmp/stdOut";
 					writeFromString(stdFile,col[i]->getSTDOutput(),col[i]->getSTDOutput().length());
 
 					//cout<<"stdOut: "<<col[i]->getSTDOutput()<<endl;
@@ -269,14 +270,17 @@ compileCommand = col[i]->getCompilerName() +" -o "+ mainName+" "+ file +" 2>" +e
 					/*
 					 * executation done, now get the executation result
 					 */
-					stdFile = "./userOut";
+					stdFile = "./tmp/userOut";
 					strReadFromFile.clear();
 					readToString(stdFile,&strReadFromFile);
 					//cout<<"userOut: "<<strReadFromFile<<endl;
-					if ( col[i]->getJudgeState() != EXIT_NORMALLY)
+					if ( col[i]->getLastState() != EXIT_NORMALLY)
+					//if ( col[i]->getJudgeState() != EXIT_NORMALLY)
 					{
+						cout<<"run app failed with statu: "<<col[i]->getLastState()<<endl;
+							//dontSetAccptedNextTime = true;
+							break;
 
-						//
 					}
 					else
 					{
@@ -285,13 +289,13 @@ compileCommand = col[i]->getCompilerName() +" -o "+ mainName+" "+ file +" 2>" +e
 						 *
 						 */
 
-						//cout<<"befor diff judge status: "<<col[i]->getJudgeState()<<endl;
+						cout<<"befor diff judge status: "<<col[i]->getJudgeState()<<endl;
 
 						diffCasesJudge(col[i]);
 
-						//cout<<"after diff judge status: "<<col[i]->getJudgeState()<<endl;
+						cout<<"after diff judge status: "<<col[i]->getJudgeState()<<endl;
 
-						if (col[i]->getJudgeState() !=ACCEPTED) {
+						if (col[i]->getJudgeState() !=ACCEPTED ) {
 
 							/*
 							 * judge statu now can not be exit normally
@@ -300,18 +304,17 @@ compileCommand = col[i]->getCompilerName() +" -o "+ mainName+" "+ file +" 2>" +e
 							 *set last statu to WA
 							 */
 							col[i]->setLastState(col[i]->getJudgeState());
-							testCaseError = true;
+							dontSetAccptedNextTime = true;
 						}
 						/*
 						 * already set last state and the last is not AC or exit normally
 						 */
-						if (testCaseError)
+						if (dontSetAccptedNextTime)
 						{
 							/* skip setting last state keeping last to unAC*/
 						}
 						else{
 							col[i]->setLastState(col[i]->getJudgeState());
-						
 						}
 
 					}
@@ -320,7 +323,7 @@ compileCommand = col[i]->getCompilerName() +" -o "+ mainName+" "+ file +" 2>" +e
 					 * delete the file preparing for next test case
 					 *don't have to delete but set them to empty?
 					 */
-					delteComand="rm ./stdIn userOut stdOut";
+					delteComand="rm ./tmp/stdIn ./tmp/userOut ./tmp/stdOut";
 					system(delteComand.c_str());
 					/*
 					 * use the max consumiption
@@ -424,7 +427,9 @@ int startExecution(Collection * col){
 
 		int pid;
 		int status;
-		long tmp;
+		//long tmp;
+
+		cout<<"time limitation: "<<col->getTimeLimit()<<" memory limitation: "<<col->getMemoryLimit()<<endl;
 
 		struct rlimit executableLimit;
 
@@ -443,11 +448,12 @@ int startExecution(Collection * col){
 			 * judge memory exceedance by comparing memory consumption and memoryLimitaion every time getting memory consumption  from proc/$pid/status,if memory consumption is greater than the memoryLimitaion,use ptrace(PTRACE_KILL,pid,NULL,NULL) to stop the user app, and set time consumption to zero and memory consumption to zero.
 			 */
 			while(waitpid(pid,&status,0) > 0){
-				//updateConsumption(pid,col);
+				updateConsumption(pid,col);
 
 				if (WIFSIGNALED(status))
 				{
 					if(WTERMSIG(status) == SIGKILL){
+						cout<<"signal kill"<<endl;
 						col->setLastState(RUNTIME_ERROR);
 
 					}
@@ -471,8 +477,8 @@ int startExecution(Collection * col){
 					updateConsumption(pid,col);	
 					if (sig == SIGXCPU || (col->getTimeConsumption() > col->getTimeLimit()))
 					{
-						col->setLastState(TIME_LIMIT_ERROR);
 
+						col->setLastState(TIME_LIMIT_ERROR);
 						printf("time exceeded\n");
 						//timeConsumption =(timeLimitation)*1000+1;
 						col->setTimeConsumption(col->getTimeLimit());
@@ -498,6 +504,7 @@ int startExecution(Collection * col){
 
 					}
 					else{
+						cout<<"unknow error"<<endl;
 						col->setLastState(RUNTIME_ERROR);
 
 					}
@@ -559,8 +566,8 @@ int startExecution(Collection * col){
 					 */
 
 					updateConsumption(pid,col);
-					//col->setLastState(EXIT_NORMALLY);
-					col->setJudgeState(EXIT_NORMALLY);
+					col->setLastState(EXIT_NORMALLY);
+				//	col->setJudgeState(EXIT_NORMALLY);
 
 
 				}
@@ -572,8 +579,8 @@ int startExecution(Collection * col){
 		else
 		{
 			ptrace(PTRACE_TRACEME,0,NULL,NULL);
-			freopen("./stdIn", "r", stdin);
-			freopen("./userOut", "w+", stdout);
+			freopen("./tmp/stdIn", "r", stdin);
+			freopen("./tmp/userOut", "w+", stdout);
 
 			if (col->getLanguageId() ==4)
 			{
@@ -582,8 +589,9 @@ int startExecution(Collection * col){
 			else{
 				   if ( getrlimit(RLIMIT_AS,&executableLimit) == 0)
 				   {
-				   executableLimit.rlim_cur = 2 * 1024;
-				   //executableLimit.rlim_cur = 2 * col->getMemoryLimit() * 1024;
+				  // executableLimit.rlim_cur = 2 * 1024;
+				  // byte
+				   executableLimit.rlim_cur =  col->getMemoryLimit() * 1024;
 				//	if (setrlimit(RLIMIT_AS, &executableLimit) == 0)
 				{
 				//	cout<<"set memory limit done!"<<endl;
@@ -592,8 +600,9 @@ int startExecution(Collection * col){
 				if ( getrlimit(RLIMIT_CPU,&executableLimit) == 0)
 				{
 				//	cout<<"time limit:"<<col->getTimeLimit()<<endl;
-				executableLimit.rlim_cur = 2;
-				//executableLimit.rlim_cur = 2 * col->getTimeLimit()/1000 ;
+				//executableLimit.rlim_cur = 2;
+				//second
+				executableLimit.rlim_cur = col->getTimeLimit()/1000 ;
 				if (setrlimit(RLIMIT_CPU, &executableLimit) == 0)
 				{
 				//		cout<<"set time limit done!"<<endl;
@@ -696,8 +705,8 @@ int diffCasesJudge(Collection* col){
 	FILE *stdf, *usrf;
 	col->setJudgeState(ACCEPTED);
 	//col->setLastState(ACCEPTED); //puzzle whern comment this line state become 10011
-	stdf = fopen("./stdOut", "r");
-	usrf = fopen("./userOut", "r");
+	stdf = fopen("./tmp/stdOut", "r");
+	usrf = fopen("./tmp/userOut", "r");
 	if (stdf == NULL || usrf == NULL)
 	{
 		col->setJudgeState(RUNTIME_ERROR);
