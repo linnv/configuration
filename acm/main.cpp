@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
 				 * get compiler_name,language fix,compiler_option, only one set
 				 */
 				tmp = res->getString("compiler_name");
-					cout<<"compiler name:"<<tmp<<endl;
+				cout<<"compiler name:"<<tmp<<endl;
 				col[i]->setCompilerName(tmp);
 				tmp = res->getString("source_suffix");
 				col[i]->setSCodeSuffix(tmp);
@@ -136,14 +136,14 @@ int main(int argc, char *argv[])
 			 */
 			//cout<<"source code: "<<endl<<content<<endl;
 			writeFromString(file,content,content.length());
-				//cout<<"demo"<<endl;
+			//cout<<"demo"<<endl;
 			if (col[i]->getLanguageId() == 4)// java
 			{
 				compileCommand = col[i]->getCompilerName() +" -Wall "+ file +" "+  col[i]->getCompilerOption() + " 2>" + errorfile;
 			}
 			else{
 				//cout<<"start compiling "<<endl;
-compileCommand = col[i]->getCompilerName() +" -o "+ mainName+" "+ file +" 2>" +errorfile;
+				compileCommand = col[i]->getCompilerName() +" -o "+ mainName+" "+ file +" 2>" +errorfile;
 				//compileCommand = col[i]->getCompilerName() +" "+ file +" "+  col[i]->getCompilerOption()+" -o "+  mainName +"  2>" +errorfile;
 				//cout<<"compile command is: "<<endl<<compileCommand<<endl;
 			}
@@ -209,7 +209,7 @@ compileCommand = col[i]->getCompilerName() +" -o "+ mainName+" "+ file +" 2>" +e
 				pstm->executeUpdate();
 				delete pstm;
 
-							//totolTimeconsumption = 0;
+				//totolTimeconsumption = 0;
 
 				/*
 				//sprintf(tmpsql,"UPDATE tbl_run SET Status = %d, Time_Used = %ld, Memory_Used = %ld ,compile_error = '%s'  WHERE Run_ID = %ld",col[i]->getLastState(),col[i]->getTimeComsupted(),col[i]->getMemoryComsupted(),col[i]->getCompilerError().c_str(),col[i]->getRunId());
@@ -231,7 +231,7 @@ compileCommand = col[i]->getCompilerName() +" -o "+ mainName+" "+ file +" 2>" +e
 				sql::ResultSet *res = sqlconn->getResultSet();
 				while(res->next()){
 					tmpInt = res->getInt("Time_Limit");
-					
+
 					col[i]->setTimeLimit(tmpInt);
 					tmpInt = res->getInt("Memory_Limit");
 					col[i]->setMemoryLimit(tmpInt);
@@ -275,11 +275,11 @@ compileCommand = col[i]->getCompilerName() +" -o "+ mainName+" "+ file +" 2>" +e
 					readToString(stdFile,&strReadFromFile);
 					//cout<<"userOut: "<<strReadFromFile<<endl;
 					if ( col[i]->getLastState() != EXIT_NORMALLY)
-					//if ( col[i]->getJudgeState() != EXIT_NORMALLY)
+						//if ( col[i]->getJudgeState() != EXIT_NORMALLY)
 					{
 						cout<<"run app failed with statu: "<<col[i]->getLastState()<<endl;
-							//dontSetAccptedNextTime = true;
-							break;
+						//dontSetAccptedNextTime = true;
+						break;
 
 					}
 					else
@@ -296,6 +296,34 @@ compileCommand = col[i]->getCompilerName() +" -o "+ mainName+" "+ file +" 2>" +e
 						cout<<"after diff judge status: "<<col[i]->getJudgeState()<<endl;
 
 						if (col[i]->getJudgeState() !=ACCEPTED ) {
+							//wtd
+							//select * from tbl_run_testcase where run_id=%ld and testcase_id=%d
+
+							sqlconn->querySQL("select * from tbl_run_testcase where run_id="+std::to_string(col[i]->getRunId()) +" and testcase_id= "+std::to_string(col[i]->getTestcaseID()));
+							//sql::ResultSet *res = sqlconn->getResultSet();
+							//cout<<"dealing with "<<sqlconn->getRowsCount()<<" source code(s)"<<endl<<endl;
+							if (sqlconn->getRowsCount())
+							{
+								cout<<"case record already exist"<<endl;
+
+							}
+							else{
+								sql::PreparedStatement *pstm=sqlconn->con->prepareStatement("INSERT INTO tbl_run_testcase  SET run_id = ?,testcase_id=?");
+								pstm->setInt(1,col[i]->getRunId());
+								/*
+								   pstm->setInt(2,totolTimeconsumption);
+								   pstm->setInt(3,totolMemoryConsumption);
+								   */
+								pstm->setInt(2,col[i]->getTestcaseID());
+								pstm->executeUpdate();
+								cout<<"WA case record!"<<endl;
+								delete pstm;
+							}
+
+
+
+
+
 
 							/*
 							 * judge statu now can not be exit normally
@@ -404,7 +432,7 @@ int writeFromString( string &fileName, const string& buffer, size_t count){
 	if (fd == NULL)
 	{
 		cout<<"open file to write faild"<<endl;
-//		return 1;
+		//		return 1;
 	}
 	const char*p = buffer.c_str();
 	//cout<<"*c_str: "<<buffer.c_str();
@@ -567,7 +595,7 @@ int startExecution(Collection * col){
 
 					updateConsumption(pid,col);
 					col->setLastState(EXIT_NORMALLY);
-				//	col->setJudgeState(EXIT_NORMALLY);
+					//	col->setJudgeState(EXIT_NORMALLY);
 
 
 				}
@@ -587,26 +615,26 @@ int startExecution(Collection * col){
 				execl("/usr/java/bin/java", "/usr/java/bin/java","Main", (char *) NULL);
 			}
 			else{
-				   if ( getrlimit(RLIMIT_AS,&executableLimit) == 0)
-				   {
-				  // executableLimit.rlim_cur = 2 * 1024;
-				  // byte
-				   executableLimit.rlim_cur =  col->getMemoryLimit() * 1024;
-				//	if (setrlimit(RLIMIT_AS, &executableLimit) == 0)
+				if ( getrlimit(RLIMIT_AS,&executableLimit) == 0)
 				{
-				//	cout<<"set memory limit done!"<<endl;
-				}
+					// executableLimit.rlim_cur = 2 * 1024;
+					// byte
+					executableLimit.rlim_cur =  col->getMemoryLimit() * 1024;
+					//	if (setrlimit(RLIMIT_AS, &executableLimit) == 0)
+					{
+						//	cout<<"set memory limit done!"<<endl;
+					}
 				}
 				if ( getrlimit(RLIMIT_CPU,&executableLimit) == 0)
 				{
-				//	cout<<"time limit:"<<col->getTimeLimit()<<endl;
-				//executableLimit.rlim_cur = 2;
-				//second
-				executableLimit.rlim_cur = col->getTimeLimit()/1000 ;
-				if (setrlimit(RLIMIT_CPU, &executableLimit) == 0)
-				{
-				//		cout<<"set time limit done!"<<endl;
-				}
+					//	cout<<"time limit:"<<col->getTimeLimit()<<endl;
+					//executableLimit.rlim_cur = 2;
+					//second
+					executableLimit.rlim_cur = col->getTimeLimit()/1000 ;
+					if (setrlimit(RLIMIT_CPU, &executableLimit) == 0)
+					{
+						//		cout<<"set time limit done!"<<endl;
+					}
 				}
 
 				execl("./Main", "./Main", (char *) NULL);
@@ -615,86 +643,86 @@ int startExecution(Collection * col){
 	}
 }
 
-	/*
-	   int startExecution(Collection * col){
+/*
+   int startExecution(Collection * col){
 
-	   int pid;
-	   int status;
-	   float passTime;
-	   long tmp;
-	   struct rusage executableResourceUsage;
-	   struct rlimit executableLimit;
+   int pid;
+   int status;
+   float passTime;
+   long tmp;
+   struct rusage executableResourceUsage;
+   struct rlimit executableLimit;
 
-	   struct timeval before, after;
-	   struct timeval before1, after1;
-	   pid = fork();
-	   if (pid)
-	   {
+   struct timeval before, after;
+   struct timeval before1, after1;
+   pid = fork();
+   if (pid)
+   {
 
-	   gettimeofday(&before1, NULL);
-	   wait(&status);
+   gettimeofday(&before1, NULL);
+   wait(&status);
 
-	//cout<<"status:"<<status<<endl;
-	// col->setLastState(RUNTIME_ERROR);
-	if (WIFEXITED(status))
-	{
-	col->setLastState(EXIT_NORMALLY);
-	}
-	else if (WIFSIGNALED(status))
-	{
-	if (SIGXCPU == WTERMSIG(status))
-	{
-	col->setLastState(TIME_LIMIT_ERROR);
-	}
-	else if ( SIGSEGV == WTERMSIG(status))
-	{
-	col->setLastState(MEMORY_LIMIT_ERROR);
-	}
-	else if ( SIGKILL == WTERMSIG(status))
-	{
-	col->setLastState(SYSTEM_ERROR);
-	}
+//cout<<"status:"<<status<<endl;
+// col->setLastState(RUNTIME_ERROR);
+if (WIFEXITED(status))
+{
+col->setLastState(EXIT_NORMALLY);
+}
+else if (WIFSIGNALED(status))
+{
+if (SIGXCPU == WTERMSIG(status))
+{
+col->setLastState(TIME_LIMIT_ERROR);
+}
+else if ( SIGSEGV == WTERMSIG(status))
+{
+col->setLastState(MEMORY_LIMIT_ERROR);
+}
+else if ( SIGKILL == WTERMSIG(status))
+{
+col->setLastState(SYSTEM_ERROR);
+}
 
-	}
+}
 
-	gettimeofday(&after1, NULL);
-	//microseconds:us
-	tmp = ((long long)after1.tv_sec)*1000*1000 +
-	((long long)after1.tv_usec) -
-	((long long)before1.tv_sec)*1000*1000 -
-	((long long)before1.tv_usec);
-	col->setTimeComsupted(tmp);
-	getrusage(RUSAGE_CHILDREN, &executableResourceUsage);
-	col->setMemoryComsupted(executableResourceUsage.ru_maxrss);
-	}
-	else
-	{
-	freopen("./stdIn", "r", stdin);
-	freopen("./userOut", "w+", stdout);
+gettimeofday(&after1, NULL);
+//microseconds:us
+tmp = ((long long)after1.tv_sec)*1000*1000 +
+((long long)after1.tv_usec) -
+((long long)before1.tv_sec)*1000*1000 -
+((long long)before1.tv_usec);
+col->setTimeComsupted(tmp);
+getrusage(RUSAGE_CHILDREN, &executableResourceUsage);
+col->setMemoryComsupted(executableResourceUsage.ru_maxrss);
+}
+else
+{
+freopen("./stdIn", "r", stdin);
+freopen("./userOut", "w+", stdout);
 
-	if (col->getLanguageId() ==4)
+if (col->getLanguageId() ==4)
+{
+execl("/usr/java/bin/java", "/usr/java/bin/java","Main", (char *) NULL);
+}
+else{
+if ( getrlimit(RLIMIT_AS,&executableLimit) == 0)
+{
+executableLimit.rlim_cur = 2 * col->getMemoryLimit() * 1024;
+//	if (setrlimit(RLIMIT_AS, &executableLimit) == 0)
+{
+//	cout<<"set memory limit done!"<<endl;
+}
+}
+if ( getrlimit(RLIMIT_CPU,&executableLimit) == 0)
+{
+	//	cout<<"time limit:"<<col->getTimeLimit()<<endl;
+	executableLimit.rlim_cur = 2 * col->getTimeLimit()/1000 ;
+	if (setrlimit(RLIMIT_CPU, &executableLimit) == 0)
 	{
-	execl("/usr/java/bin/java", "/usr/java/bin/java","Main", (char *) NULL);
+		//		cout<<"set time limit done!"<<endl;
 	}
-	else{
-	if ( getrlimit(RLIMIT_AS,&executableLimit) == 0)
-	{
-	executableLimit.rlim_cur = 2 * col->getMemoryLimit() * 1024;
-	//	if (setrlimit(RLIMIT_AS, &executableLimit) == 0)
-	{
-	//	cout<<"set memory limit done!"<<endl;
-	}
-	}
-	if ( getrlimit(RLIMIT_CPU,&executableLimit) == 0)
-	{
-		//	cout<<"time limit:"<<col->getTimeLimit()<<endl;
-		executableLimit.rlim_cur = 2 * col->getTimeLimit()/1000 ;
-		if (setrlimit(RLIMIT_CPU, &executableLimit) == 0)
-		{
-			//		cout<<"set time limit done!"<<endl;
-		}
-	}
-	execl("./Main", "./Main", (char *) NULL);
+}
+execl("./Main", "./Main", (char *) NULL);
 }
 }
 }
@@ -838,7 +866,7 @@ int ReadTimeConsumption(pid_t pid){
 	FILE* fp = fopen(buffer,"r");
 	if (fp == NULL)
 	{
-		printf("no stat found in proc\n");
+//		printf("no stat found in proc\n");
 		return -1;
 	}
 	int stime,utime;
