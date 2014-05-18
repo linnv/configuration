@@ -281,6 +281,10 @@ int main(int argc, char *argv[])
 							 *set last statu to WA
 							 */
 							col[i]->setLastState(col[i]->getJudgeState());
+
+
+
+
 						}
 					}
 					/*
@@ -430,7 +434,7 @@ int startExecution(Collection * col){
 				if (sig != SIGTRAP)
 				{
 					updateConsumption(pid,col);	
-					if (sig == SIGXCPU)
+					if (sig == SIGXCPU || (col->getTimeConsumption() > col->getTimeLimit()))
 					{
 						col->setLastState(TIME_LIMIT_ERROR);
 

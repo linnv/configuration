@@ -1,0 +1,13 @@
+Main.c:2:1: warning: return type defaults to ‘int’ [enabled by default]
+ main()
+ ^
+Main.c: In function ‘main’:
+Main.c:8:3: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
+   while(b=getchar()!='\n')
+   ^
+Main.c:20:9: warning: suggest parentheses around arithmetic in operand of ‘^’ [-Wparentheses]
+      m=m+a[n]*10^i;
+         ^
+Main.c:27:3: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
+   if(b=getchar()=='\n') break;
+   ^
