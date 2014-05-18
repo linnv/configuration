@@ -1,0 +1,7 @@
+./tmp/user/1000920/2322/2322.cpp: In function ‘int main()’:
+./tmp/user/1000920/2322/2322.cpp:28:15: error: ‘system’ was not declared in this scope
+ system("pause");
+               ^
+./tmp/user/1000920/2322/2322.cpp:19:9: warning: unused variable ‘i’ [-Wunused-variable]
+ int n,h,i;
+         ^

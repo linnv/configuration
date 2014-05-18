@@ -1,0 +1,5 @@
+./tmp/user/1000000/23356/23356.cpp: In function ‘int main()’:
+./tmp/user/1000000/23356/23356.cpp:8:1: error: expected primary-expression before ‘return’
+ return 0;
+ ^
+./tmp/user/1000000/23356/23356.cpp:8:1: error: expected ‘;’ before ‘return’

@@ -1,0 +1,2 @@
+add syscall restriction,but considering the syscall nums are diferent in different linux distribution,
+it must be comfirmed that syscall num order is same to my ubuntu server(12.04),or reset the disabled_syscall array.

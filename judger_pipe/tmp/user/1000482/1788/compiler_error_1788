@@ -1,0 +1,3 @@
+javac: 无效的标记: for
+用法: javac <options> <source files>
+-help 用于列出可能的选项

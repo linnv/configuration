@@ -1,0 +1,6 @@
+./tmp/user/27/1792/Main.java:9: error: incompatible types
+while(1);
+      ^
+  required: boolean
+  found:    int
+1 error
