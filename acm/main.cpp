@@ -173,24 +173,27 @@ int main(int argc, char *argv[])
 		    system(delteComand.c_str());
 		//cout<<"time used:"<<col[i]->getTimeComsupted()<<"ns   memory used:"<<col[i]->getMemoryComsupted()<<"kb state: "<<col[i]->getState()<<endl;
 
-		/*
-		sql::PreparedStatement *pstm=sqlconn->con->prepareStatement("UPDATE tbl_run SET Status = ?, Time_Used = ?, Memory_Used = ? ,compile_error =?  WHERE Run_ID = ?");
+		sql::PreparedStatement *pstm=sqlconn->con->prepareStatement("UPDATE tbl_run SET Status = ?,compile_error = ?  WHERE Run_ID = ?");
 		pstm->setInt(1,col[i]->getState());
-		pstm->setInt(2,totolTimeconsumption);
+		pstm->setString(2,col[i]->getCompilerError());
+		//pstm->setInt(2,totolTimeconsumption);
 		//pstm->setInt(2,col[i]->getTimeComsupted());
 		//pstm->setInt(3,col[i]->getMemoryComsupted());
-		pstm->setInt(3,totolMemoryConsumption);
-		pstm->setString(4,col[i]->getCompilerError());
-		pstm->setInt(5,col[i]->getRunId());
+		//pstm->setInt(3,totolMemoryConsumption);
+		//pstm->setString(4,col[i]->getCompilerError());
+		pstm->setInt(3,col[i]->getRunId());
 		pstm->executeUpdate();
 		delete pstm;
-		*/
+
+		    /*
 		//sprintf(tmpsql,"UPDATE tbl_run SET Status = %d, Time_Used = %ld, Memory_Used = %ld ,compile_error = '%s'  WHERE Run_ID = %ld",col[i]->getState(),col[i]->getTimeComsupted(),col[i]->getMemoryComsupted(),col[i]->getCompilerError().c_str(),col[i]->getRunId());
         sprintf(tmpsql,"UPDATE tbl_run SET Status = %d,compile_error = '%s'  WHERE Run_ID = %ld",col[i]->getState(),col[i]->getCompilerError().c_str(),col[i]->getRunId());
-		cout<<"status: "<<col[i]->getState()<<endl;
+		//cout<<"status: "<<col[i]->getState()<<"compile error: "<<col[i]->getCompilerError()<<endl;
+		//cout<<tmpsql<<endl;
 			sql = tmpsql;
-	//		cout<<col[i]->getCompilerError()<<endl;
-		sqlconn->updateSQL(sql);
+			//cout<<sql<<endl;
+		sqlconn->updateSQL(tmpsql);
+		*/
 	    }
 	    else{
 		/*
@@ -293,6 +296,8 @@ modiry the colleciont's setTimeConsumption() and setMemoryConsumption()
 			 totolTimeconsumption = 0;
 			 totolMemoryConsumption=0;
 			}
+	    delete col[i];
+	    col[i] = NULL;
         /*
          *ok,deal with one problem done!
          */
