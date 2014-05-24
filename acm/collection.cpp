@@ -76,14 +76,15 @@ class Collection{
 		}
 
 		void setTimeComsupted(const int &id){
-			_timeComsupted = id;
+
+			_timeComsupted = (id>_timeComsupted?id:_timeComsupted);
 		}
 		long int getTimeComsupted(){
 			return _timeComsupted;
 		}
 
 		void setMemoryComsupted(const int &id){
-			_memoryComsupted = id;
+			_memoryComsupted = (id>_memoryComsupted?id:_memoryComsupted);
 		}
 		long int getMemoryComsupted(){
 			return _memoryComsupted;
