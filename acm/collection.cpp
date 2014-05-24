@@ -8,7 +8,7 @@ class Collection{
 		long int _memoryLimit;
 		int  _fileSizeLimit;
 		int _state;
-		int _judgeState;
+		int _judgeState; //state after diff judge
 		long int _runId;
 		int _languageId;
 		long int _timeComsupted;
@@ -75,18 +75,18 @@ class Collection{
 			return _languageId;
 		}
 
-		void setTimeComsupted(const int &id){
+		void setTimeComsuption(const int &id){
 
-			_timeComsupted = (id>_timeComsupted?id:_timeComsupted);
+			_timeComsupted = (id>_timeComsupted?id：_timeComsupted);
 		}
-		long int getTimeComsupted(){
+		long int getTimeComsuption(){
 			return _timeComsupted;
 		}
 
-		void setMemoryComsupted(const int &id){
+		void setMemoryComsuption(const int &id){
 			_memoryComsupted = (id>_memoryComsupted?id:_memoryComsupted);
 		}
-		long int getMemoryComsupted(){
+		long int getMemoryComsuption(){
 			return _memoryComsupted;
 		}
 
@@ -143,10 +143,10 @@ class Collection{
 			return _problemId;
 		}
 
-		void setState(const int&s){
+		void setLastState(const int&s){
 		_state = s;	
 		}
-		int getState(){
+		int getLastState(){
 		return _state;	
 		}
 		

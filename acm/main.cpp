@@ -14,7 +14,7 @@ int readToString(string &fileName, string* str);
 int startExecution(Collection *col);
 int diffCasesJudge(Collection* col);
 void find_next_nonspace(int * c1, int * c2, FILE * stdf, FILE * usrf,Collection * col);
-enum exitStatus {COMPILING = 100000, ACCEPTED=100001, PRESENTATION_ERROR, TIME_LIMIT_ERROR, MEMORY_LIMIT_ERROR, WRONG_ANSWER, RUNTIME_ERROR, OUTPUT_LIMIT_ERROR, COMPILE_ERROR, SYSTEM_ERROR, VALIATOR_ERROR, EXIT_NORMALLY};
+enum exitStatus {COMPILING = 100000, ACCEPTED=100001, PRESENTATION_ERROR, TIME_LIMIT_ERROR, MEMORY_LIMIT_ERROR, WRONG_ANSWER, RUNTIME_ERROR, OUTPUT_LIMIT_ERROR, COMPILE_ERROR, SYSTEM_ERROR, VALIATOR_ERROR, EXIT_NORMALLY,SYSCALL_RESTRICTION,SEGMENTATION_FAULT};
 int main(int argc, char *argv[])
 {
 	SQL* sqlconn =  new SQL();
@@ -26,8 +26,8 @@ int main(int argc, char *argv[])
 
 	char tmpsql[200];
 	int caseCount;
-	long int totolTimeconsumption=0;
-	long int totolMemoryConsumption=0;
+	//long int totolTimeconsumption=0;
+	//long int totolMemoryConsumption=0;
 	string sql;
 	string strReadFromFile;
 	string stdFile;
@@ -168,17 +168,17 @@ int main(int argc, char *argv[])
 				readToString(errorfile,&strReadFromFile);
 				strReadFromFile+=" from null";
 				col[i]->setCompilerError(strReadFromFile);
-				col[i]->setState(COMPILE_ERROR);
+				col[i]->setLastState(COMPILE_ERROR);
 				/*
 				 *delete the source file and error file when it's needless
 				 */
 				errorfile = "./"+errorfile;
 				delteComand="rm "+file + " " +errorfile;
 				system(delteComand.c_str());
-				//cout<<"time used:"<<col[i]->getTimeComsupted()<<"ns   memory used:"<<col[i]->getMemoryComsupted()<<"kb state: "<<col[i]->getState()<<endl;
+				//cout<<"time used:"<<col[i]->getTimeComsupted()<<"ns   memory used:"<<col[i]->getMemoryComsupted()<<"kb state: "<<col[i]->getLastState()<<endl;
 
 				sql::PreparedStatement *pstm=sqlconn->con->prepareStatement("UPDATE tbl_run SET Status = ?,compile_error = ?  WHERE Run_ID = ?");
-				pstm->setInt(1,col[i]->getState());
+				pstm->setInt(1,col[i]->getLastState());
 				pstm->setString(2,col[i]->getCompilerError());
 				//pstm->setInt(2,totolTimeconsumption);
 				//pstm->setInt(2,col[i]->getTimeComsupted());
@@ -190,9 +190,9 @@ int main(int argc, char *argv[])
 				delete pstm;
 
 				/*
-				//sprintf(tmpsql,"UPDATE tbl_run SET Status = %d, Time_Used = %ld, Memory_Used = %ld ,compile_error = '%s'  WHERE Run_ID = %ld",col[i]->getState(),col[i]->getTimeComsupted(),col[i]->getMemoryComsupted(),col[i]->getCompilerError().c_str(),col[i]->getRunId());
-				sprintf(tmpsql,"UPDATE tbl_run SET Status = %d,compile_error = '%s'  WHERE Run_ID = %ld",col[i]->getState(),col[i]->getCompilerError().c_str(),col[i]->getRunId());
-				//cout<<"status: "<<col[i]->getState()<<"compile error: "<<col[i]->getCompilerError()<<endl;
+				//sprintf(tmpsql,"UPDATE tbl_run SET Status = %d, Time_Used = %ld, Memory_Used = %ld ,compile_error = '%s'  WHERE Run_ID = %ld",col[i]->getLastState(),col[i]->getTimeComsupted(),col[i]->getMemoryComsupted(),col[i]->getCompilerError().c_str(),col[i]->getRunId());
+				sprintf(tmpsql,"UPDATE tbl_run SET Status = %d,compile_error = '%s'  WHERE Run_ID = %ld",col[i]->getLastState(),col[i]->getCompilerError().c_str(),col[i]->getRunId());
+				//cout<<"status: "<<col[i]->getLastState()<<"compile error: "<<col[i]->getCompilerError()<<endl;
 				//cout<<tmpsql<<endl;
 				sql = tmpsql;
 				//cout<<sql<<endl;
@@ -248,9 +248,10 @@ int main(int argc, char *argv[])
 					strReadFromFile.clear();
 					readToString(stdFile,&strReadFromFile);
 					cout<<"userOut: "<<strReadFromFile<<endl;
-					if ( col[i]->getState() != EXIT_NORMALLY)
+					if ( col[i]->getLastState() != EXIT_NORMALLY)
 					{
-						//write to database;
+                        
+						//
 					}
 					else
 					{
@@ -258,7 +259,17 @@ int main(int argc, char *argv[])
 						 * ok the app can run normally now check the app's answer with the std answer: comparing the conten of  userOut and the conten of stdOut
 						 *
 						 */
+                        
 						diffCasesJudge(col[i]);
+                        
+                        if (col[i]->getJudgeState() !=ACCEPTED) {
+                            
+                            /*
+                             *insert into tbl_run_testcase
+                             *set last statu to WA
+                             */
+                            col[i]->setLastState(col[i]->getJudgeState());
+                        }
 					}
 					/*
 					 * get the exection condicton data:time comsuption memory cumsuption etc.
@@ -268,12 +279,15 @@ int main(int argc, char *argv[])
 					delteComand="rm ./stdIn userOut stdOut";
 					system(delteComand.c_str());
 					/*
+                     * use the max consumiption
+                     
 					 *if choose the max consumption, the following will not need anymore,just
 					 modiry the colleciont's setTimeConsumption() and setMemoryConsumption()
-					 */
+					 *
 					totolTimeconsumption +=col[i]->getTimeComsupted();
 					totolMemoryConsumption +=col[i]->getMemoryComsupted();
-					cout<<"test case time used:"<<col[i]->getTimeComsupted()<<"ns   memory used:"<<col[i]->getMemoryComsupted()<<"kb state: "<<col[i]->getState()<<endl;
+                    */
+					cout<<"test case time used:"<<col[i]->getTimeComsupted()<<"ms   memory used:"<<col[i]->getMemoryComsupted()<<"kb state: "<<col[i]->getLastState()<<endl;
 				}
 				/*
 				 * delete the source code file error file and execute file when they are needless
@@ -282,23 +296,29 @@ int main(int argc, char *argv[])
 				delteComand="rm "+mainName+" "+file + " " +errorfile;
 				system(delteComand.c_str());
 
-				totolTimeconsumption /=(caseCount*1000);   //milis but not micros?
-				totolMemoryConsumption /=(caseCount*1024); //kb or M?
+				//totolTimeconsumption /=(caseCount*1000);   //milis but not micros?
+				//totolMemoryConsumption /=(caseCount*1024); //kb or M?
 				/*
 				 *write result to database using 
 				 */
 				sql::PreparedStatement *pstm=sqlconn->con->prepareStatement("UPDATE tbl_run SET Status = ?, Time_Used = ?, Memory_Used = ? ,compile_error =?  WHERE Run_ID = ?");
 				//	cout<<"error coneten:   "<<col[i]->getCompilerError()<<endl;
-				pstm->setInt(1,col[i]->getState());
+				pstm->setInt(1,col[i]->getLastState());
+                /*
 				pstm->setInt(2,totolTimeconsumption);
 				pstm->setInt(3,totolMemoryConsumption);
+                */
+                pstm->setInt(2,col[i]->getTimeComsupted());
+                pstm->setInt(3,col[i]->getMemoryComsupted());
+				
+                
 				pstm->setString(4,col[i]->getCompilerError());
 				pstm->setInt(5,col[i]->getRunId());
 				pstm->executeUpdate();
 				delete pstm;
-				cout<<"tTime: "<<totolTimeconsumption<<"ms tMemory: "<<totolMemoryConsumption<<"M"<<endl;
-				totolTimeconsumption = 0;
-				totolMemoryConsumption=0;
+				//cout<<"tTime: "<<totolTimeconsumption<<"ms tMemory: "<<totolMemoryConsumption<<"M"<<endl;
+				//totolTimeconsumption = 0;
+				//totolMemoryConsumption=0;
 			}
 			delete col[i];
 			col[i] = NULL;
@@ -372,17 +392,21 @@ int startExecution(Collection * col){
 		 * judge memory exceedance by comparing memory consumption and memoryLimitaion every time getting memory consumption  from proc/$pid/status,if memory consumption is greater than the memoryLimitaion,use ptrace(PTRACE_KILL,pid,NULL,NULL) to stop the user app, and set time consumption to zero and memory consumption to zero.
 		 */
 		while(waitpid(pid,&status,0) > 0){
+            updateConsumption(pid,col);
+            
 			if (WIFSIGNALED(status))
 			{
 				if(WTERMSIG(status) == SIGKILL){
-					programStatus = RUNTIME_ERROR;
+                    col->setLastState(RUNTIME_ERROR);
+					
 				}
 				break;
 			}
 			if(!WIFSTOPPED(status)){
 				if (WTERMSIG(status))
 				{
-					programStatus = RUNTIME_ERROR;
+                    col->setLastState(RUNTIME_ERROR);
+					
 				}	
 				break;
 			}
@@ -396,14 +420,15 @@ int startExecution(Collection * col){
 				updateConsumption(pid);	
 				if (sig == SIGXCPU)
 				{
-					programStatus = TIME_LIMIT_ERROR;
+                    col->setLastState(TIME_LIMIT_ERROR);
+					
 					printf("time exceeded\n");
 					//timeConsumption =(timeLimitation)*1000+1;
-					timeConsumption =0;
-					memoryConsumption = 0;
+					col[i]->setTimeConsumption(col[i]->getTimeLimit()+1);
 				}
 				else if( sig == SIGXFSZ){
-					programStatus = OUTPUT_LIMIT_ERROR;
+                    col->setLastState(OUTPUT_LIMIT_ERROR);
+					
 				}
 				/*
 				   else if( sig == SIGKILL){
@@ -412,22 +437,29 @@ int startExecution(Collection * col){
 				   }	
 				   */
 				else if( sig == SIGILL){
-					programStatus = RUNTIME_ERROR;
+                    col->setLastState(RUNTIME_ERROR);
+					
 				}
 				else if( sig == SIGSEGV){
-					programStatus = SEGMENTATION_FAULT;
-					memoryConsumption = 0;
+                  
+                    col->setLastState(SEGMENTATION_FAULT);
+
 				}
 				else{
-					programStatus = RUNTIME_ERROR;
+                    col->setLastState(RUNTIME_ERROR);
+			
 				}
 				break;
 				//	ptrace(PTRACE_SYSCALL, pid, NULL, sig);
 			}
-			if (ReadMemoryConsumption(pid) >= memoryLimitation)
+			if (ReadMemoryConsumption(pid) >= col[i]->getMemoryLimit())
 			{
-				programStatus=MEMORY_LIMIT_ERROR;
+                col->setLastState(MEMORY_LIMIT_ERROR);
+				
 				//memoryConsumption = memoryLimitation+1;
+                /*
+                 * don't use ptrace_kill wati fix
+                 */
 				ptrace(PTRACE_KILL,pid,NULL,NULL);	
 				break;
 			}
@@ -457,8 +489,9 @@ int startExecution(Collection * col){
 					ptrace(PTRACE_SYSCALL,pid,NULL,NULL);	
 				}
 				else{
-					//the app is do somethin evil,so kill it! 
-					programStatus =SYSCALL_RESTRICTION;
+					//the app is do somethin evil,so kill it!
+                    col->setLastState(SYSCALL_RESTRICTION);
+					
 					ptrace(PTRACE_KILL,pid,NULL,NULL);	
 					break;
 				}
@@ -473,8 +506,9 @@ int startExecution(Collection * col){
 				 * detect these two syscall to judge the app is exit normally or not
 				 */
 
-				updateConsumption(pid);
-				programStatus = EXIT_NORMALLY;
+				updateConsumption(pid,col);
+                 col->setLastState(EXIT_NORMALLY);
+				
 
 			}
 			ptrace(PTRACE_SYSCALL,pid,NULL,NULL);
@@ -538,24 +572,24 @@ int startExecution(Collection * col){
 		wait(&status);
 
 		//cout<<"status:"<<status<<endl;
-		// col->setState(RUNTIME_ERROR);
+		// col->setLastState(RUNTIME_ERROR);
 		if (WIFEXITED(status))
 		{
-			col->setState(EXIT_NORMALLY);
+			col->setLastState(EXIT_NORMALLY);
 		}
 		else if (WIFSIGNALED(status))
 		{
 			if (SIGXCPU == WTERMSIG(status))
 			{
-				col->setState(TIME_LIMIT_ERROR);
+				col->setLastState(TIME_LIMIT_ERROR);
 			}
 			else if ( SIGSEGV == WTERMSIG(status))
 			{
-				col->setState(MEMORY_LIMIT_ERROR);
+				col->setLastState(MEMORY_LIMIT_ERROR);
 			}
 			else if ( SIGKILL == WTERMSIG(status))
 			{
-				col->setState(SYSTEM_ERROR);
+				col->setLastState(SYSTEM_ERROR);
 			}
 
 		}
@@ -606,12 +640,13 @@ int startExecution(Collection * col){
 int diffCasesJudge(Collection* col){
 
 	FILE *stdf, *usrf;
-	col->setState(ACCEPTED); //puzzle whern comment this line state become 10011 
+    col->setJudgeState(ACCEPTED);
+	//col->setLastState(ACCEPTED); //puzzle whern comment this line state become 10011
 	stdf = fopen("./stdOut", "r");
 	usrf = fopen("./userOut", "r");
 	if (stdf == NULL || usrf == NULL)
 	{
-		col->setState(RUNTIME_ERROR);
+		col->setJudgeState(RUNTIME_ERROR);
 		//currentExitStatus = RUNTIME_ERROR;
 	}
 	else
@@ -637,7 +672,7 @@ int diffCasesJudge(Collection* col){
 							c2 = fgetc(usrf);
 							if (!isspace(c2))
 							{
-								col->setState(WRONG_ANSWER);
+								col->setJudgeState(WRONG_ANSWER);
 							}
 						}
 						if (c2 == EOF)
@@ -645,7 +680,7 @@ int diffCasesJudge(Collection* col){
 							c1 = fgetc(stdf);
 							if (!isspace(c1))
 							{
-								col->setState(WRONG_ANSWER);
+								col->setJudgeState(WRONG_ANSWER);
 							}
 						}
 						break;
@@ -654,7 +689,7 @@ int diffCasesJudge(Collection* col){
 					c2 = toupper(c2);
 					if (c1 != c2)
 					{
-						col->setState(WRONG_ANSWER);
+						col->setJudgeState(WRONG_ANSWER);
 						goto end;
 					}
 					c1 = fgetc(stdf);
@@ -666,7 +701,7 @@ int diffCasesJudge(Collection* col){
 					}
 					if (c1 == EOF || c2 == EOF)
 					{
-						col->setState(WRONG_ANSWER);
+						col->setJudgeState(WRONG_ANSWER);
 						goto end;
 					}
 					if ((c1 == '\n' || !c1) && (c2 == '\n' || !c2))
@@ -720,7 +755,7 @@ void find_next_nonspace(int * c1, int * c2, FILE * stdf, FILE * usrf,Collection 
 			}
 			else
 			{
-				col->setState(PRESENTATION_ERROR);
+				col->setJudgeState(PRESENTATION_ERROR);
 				//*currentExitStatus = PRESENTATION_ERROR;
 			}
 		}
@@ -818,6 +853,8 @@ void find_next_nonspace(int * c1, int * c2, FILE * stdf, FILE * usrf,Collection 
 	}
 
 	void updateConsumption(pid_t pid,Collection* col){
+        col->setMemoryConsumption(ReadMemoryConsumption(pid));
+        col->setTimeConsumption(ReadTimeConsumption(pid));
 
 		/*
 		if (ReadMemoryConsumption(pid) > memoryConsumption)
