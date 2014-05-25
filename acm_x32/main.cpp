@@ -54,7 +54,8 @@ int main(int argc, char *argv[])
 	/*
 	 * loop for headp problems
 	 */
-	while(1){
+//	while(1)
+	{
 
 		/*
 		 * query problem fromdatabase
@@ -102,6 +103,7 @@ int main(int argc, char *argv[])
 				count--;
 			}
 		}
+		//delete res;
 		for (int i = 0; i < waitintCount; ++i){
 			/*
 			 *now dealing with one by one
@@ -121,7 +123,7 @@ int main(int argc, char *argv[])
 				tmp = res->getString("compiler_option");
 				col[i]->setCompilerOption(tmp);
 			}
-
+			delete res;
 			//cout<<i<<"user id:"<<col[i]->getUserId()<<" run id:"<<col[i]->getRunId()<<" problem id:"<<col[i]->getProblemId()<<" source code: \n"<<col[i]->getSourceCode()<<endl;
 			/*
 			 * every souce code file will be renamed to Main.suffix
@@ -366,6 +368,7 @@ int main(int argc, char *argv[])
 					cout<<"run ID:"<<col[i]->getRunId()<<" testcase ID:"<<col[i]->getTestcaseID()<<" time used:"<<col[i]->getTimeConsumption()<<"ms   memory used:"<<col[i]->getMemoryConsumption()<<"kb judge state: "<<col[i]->getJudgeState()<<endl;
 				}//all testcases are tested
 
+				delete res;
 				/*
 				 * delete the source code file error file and execute file when they are needless
 				 * for example: rm ./Main main.cpp error
@@ -409,6 +412,8 @@ int main(int argc, char *argv[])
 	}//end loop
 	cout<<"cloing sql"<<endl;
 	sqlconn->closeSQL();
+	delete sqlconn;
+	sqlconn=NULL;
 	return 0;
 }
 int readToString(string &fileName, string* str){
