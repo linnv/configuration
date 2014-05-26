@@ -1,0 +1,16 @@
+
+				if (getrlimit(RLIMIT_FSIZE, &executableLimit) == 0)
+				{
+					/*
+					 *comment by: Jialin Wu
+					 *output limitation is set the const value: 5MB
+					 */
+
+					executableLimit.rlim_cur = 5 * 1024* 1024;  //MB
+
+					if (setrlimit(RLIMIT_FSIZE, &executableLimit) == 0)
+					{
+						//         printf("Set New Limit for file size output limit  successed!\n");
+					}
+				}
+

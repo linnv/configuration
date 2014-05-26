@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
 	/*
 	 * loop for headp problems
 	 */
-//	while(1)
+	//	while(1)
 	{
 
 		/*
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
 				tmp = res->getString("compiler_option");
 				col[i]->setCompilerOption(tmp);
 			}
-			delete res;
+			//delete res;
 			//cout<<i<<"user id:"<<col[i]->getUserId()<<" run id:"<<col[i]->getRunId()<<" problem id:"<<col[i]->getProblemId()<<" source code: \n"<<col[i]->getSourceCode()<<endl;
 			/*
 			 * every souce code file will be renamed to Main.suffix
@@ -368,7 +368,7 @@ int main(int argc, char *argv[])
 					cout<<"run ID:"<<col[i]->getRunId()<<" testcase ID:"<<col[i]->getTestcaseID()<<" time used:"<<col[i]->getTimeConsumption()<<"ms   memory used:"<<col[i]->getMemoryConsumption()<<"kb judge state: "<<col[i]->getJudgeState()<<endl;
 				}//all testcases are tested
 
-				delete res;
+				//delete res;
 				/*
 				 * delete the source code file error file and execute file when they are needless
 				 * for example: rm ./Main main.cpp error
@@ -412,8 +412,8 @@ int main(int argc, char *argv[])
 	}//end loop
 	cout<<"cloing sql"<<endl;
 	sqlconn->closeSQL();
-	delete sqlconn;
-	sqlconn=NULL;
+//	delete sqlconn;
+//	sqlconn=NULL;
 	return 0;
 }
 int readToString(string &fileName, string* str){
@@ -614,12 +614,28 @@ int startExecution(Collection * col){
 			ptrace(PTRACE_TRACEME,0,NULL,NULL);
 			freopen("./tmp/stdIn", "r", stdin);
 			freopen("./tmp/userOut", "w+", stdout);
-
 			if (col->getLanguageId() ==4)
 			{
 				execl("/usr/java/bin/java", "/usr/java/bin/java","Main", (char *) NULL);
 			}
 			else{
+
+				if (getrlimit(RLIMIT_FSIZE, &executableLimit) == 0)
+				{
+					/*
+					 *comment by: Jialin Wu
+					 *output limitation is set the const value: 5MB
+					 */
+
+					executableLimit.rlim_cur = 5 * 1024* 1024;  //MB
+
+					if (setrlimit(RLIMIT_FSIZE, &executableLimit) == 0)
+					{
+						//         printf("Set New Limit for file size output limit  successed!\n");
+					}
+				}
+
+
 				if ( getrlimit(RLIMIT_AS,&executableLimit) == 0)
 				{
 					// executableLimit.rlim_cur = 2 * 1024;
@@ -871,7 +887,7 @@ int ReadTimeConsumption(pid_t pid){
 	FILE* fp = fopen(buffer,"r");
 	if (fp == NULL)
 	{
-//		printf("no stat found in proc\n");
+		//		printf("no stat found in proc\n");
 		return -1;
 	}
 	int stime,utime;
