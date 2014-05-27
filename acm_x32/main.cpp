@@ -199,6 +199,7 @@ int main(int argc, char *argv[])
 				errorfile = "./"+errorfile;
 				delteComand="rm "+file + " " +errorfile;
 				system(delteComand.c_str());
+				cout<<"error content: "<<col[i]->getCompilerError()<<endl;
 				sql::PreparedStatement *pstm=sqlconn->con->prepareStatement("UPDATE tbl_run SET Status = ?,compile_error = ?  WHERE Run_ID = ?");
 				pstm->setInt(1,col[i]->getLastState());
 				pstm->setString(2,col[i]->getCompilerError());
@@ -228,7 +229,7 @@ int main(int argc, char *argv[])
 				res = sqlconn->getResultSet();
 				caseCount = sqlconn->getRowsCount();
 				cout<<"there are "<<caseCount<<"cases to test"<<endl;
-				bool dontSetAccptedNextTime = false;
+				//bool dontSetAccptedNextTime = false;
 				while(res->next()){
 					/*
 					 * use every test data to test the executive app
@@ -286,26 +287,36 @@ int main(int argc, char *argv[])
 
 						//cout<<"after diff judge status: "<<col[i]->getJudgeState()<<endl;
 
-						if (col[i]->getJudgeState() !=ACCEPTED ) {
+						if (col[i]->getLastState() ==ACCEPTED || col[i]->getLastState() ==EXIT_NORMALLY) {
+
+							col[i]->setLastState(col[i]->getJudgeState());
 
 							/*
 							 * how about app break because of segment fault like 0/n, is this WA  or not 
 							 */
 							//select * from tbl_run_testcase where run_id=%ld and testcase_id=%d
 
-							sqlconn->querySQL("select * from tbl_run_testcase where run_id="+std::to_string(col[i]->getRunId()) +" and testcase_id= "+std::to_string(col[i]->getTestcaseID()));
-							if (sqlconn->getRowsCount())
-							{
-								cout<<"case record already exist"<<endl;
 
-							}
-							else{
-								sql::PreparedStatement *pstm=sqlconn->con->prepareStatement("INSERT INTO tbl_run_testcase  SET run_id = ?,testcase_id=?");
-								pstm->setInt(1,col[i]->getRunId());
-								pstm->setInt(2,col[i]->getTestcaseID());
-								pstm->executeUpdate();
-								cout<<"WA case record!"<<endl;
-								delete pstm;
+							if (col[i]->getJudgeState() !=ACCEPTED ) 
+							{
+
+								sqlconn->querySQL("select * from tbl_run_testcase where run_id="+std::to_string(col[i]->getRunId()) +" and testcase_id= "+std::to_string(col[i]->getTestcaseID()));
+								if (sqlconn->getRowsCount())
+								{
+									cout<<"case record already exist"<<endl;
+
+								}
+								else{
+									sql::PreparedStatement *pstm=sqlconn->con->prepareStatement("INSERT INTO tbl_run_testcase  SET run_id = ?,testcase_id=?");
+									pstm->setInt(1,col[i]->getRunId());
+									pstm->setInt(2,col[i]->getTestcaseID());
+									pstm->executeUpdate();
+									cout<<"WA case record!"<<endl;
+									delete pstm;
+								}
+
+
+
 							}
 
 							/*
@@ -314,20 +325,19 @@ int main(int argc, char *argv[])
 							 *insert into tbl_run_testcase
 							 *set last statu to WA
 							 */
-							col[i]->setLastState(col[i]->getJudgeState());
-							dontSetAccptedNextTime = true;
+							//	dontSetAccptedNextTime = true;
 						}
 
+						/* skip setting last state keeping last to unAC*/
 						/*
 						 * already set last state and the last is not AC or exit normally
+						 if (dontSetAccptedNextTime)
+						 {
+						 }
+						 else{
+						 col[i]->setLastState(col[i]->getJudgeState());
+						 }
 						 */
-						if (dontSetAccptedNextTime)
-						{
-							/* skip setting last state keeping last to unAC*/
-						}
-						else{
-							col[i]->setLastState(col[i]->getJudgeState());
-						}
 
 					}
 
@@ -849,7 +859,8 @@ void updateConsumption(pid_t pid,Collection* col)
 {
 
 	col->setMemoryConsumption(ReadMemoryConsumption(pid));
-	col->setTimeConsumption(ReadTimeConsumption(pid));
+	//col->setTimeConsumption((ReadTimeConsumption(pid)));
+	col->setTimeConsumption((ReadTimeConsumption(pid)+1));
 
 }
 
