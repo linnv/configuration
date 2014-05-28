@@ -1,5 +1,5 @@
 s=main.cpp
-d=MainExecution
+d=guet_judger_cpp_version
 all:
 #	clang $(s) -lmysqlcppconn -std=c++11 -o $(d)
 #

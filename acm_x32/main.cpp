@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
 	/*
 	 * loop for headp problems
 	 */
-	//	while(1)
+		while(1)
 	{
 
 		/*
@@ -69,6 +69,8 @@ int main(int argc, char *argv[])
 		/*
 		 * get a bunch of problems once time
 		 */
+		if (sqlconn->getRowsCount())
+		{
 		cout<<"dealing with "<<sqlconn->getRowsCount()<<" source code(s)"<<endl<<endl;
 
 		int waitintCount = sqlconn->getRowsCount();
@@ -149,7 +151,8 @@ int main(int argc, char *argv[])
 
 			if (col[i]->getLanguageId() == 4)// java
 			{
-				compileCommand = col[i]->getCompilerName() +" -Wall "+ file +" "+  col[i]->getCompilerOption() + " 2>" + errorfile;
+				compileCommand = col[i]->getCompilerName() +" "+file + " 2>" + errorfile;
+				//compileCommand = col[i]->getCompilerName() +" -Wall "+ file +" "+  col[i]->getCompilerOption() + " 2>" + errorfile;
 			}
 			else{
 				//cout<<"start compiling "<<endl;
@@ -263,7 +266,7 @@ int main(int argc, char *argv[])
 					strReadFromFile.clear();
 					readToString(stdFile,&strReadFromFile);
 
-					//cout<<"userOut: "<<strReadFromFile<<endl;
+					cout<<"user's output: ======================================\n"<<strReadFromFile<<"\n====================================="<<endl;
 
 					if ( col[i]->getLastState() != EXIT_NORMALLY)
 					{
@@ -392,7 +395,11 @@ int main(int argc, char *argv[])
 			 */
 		}
 
-		sleep(3);
+		}
+		else{
+		cout<<"nothing to do sleeping!"<<endl;
+		sleep(1);
+		}
 	}/*end loop*/
 
 	cout<<"cloing sql"<<endl;
@@ -597,7 +604,7 @@ int startExecution(Collection * col)
 			freopen("./tmp/userOut", "w+", stdout);
 			if (col->getLanguageId() ==4)
 			{
-				execl("/usr/java/bin/java", "/usr/java/bin/java","Main", (char *) NULL);
+				execl("/usr/local/java/bin/java", "/usr/local/java/bin/java","Main", (char *) NULL);
 			}
 			else{
 
