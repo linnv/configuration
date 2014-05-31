@@ -188,14 +188,16 @@ int main(int argc, char *argv[])
 				 */
 				//cout<<"source code: "<<endl<<content<<endl;
 				writeFromString(file,content,content.length());
-				//cout<<"demo"<<endl;
+				string dos2unix_source_code="dos2unix "+file;
+				//system(dos2unix_source_code.c_str());
+				cout<<"format source code done!"<<endl;
 				if (col[i]->getLanguageId() == 4)// java
 				{
 					compileCommand = col[i]->getCompilerName() +" -Wall "+ file +" "+  col[i]->getCompilerOption() + " 2>" + errorfile;
 				}
 				else{
 					//cout<<"start compiling "<<endl;
-					compileCommand = col[i]->getCompilerName() +" -o "+ mainName+" "+ file +" 2>" +errorfile;
+					compileCommand = col[i]->getCompilerName() +" -o "+ mainName+" "+ file + " "+ col[i]->getCompilerOption() +" 2>" +errorfile;
 					//compileCommand = col[i]->getCompilerName() +" "+ file +" "+  col[i]->getCompilerOption()+" -o "+  mainName +"  2>" +errorfile;
 				}
 				if (outputInfo)
@@ -314,6 +316,12 @@ int main(int argc, char *argv[])
 						col[i]->setSTDOutput(tmp);
 						stdFile = "./tmp/stdIn";
 						writeFromString(stdFile,col[i]->getSTDIput(),col[i]->getSTDIput().length());
+
+						//cout<<"dos2unix is working"<<endl;
+						string dos2unixFile="dos2unix "+stdFile;
+						system(dos2unixFile.c_str());
+					//	cout<<"dos2unix worked done!"<<endl;
+
 						stdFile = "./tmp/stdOut";
 						writeFromString(stdFile,col[i]->getSTDOutput(),col[i]->getSTDOutput().length());
 						if (outputInfo)
@@ -329,8 +337,8 @@ int main(int argc, char *argv[])
 						/*
 						 * executation done, now get the executation result
 						 */
-						stdFile = "./tmp/userOut";
 						strReadFromFile.clear();
+						stdFile = "./tmp/userOut";
 						readToString(stdFile,&strReadFromFile);
 						if (outputInfo)
 						{
@@ -587,8 +595,9 @@ int startExecution(Collection * col){
 				if (sig != SIGTRAP)
 				{
 					updateConsumption(pid,col);	
-					if (sig == SIGXCPU || (col->getTimeConsumption() > col->getTimeLimit()))
+					if (sig == SIGXCPU || (col->getTimeConsumption() >= 2*col->getTimeLimit()))
 					{
+						cout<<"TLC: ts:"<<ReadTimeConsumption(pid)<<endl;
 
 						col->setJudgeState(TIME_LIMIT_ERROR);
 						printf("time exceeded\n");
@@ -622,6 +631,11 @@ int startExecution(Collection * col){
 						//col->setLastState(SEGMENTATION_FAULT);
 
 					}
+					else if( sig == SIGXFSZ){
+						col->setJudgeState(OUTPUT_LIMIT_ERROR);
+						break;
+				}
+
 					/*
 					   else
 					   {
@@ -634,15 +648,18 @@ int startExecution(Collection * col){
 					*/
 					ptrace(PTRACE_SYSCALL, pid, NULL, sig);
 				}
-				   if (ReadTimeConsumption(pid) >= 2*col->getTimeLimit());
+				/*
+				   if (ReadTimeConsumption(pid) >= 2*col->getTimeLimit())
+
 				   {
-					   cout<<"TLC: ts:"<<ReadTimeConsumption(pid)<<endl;
+					cout<<"TLC: ts:"<<ReadTimeConsumption(pid)<<endl;
 				   col->setJudgeState(TIME_LIMIT_ERROR);
 				   col->setTimeConsumption(col->getTimeLimit()+1);
 				   ptrace(PTRACE_KILL,pid,NULL,NULL);	
 				   break;
 
 				   }	
+				   */
 				if (ReadMemoryConsumption(pid) >= col->getMemoryLimit())
 				{
 					col->setJudgeState(MEMORY_LIMIT_ERROR);
@@ -709,19 +726,35 @@ int startExecution(Collection * col){
 				ptrace(PTRACE_SYSCALL,pid,NULL,NULL);
 			}
 
-
-		}
-		else
-		{
+} else {
 			ptrace(PTRACE_TRACEME,0,NULL,NULL);
-			freopen("./tmp/stdIn", "r", stdin);
-			freopen("./tmp/userOut", "w+", stdout);
+					//cout<<"test output:"<<endl;
+			//fopen("./tmp/userOut", "w+");
 
 			if (col->getLanguageId() ==4)
 			{
 				execl("/usr/java/bin/java", "/usr/java/bin/java","Main", (char *) NULL);
 			}
 			else{
+			if (getrlimit(RLIMIT_FSIZE, &executableLimit) == 0)
+			{
+				/*
+
+				   executableLimit.rlim_cur);
+				   printf("Hard Limit for virtual memory : %ld\n",
+				   executableLimit.rlim_max);
+				   */
+
+				/*
+				 *comment by: Jialin Wu
+				 *output limitation is set the const value: 5MB
+				 */
+				executableLimit.rlim_cur = 5 * 1024* 1024;  //MB
+				if (setrlimit(RLIMIT_FSIZE, &executableLimit) == 0)
+				{
+					//         printf("Set New Limit for file size output limit  successed!\n");
+				}
+			}
 				if ( getrlimit(RLIMIT_AS,&executableLimit) == 0)
 				{
 					// executableLimit.rlim_cur = 2 * 1024;
@@ -750,8 +783,9 @@ int startExecution(Collection * col){
 						//		cout<<"set time limit done!"<<endl;
 					}
 				}
-
-				execl("./Main", "./Main", (char *) NULL);
+			freopen("./tmp/stdIn", "r", stdin);
+			freopen("./tmp/userOut", "w+", stdout);
+			execl("./Main", "./Main", (char *) NULL);
 			}
 		}
 	}
