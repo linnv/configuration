@@ -1,11 +1,16 @@
-#include "include.h"
-#include "mysql_connection.h"
-#include "mysqlcpp.cpp"
-#include "collection.cpp"
-#include "disabled_syscall.h"
+#ifdef __i386
+#define SYSCALL_ orig_eax
+//#define  MACHINE_TYPE 32
+#include "disabled_syscall_x32.h"
+#else
+#ifdef __x86_64
+#define SYSCALL_ orig_rax
+//#define  MACHINE_TYPE 64
+#include "disabled_syscall_x64.h"
+#endif
+#endif
 
 #include <iostream>
-
 #include <sys/syscall.h>
 #include <sys/resource.h>
 #include <sys/ptrace.h>
@@ -13,13 +18,22 @@
 #include <sys/reg.h>
 #include <string.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 
-//#include "judge_environment.cpp"
+#include "include.h"
+#include "mysql_connection.h"
+#include "mysqlcpp.cpp"
+#include "collection.cpp"
+
 using namespace std;
+
+
 
 int ReadTimeConsumption(pid_t pid);
 int ReadMemoryConsumption(pid_t pid);
 void updateConsumption(pid_t pid,Collection* col);
+void daemon(void);
+void helpInfo();
 
 int writeFromString( string &fileName, const string& buffer, size_t count);
 int readToString(string &fileName, string* str);
@@ -29,386 +43,459 @@ void find_next_nonspace(int * c1, int * c2, FILE * stdf, FILE * usrf,Collection 
 enum exitStatus {COMPILING = 100000, ACCEPTED=100001, PRESENTATION_ERROR, TIME_LIMIT_ERROR, MEMORY_LIMIT_ERROR, WRONG_ANSWER, RUNTIME_ERROR, OUTPUT_LIMIT_ERROR, COMPILE_ERROR, SYSTEM_ERROR, VALIATOR_ERROR, EXIT_NORMALLY,SYSCALL_RESTRICTION,SEGMENTATION_FAULT};
 int main(int argc, char *argv[])
 {
-	SQL* sqlconn =  new SQL();
-	sqlconn->setHost("tcp://127.0.0.1:3306");
-	sqlconn->setUser("root");
-	sqlconn->setPasswd("a");
-	sqlconn->connectSQL();
-	sqlconn->useDatabase("goj");
+	string argv1_str;
+	bool outputInfo=true;
 
-	char tmpsql[200];
-	int caseCount;
-	//long int totolTimeconsumption=0;
-	//long int totolMemoryConsumption=0;
-	string sql;
-	string strReadFromFile;
-	string stdFile;
-	string content="";
-	string file= "";
-	string compileCommand;
-	string delteComand;
-	string mainName;
-	string errorfile;
-	FILE* generateFile;
-
-	/*
-	 * loop for headp problems
-	 */
-	while(1){
-
-		/*
-		 * query problem fromdatabase
-		 */
-		sqlconn->querySQL("SELECT * FROM tbl_run WHERE Status = 100000 AND Auto_Judge = 1 ");
-		sql::ResultSet *res = sqlconn->getResultSet();
-		//cout<<"colunm num: "<<sqlconn->getColunmsCount()<<endl;
-		//cout<<"row count:"<<sqlconn->getRowsCount()<<endl<<endl;
-		/*
-		 * get a heap problems once time
-		 */
-		cout<<"dealing with "<<sqlconn->getRowsCount()<<" source code(s)"<<endl<<endl;
-
-		int waitintCount = sqlconn->getRowsCount();
-		int count = waitintCount;
-		string tmp;
-		int tmpInt;
-
-		Collection *col[waitintCount];
-		/*
-		 * new collection object occording to the count of problem head
-		 */
-		for (int i = 0; i < waitintCount; ++i)
+	if (argc >=2)
+	{
+		argv1_str= argv[1];
+		if (argv1_str =="-d"||argv1_str =="--daemon")
 		{
-			col[i] = new Collection();
-
+			outputInfo =false;	
 		}
 
-		while (count){	
-			/*
-			 * get run_id,user_id,problem_id,source_code,language_id to each collection object
-			 */
+		else if (argv1_str !="-v"||argv1_str !="--verbose"||argv1_str!="-d"||argv1_str !="--daemon")
+		{
+			if (argv1_str == "--help")
 			{
-				res->next();
-				tmpInt = res->getInt("Run_ID");
-				col[waitintCount-count]->setRunId(tmpInt);
-				tmpInt = res->getInt("User_ID");
-				col[waitintCount-count]->setUserId(tmpInt);
-				tmpInt = res->getInt("Problem_ID");
-				col[waitintCount-count]->setProblemId(tmpInt);
-				tmp = res->getString("Source_Code");
-				col[waitintCount-count]->setSourceCode(tmp);
-				tmpInt = res->getInt("language_id");
-				col[waitintCount-count]->setLanguageId(tmpInt);
-				count--;
+				helpInfo();
+				/*
+				   cout<<"GUETOJ Judger application\nMandatory arguments to long options are mandatory for short options too."<<endl;
+				   cout<<" -v, --verbose,none              verbosely list running detail"<<endl;
+				   cout<<" -d, --daemon               run GUETOJ_Judger as daemon process"<<endl;
+				   */
+
+			}
+			else{
+				cout<<"invalid option -- '"<<argv1_str<<"'"<<endl;
+				cout<<"try 'guetoj_judger --help' for more information"<<endl;
 			}
 		}
-		for (int i = 0; i < waitintCount; ++i){
-			/*
-			 *now dealing with one by one
-			 */
-			cout<<"dealing with the "<<i<<"th "<<"user id:"<<col[i]->getUserId()<<" run id:"<<col[i]->getRunId()<<" problem id:"<<col[i]->getProblemId()<<endl;//" source code: \n"<<col[i]->getSourceCode()<<endl;
-			sqlconn->querySQL("SELECT * FROM tbl_language  WHERE language_id = "+std::to_string(col[i]->getLanguageId()));
-			res = sqlconn->getResultSet();
-			while(res->next()){
-				/*
-				 * get compiler_name,language fix,compiler_option, only one set
-				 */
-				tmp = res->getString("compiler_name");
-				cout<<"compiler name:"<<tmp<<endl;
-				col[i]->setCompilerName(tmp);
-				tmp = res->getString("source_suffix");
-				col[i]->setSCodeSuffix(tmp);
-				tmp = res->getString("compiler_option");
-				col[i]->setCompilerOption(tmp);
-			}
+	}
+	else{
+		if (!outputInfo)
+		{
+			daemon();
+		}
+		helpInfo();
 
-			//cout<<i<<"user id:"<<col[i]->getUserId()<<" run id:"<<col[i]->getRunId()<<" problem id:"<<col[i]->getProblemId()<<" source code: \n"<<col[i]->getSourceCode()<<endl;
+		SQL* sqlconn =  new SQL();
+		sqlconn->setHost("tcp://127.0.0.1:3306");
+		sqlconn->setUser("root");
+		sqlconn->setPasswd("a");
+		sqlconn->connectSQL();
+		sqlconn->useDatabase("goj");
+
+		//char tmpsql[200];
+		int caseCount;
+		//long int totolTimeconsumption=0;
+		//long int totolMemoryConsumption=0;
+		string sql;
+		string strReadFromFile;
+		string stdFile;
+		string content="";
+		string file= "";
+		string compileCommand;
+		string delteComand;
+		string mainName;
+		string errorfile;
+		FILE* generateFile;
+
+		/*
+		 * loop for headp problems
+		 */
+		while(1){
+
 			/*
-			 * every souce code file will be renamed to Main.suffix
-			 * and the compile error file to compile_error
+			 * query problem fromdatabase
 			 */
-			mainName = "Main";
-			errorfile="compile_error";
-			content = col[i]->getSourceCode();
-			file = mainName+col[i]->getSCodeSuffix();
+			sqlconn->querySQL("SELECT * FROM tbl_run WHERE Status = 100000 AND Auto_Judge = 1 ");
+			sql::ResultSet *res = sqlconn->getResultSet();
+			//cout<<"colunm num: "<<sqlconn->getColunmsCount()<<endl;
+			//cout<<"row count:"<<sqlconn->getRowsCount()<<endl<<endl;
 			/*
-			 * write souce code to file Main.suffix (mainName)
+			 * get a heap problems once time
 			 */
-			//cout<<"source code: "<<endl<<content<<endl;
-			writeFromString(file,content,content.length());
-			//cout<<"demo"<<endl;
-			if (col[i]->getLanguageId() == 4)// java
+			if (outputInfo)
 			{
-				compileCommand = col[i]->getCompilerName() +" -Wall "+ file +" "+  col[i]->getCompilerOption() + " 2>" + errorfile;
-			}
-			else{
-				//cout<<"start compiling "<<endl;
-				compileCommand = col[i]->getCompilerName() +" -o "+ mainName+" "+ file +" 2>" +errorfile;
-				//compileCommand = col[i]->getCompilerName() +" "+ file +" "+  col[i]->getCompilerOption()+" -o "+  mainName +"  2>" +errorfile;
-				//cout<<"compile command is: "<<endl<<compileCommand<<endl;
-			}
+				cout<<"dealing with "<<sqlconn->getRowsCount()<<" source code(s)"<<endl<<endl;
 
+			}
+			int waitintCount = sqlconn->getRowsCount();
+			int count = waitintCount;
+			string tmp;
+			int tmpInt;
+
+			Collection *col[waitintCount];
 			/*
-			//write error to database
-			if(strReadFromFile.length() >10){
-			cout<<"write error to sql,conten:"<<strReadFromFile<<endl;
-			col[i]->setCompilerError(strReadFromFile);
-			}
-			else{
-			strReadFromFile = " ";
-			col[i]->setCompilerError(strReadFromFile);
-			}
-			*/
-
-			system(compileCommand.c_str());
-
-			/*
-			 *rename mainName to execute app's name
+			 * new collection object occording to the count of problem head
 			 */
-			if (col[i]->getLanguageId() ==4)
+			for (int i = 0; i < waitintCount; ++i)
 			{
-				mainName = "./Main.class";
-			}
-			else{
-				mainName ="./Main";
+				col[i] = new Collection();
+
 			}
 
-			generateFile =fopen(mainName.c_str(),"r");
-
-			cout<<"finish exectue compile command"<<endl;
-			if(generateFile == NULL)
-			{
-				cout<<"error compiling"<<endl;
+			while (count){	
 				/*
-				 *compile failed
-				 *
+				 * get run_id,user_id,problem_id,source_code,language_id to each collection object
 				 */
-				readToString(errorfile,&strReadFromFile);
-				strReadFromFile+=" from null";
-				col[i]->setCompilerError(strReadFromFile);
-				col[i]->setLastState(COMPILE_ERROR);
-				/*
-				 *delete the source file and error file when it's needless
-				 */
-				errorfile = "./"+errorfile;
-				delteComand="rm "+file + " " +errorfile;
-				system(delteComand.c_str());
-				//cout<<"time used:"<<col[i]->getTimeComsupted()<<"ns   memory used:"<<col[i]->getMemoryComsupted()<<"kb state: "<<col[i]->getLastState()<<endl;
-				//cout<<"last result of run ID "<<col[i]->getRunId()<<" time consumption:"<<col[i]->getTimeConsumption()<<" memory consumption: "<<
-				//	col[i]->getMemoryConsumption()<<" status: "<<col[i]->getLastState()<<endl<<endl;
-
-				sql::PreparedStatement *pstm=sqlconn->con->prepareStatement("UPDATE tbl_run SET Status = ?,compile_error = ?  WHERE Run_ID = ?");
-				pstm->setInt(1,col[i]->getLastState());
-				pstm->setString(2,col[i]->getCompilerError());
-				//pstm->setInt(2,totolTimeconsumption);
-				//pstm->setInt(2,col[i]->getTimeComsupted());
-				//pstm->setInt(3,col[i]->getMemoryComsupted());
-				//pstm->setInt(3,totolMemoryConsumption);
-				//pstm->setString(4,col[i]->getCompilerError());
-				pstm->setInt(3,col[i]->getRunId());
-				pstm->executeUpdate();
-				delete pstm;
-
-				//totolTimeconsumption = 0;
-
-				/*
-				//sprintf(tmpsql,"UPDATE tbl_run SET Status = %d, Time_Used = %ld, Memory_Used = %ld ,compile_error = '%s'  WHERE Run_ID = %ld",col[i]->getLastState(),col[i]->getTimeComsupted(),col[i]->getMemoryComsupted(),col[i]->getCompilerError().c_str(),col[i]->getRunId());
-				sprintf(tmpsql,"UPDATE tbl_run SET Status = %d,compile_error = '%s'  WHERE Run_ID = %ld",col[i]->getLastState(),col[i]->getCompilerError().c_str(),col[i]->getRunId());
-				//cout<<"status: "<<col[i]->getLastState()<<"compile error: "<<col[i]->getCompilerError()<<endl;
-				//cout<<tmpsql<<endl;
-				sql = tmpsql;
-				//cout<<sql<<endl;
-				sqlconn->updateSQL(tmpsql);
-				*/
+				{
+					res->next();
+					tmpInt = res->getInt("Run_ID");
+					col[waitintCount-count]->setRunId(tmpInt);
+					tmpInt = res->getInt("User_ID");
+					col[waitintCount-count]->setUserId(tmpInt);
+					tmpInt = res->getInt("Problem_ID");
+					col[waitintCount-count]->setProblemId(tmpInt);
+					tmp = res->getString("Source_Code");
+					col[waitintCount-count]->setSourceCode(tmp);
+					tmpInt = res->getInt("language_id");
+					col[waitintCount-count]->setLanguageId(tmpInt);
+					count--;
+				}
 			}
-			else{
+			for (int i = 0; i < waitintCount; ++i){
 				/*
-				 * compile source code successfully
-				 * now get time limit and memory limit for  test case preperation,only one set
+				 *now dealing with one by one
 				 */
-				fclose(generateFile);
-				sqlconn->querySQL("SELECT Time_Limit, Memory_Limit FROM tbl_problem WHERE status = 1 and Problem_ID ="+std::to_string(col[i]->getProblemId()));
-				sql::ResultSet *res = sqlconn->getResultSet();
+				if (outputInfo)
+				{
+					cout<<"dealing with the "<<i<<"th "<<"user id:"<<col[i]->getUserId()<<" run id:"<<col[i]->getRunId()<<" problem id:"<<col[i]->getProblemId()<<endl;//" source code: \n"<<col[i]->getSourceCode()<<endl;
+				}
+				sqlconn->querySQL("SELECT * FROM tbl_language  WHERE language_id = "+std::to_string(col[i]->getLanguageId()));
+				res = sqlconn->getResultSet();
 				while(res->next()){
-					tmpInt = res->getInt("Time_Limit");
-
-					col[i]->setTimeLimit(tmpInt);
-					tmpInt = res->getInt("Memory_Limit");
-					col[i]->setMemoryLimit(tmpInt);
-
+					/*
+					 * get compiler_name,language fix,compiler_option, only one set
+					 */
+					tmp = res->getString("compiler_name");
+					if (outputInfo)
+					{
+						cout<<"compiler name:"<<tmp<<endl;
+					}
+					col[i]->setCompilerName(tmp);
+					tmp = res->getString("source_suffix");
+					col[i]->setSCodeSuffix(tmp);
+					tmp = res->getString("compiler_option");
+					col[i]->setCompilerOption(tmp);
 				}
 
-				sqlconn->querySQL("SELECT * FROM tbl_testcase_problem  WHERE Problem_ID ="+std::to_string(col[i]->getProblemId()));
-				res = sqlconn->getResultSet();
-				caseCount = sqlconn->getRowsCount();
-				cout<<"there are "<<caseCount<<"cases to test"<<endl;
-				bool dontSetAccptedNextTime = false;
-				while(res->next()){
-					/*
-					 * use every test data to test the executive app
-					 * default:
-					 * stdIn:file stored data for exectuive app's stdin
-					 * stdOut:file stored std answer
-					 * userOut:file stored the answer redirect from executive app's stdout
-					 */
-					col[i]->setTestcaseID(res->getInt("testcase_id"));
-					tmp = res->getString("input");
-					col[i]->setSTDIput(tmp);
-					tmp = res->getString("output");
-					col[i]->setSTDOutput(tmp);
-					stdFile = "./tmp/stdIn";
-					writeFromString(stdFile,col[i]->getSTDIput(),col[i]->getSTDIput().length());
-					stdFile = "./tmp/stdOut";
-					writeFromString(stdFile,col[i]->getSTDOutput(),col[i]->getSTDOutput().length());
+				//cout<<i<<"user id:"<<col[i]->getUserId()<<" run id:"<<col[i]->getRunId()<<" problem id:"<<col[i]->getProblemId()<<" source code: \n"<<col[i]->getSourceCode()<<endl;
+				/*
+				 * every souce code file will be renamed to Main.suffix
+				 * and the compile error file to compile_error
+				 */
+				mainName = "Main";
+				errorfile="compile_error";
+				content = col[i]->getSourceCode();
+				file = mainName+col[i]->getSCodeSuffix();
+				/*
+				 * write souce code to file Main.suffix (mainName)
+				 */
+				//cout<<"source code: "<<endl<<content<<endl;
+				writeFromString(file,content,content.length());
+				//cout<<"demo"<<endl;
+				if (col[i]->getLanguageId() == 4)// java
+				{
+					compileCommand = col[i]->getCompilerName() +" -Wall "+ file +" "+  col[i]->getCompilerOption() + " 2>" + errorfile;
+				}
+				else{
+					//cout<<"start compiling "<<endl;
+					compileCommand = col[i]->getCompilerName() +" -o "+ mainName+" "+ file +" 2>" +errorfile;
+					//compileCommand = col[i]->getCompilerName() +" "+ file +" "+  col[i]->getCompilerOption()+" -o "+  mainName +"  2>" +errorfile;
+				}
+				if (outputInfo)
+				{
+					cout<<"compile command is: "<<endl<<compileCommand<<endl;
+				}
+				/*
+				//write error to database
+				if(strReadFromFile.length() >10){
+				cout<<"write error to sql,conten:"<<strReadFromFile<<endl;
+				col[i]->setCompilerError(strReadFromFile);
+				}
+				else{
+				strReadFromFile = " ";
+				col[i]->setCompilerError(strReadFromFile);
+				}
+				*/
 
-					//cout<<"stdOut: "<<col[i]->getSTDOutput()<<endl;
+				system(compileCommand.c_str());
+
+				/*
+				 *rename mainName to execute app's name
+				 */
+				if (col[i]->getLanguageId() ==4)
+				{
+					mainName = "./Main.class";
+				}
+				else{
+					mainName ="./Main";
+				}
+
+				generateFile =fopen(mainName.c_str(),"r");
+
+				//cout<<"finish exectue compile command"<<endl;
+				if(generateFile == NULL)
+				{
+					cout<<"error compiling"<<endl;
 					/*
-					 *compile done start to  run user app and redirect the stdout to the file userOut file
-					 *here will get the time consumption and the memory consumption etc.
+					 *compile failed
+					 *
 					 */
-					startExecution(col[i]);
+					readToString(errorfile,&strReadFromFile);
+					strReadFromFile+=" from null";
+					col[i]->setCompilerError(strReadFromFile);
+					col[i]->setLastState(COMPILE_ERROR);
 					/*
-					 * executation done, now get the executation result
+					 *delete the source file and error file when it's needless
 					 */
-					stdFile = "./tmp/userOut";
-					strReadFromFile.clear();
-					readToString(stdFile,&strReadFromFile);
-					//cout<<"userOut: "<<strReadFromFile<<endl;
-					if ( col[i]->getLastState() != EXIT_NORMALLY)
-						//if ( col[i]->getJudgeState() != EXIT_NORMALLY)
-					{
-						cout<<"run app failed with statu: "<<col[i]->getLastState()<<endl;
-						//dontSetAccptedNextTime = true;
-						break;
+					errorfile = "./"+errorfile;
+					delteComand="rm "+file + " " +errorfile;
+					system(delteComand.c_str());
+					//cout<<"time used:"<<col[i]->getTimeComsupted()<<"ns   memory used:"<<col[i]->getMemoryComsupted()<<"kb state: "<<col[i]->getLastState()<<endl;
+					//cout<<"last result of run ID "<<col[i]->getRunId()<<" time consumption:"<<col[i]->getTimeConsumption()<<" memory consumption: "<<
+					//	col[i]->getMemoryConsumption()<<" status: "<<col[i]->getLastState()<<endl<<endl;
+
+					sql::PreparedStatement *pstm=sqlconn->con->prepareStatement("UPDATE tbl_run SET Status = ?,compile_error = ?  WHERE Run_ID = ?");
+					pstm->setInt(1,col[i]->getLastState());
+					pstm->setString(2,col[i]->getCompilerError());
+					//pstm->setInt(2,totolTimeconsumption);
+					//pstm->setInt(2,col[i]->getTimeComsupted());
+					//pstm->setInt(3,col[i]->getMemoryComsupted());
+					//pstm->setInt(3,totolMemoryConsumption);
+					//pstm->setString(4,col[i]->getCompilerError());
+					pstm->setInt(3,col[i]->getRunId());
+					pstm->executeUpdate();
+					delete pstm;
+
+					//totolTimeconsumption = 0;
+
+					/*
+					//sprintf(tmpsql,"UPDATE tbl_run SET Status = %d, Time_Used = %ld, Memory_Used = %ld ,compile_error = '%s'  WHERE Run_ID = %ld",col[i]->getLastState(),col[i]->getTimeComsupted(),col[i]->getMemoryComsupted(),col[i]->getCompilerError().c_str(),col[i]->getRunId());
+					sprintf(tmpsql,"UPDATE tbl_run SET Status = %d,compile_error = '%s'  WHERE Run_ID = %ld",col[i]->getLastState(),col[i]->getCompilerError().c_str(),col[i]->getRunId());
+					//cout<<"status: "<<col[i]->getLastState()<<"compile error: "<<col[i]->getCompilerError()<<endl;
+					//cout<<tmpsql<<endl;
+					sql = tmpsql;
+					//cout<<sql<<endl;
+					sqlconn->updateSQL(tmpsql);
+					*/
+				}
+				else{
+					/*
+					 * compile source code successfully
+					 * now get time limit and memory limit for  test case preperation,only one set
+					 */
+					fclose(generateFile);
+					sqlconn->querySQL("SELECT Time_Limit, Memory_Limit FROM tbl_problem WHERE status = 1 and Problem_ID ="+std::to_string(col[i]->getProblemId()));
+					sql::ResultSet *res = sqlconn->getResultSet();
+					while(res->next()){
+						tmpInt = res->getInt("Time_Limit");
+
+						col[i]->setTimeLimit(tmpInt);
+						tmpInt = res->getInt("Memory_Limit");
+						col[i]->setMemoryLimit(tmpInt);
 
 					}
-					else
-					{
+
+					sqlconn->querySQL("SELECT * FROM tbl_testcase_problem  WHERE Problem_ID ="+std::to_string(col[i]->getProblemId()));
+					res = sqlconn->getResultSet();
+					caseCount = sqlconn->getRowsCount();
+					cout<<"there are "<<caseCount<<"cases to test"<<endl;
+
+					int tmpStatu=0;
+
+					while(res->next()){
 						/*
-						 * ok the app can run normally now check the app's answer with the std answer: comparing the conten of  userOut and the conten of stdOut
-						 *
+						 * use every test data to test the executive app
+						 * default:
+						 * stdIn:file stored data for exectuive app's stdin
+						 * stdOut:file stored std answer
+						 * userOut:file stored the answer redirect from executive app's stdout
 						 */
-
-						cout<<"befor diff judge status: "<<col[i]->getJudgeState()<<endl;
-
-						diffCasesJudge(col[i]);
-
-						cout<<"after diff judge status: "<<col[i]->getJudgeState()<<endl;
-
-						if (col[i]->getJudgeState() !=ACCEPTED ) {
-							//wtd
-							//select * from tbl_run_testcase where run_id=%ld and testcase_id=%d
-
-							sqlconn->querySQL("select * from tbl_run_testcase where run_id="+std::to_string(col[i]->getRunId()) +" and testcase_id= "+std::to_string(col[i]->getTestcaseID()));
-							//sql::ResultSet *res = sqlconn->getResultSet();
-							//cout<<"dealing with "<<sqlconn->getRowsCount()<<" source code(s)"<<endl<<endl;
-							if (sqlconn->getRowsCount())
+						col[i]->setTestcaseID(res->getInt("testcase_id"));
+						tmp = res->getString("input");
+						col[i]->setSTDIput(tmp);
+						tmp = res->getString("output");
+						col[i]->setSTDOutput(tmp);
+						stdFile = "./tmp/stdIn";
+						writeFromString(stdFile,col[i]->getSTDIput(),col[i]->getSTDIput().length());
+						stdFile = "./tmp/stdOut";
+						writeFromString(stdFile,col[i]->getSTDOutput(),col[i]->getSTDOutput().length());
+						if (outputInfo)
+						{
+							cout<<"stdIn: "<<col[i]->getSTDIput()<<endl;
+							cout<<"stdOut: "<<col[i]->getSTDOutput()<<endl;
+						}
+						/*
+						 *compile done start to  run user app and redirect the stdout to the file userOut file
+						 *here will get the time consumption and the memory consumption etc.
+						 */
+						startExecution(col[i]);
+						/*
+						 * executation done, now get the executation result
+						 */
+						stdFile = "./tmp/userOut";
+						strReadFromFile.clear();
+						readToString(stdFile,&strReadFromFile);
+						if (outputInfo)
+						{
+							cout<<"userOut: "<<strReadFromFile<<endl;
+						}
+						if ( col[i]->getJudgeState() != EXIT_NORMALLY)
+							//if ( col[i]->getJudgeState() != EXIT_NORMALLY)
+						{
+							if (outputInfo)
 							{
-								cout<<"case record already exist"<<endl;
 
+								cout<<"app running with failure and statu is: "<<col[i]->getLastState()<<endl;
+							}
+
+							col[i]->setLastState(col[i]->getJudgeState() );
+							//dontSetAccptedNextTime = true;
+							break;
+
+						}
+						else
+						{
+							/*
+							 * ok the app can run normally now check the app's answer with the std answer: comparing the conten of  userOut and the conten of stdOut
+							 *
+							 */
+							if (outputInfo)
+							{
+								cout<<"befor diff judge status: "<<col[i]->getJudgeState()<<endl;
+							}
+
+							diffCasesJudge(col[i]);
+							if (outputInfo)
+							{
+								cout<<"after diff judge status: "<<col[i]->getJudgeState()<<endl;
+							}
+
+							if (col[i]->getJudgeState() !=ACCEPTED ) {
+								//wtd
+								//select * from tbl_run_testcase where run_id=%ld and testcase_id=%d
+								tmpStatu =col[i]->getJudgeState();
+
+								sqlconn->querySQL("select * from tbl_run_testcase where run_id="+std::to_string(col[i]->getRunId()) +" and testcase_id= "+std::to_string(col[i]->getTestcaseID()));
+								//sql::ResultSet *res = sqlconn->getResultSet();
+								//cout<<"dealing with "<<sqlconn->getRowsCount()<<" source code(s)"<<endl<<endl;
+								if (sqlconn->getRowsCount())
+								{
+									if (outputInfo)
+									{
+										cout<<"case record already exist"<<endl;
+									}
+
+								}
+								else{
+									sql::PreparedStatement *pstm=sqlconn->con->prepareStatement("INSERT INTO tbl_run_testcase  SET run_id = ?,testcase_id=?");
+									pstm->setInt(1,col[i]->getRunId());
+									/*
+									   pstm->setInt(2,totolTimeconsumption);
+									   pstm->setInt(3,totolMemoryConsumption);
+									   */
+									pstm->setInt(2,col[i]->getTestcaseID());
+									pstm->executeUpdate();
+									cout<<"WA case record!"<<endl;
+									delete pstm;
+								}
+
+
+
+
+
+
+								/*
+								 * judge statu now can not be exit normally
+								 * just check it's AC or not
+								 *insert into tbl_run_testcase
+								 *set last statu to WA
+								 */
 							}
 							else{
-								sql::PreparedStatement *pstm=sqlconn->con->prepareStatement("INSERT INTO tbl_run_testcase  SET run_id = ?,testcase_id=?");
-								pstm->setInt(1,col[i]->getRunId());
-								/*
-								   pstm->setInt(2,totolTimeconsumption);
-								   pstm->setInt(3,totolMemoryConsumption);
-								   */
-								pstm->setInt(2,col[i]->getTestcaseID());
-								pstm->executeUpdate();
-								cout<<"WA case record!"<<endl;
-								delete pstm;
+								col[i]->setLastState(col[i]->getJudgeState());
 							}
 
 
-
-
-
-
-							/*
-							 * judge statu now can not be exit normally
-							 * just check it's AC or not
-							 *insert into tbl_run_testcase
-							 *set last statu to WA
-							 */
-							col[i]->setLastState(col[i]->getJudgeState());
-							dontSetAccptedNextTime = true;
 						}
 						/*
-						 * already set last state and the last is not AC or exit normally
+						 * get the exection condicton data:time comsuption memory cumsuption etc.
+						 * delete the file preparing for next test case
+						 *don't have to delete but set them to empty?
 						 */
-						if (dontSetAccptedNextTime)
+						delteComand="rm ./tmp/stdIn ./tmp/userOut ./tmp/stdOut";
+						system(delteComand.c_str());
+						/*
+						 * use the max consumiption
+
+						 *if choose the max consumption, the following will not need anymore,just
+						 modiry the colleciont's setTimeConsumption() and setMemoryConsumption()
+						 *
+						 totolTimeconsumption +=col[i]->getTimeComsupted();
+						 totolMemoryConsumption +=col[i]->getMemoryComsupted();
+						 */
+						if (outputInfo)
 						{
-							/* skip setting last state keeping last to unAC*/
-						}
-						else{
-							col[i]->setLastState(col[i]->getJudgeState());
-						}
+							cout<<"run ID:"<<col[i]->getRunId()<<" testcase ID:"<<col[i]->getTestcaseID()<<" time used:"<<col[i]->getTimeConsumption()<<"ms   memory used:"<<col[i]->getMemoryConsumption()<<"kb judge state: "<<col[i]->getJudgeState()<<endl;
+						}//all testcases are tested
+					}
+
+					/*
+					 * delete the source code file error file and execute file when they are needless
+					 * for example: rm ./Main main.cpp error
+					 */
+					delteComand="rm "+mainName+" "+file + " " +errorfile;
+					system(delteComand.c_str());
+
+					//totolTimeconsumption /=(caseCount*1000);   //milis but not micros?
+					//totolMemoryConsumption /=(caseCount*1024); //kb or M?
+					/*
+					 *write result to database using 
+					 */
+					if (tmpStatu)
+					{
+						col[i]->setLastState(tmpStatu);
 
 					}
+
+
+
+					sql::PreparedStatement *pstm=sqlconn->con->prepareStatement("UPDATE tbl_run SET Status = ?, Time_Used = ?, Memory_Used = ? ,compile_error =?  WHERE Run_ID = ?");
+					//	cout<<"error coneten:   "<<col[i]->getCompilerError()<<endl;
+					pstm->setInt(1,col[i]->getLastState());
 					/*
-					 * get the exection condicton data:time comsuption memory cumsuption etc.
-					 * delete the file preparing for next test case
-					 *don't have to delete but set them to empty?
-					 */
-					delteComand="rm ./tmp/stdIn ./tmp/userOut ./tmp/stdOut";
-					system(delteComand.c_str());
-					/*
-					 * use the max consumiption
+					   pstm->setInt(2,totolTimeconsumption);
+					   pstm->setInt(3,totolMemoryConsumption);
+					   */
+					pstm->setInt(2,col[i]->getTimeConsumption());
+					pstm->setInt(3,col[i]->getMemoryConsumption());
 
-					 *if choose the max consumption, the following will not need anymore,just
-					 modiry the colleciont's setTimeConsumption() and setMemoryConsumption()
-					 *
-					 totolTimeconsumption +=col[i]->getTimeComsupted();
-					 totolMemoryConsumption +=col[i]->getMemoryComsupted();
-					 */
-					cout<<"run ID:"<<col[i]->getRunId()<<" testcase ID:"<<col[i]->getTestcaseID()<<" time used:"<<col[i]->getTimeConsumption()<<"ms   memory used:"<<col[i]->getMemoryConsumption()<<"kb judge state: "<<col[i]->getJudgeState()<<endl;
-				}//all testcases are tested
 
+					pstm->setString(4,col[i]->getCompilerError());
+					pstm->setInt(5,col[i]->getRunId());
+					pstm->executeUpdate();
+					delete pstm;
+					cout<<"last result of run ID "<<col[i]->getRunId()<<" time consumption:"<<col[i]->getTimeConsumption()<<" memory consumption: "<<
+						col[i]->getMemoryConsumption()<<" status: "<<col[i]->getLastState()<<endl<<endl;
+					//totolTimeconsumption = 0;
+					//totolMemoryConsumption=0;
+				}
+				delete col[i];
+				col[i] = NULL;
 				/*
-				 * delete the source code file error file and execute file when they are needless
-				 * for example: rm ./Main main.cpp error
+				 *ok,deal with one problem done!
 				 */
-				delteComand="rm "+mainName+" "+file + " " +errorfile;
-				system(delteComand.c_str());
-
-				//totolTimeconsumption /=(caseCount*1000);   //milis but not micros?
-				//totolMemoryConsumption /=(caseCount*1024); //kb or M?
-				/*
-				 *write result to database using 
-				 */
-				sql::PreparedStatement *pstm=sqlconn->con->prepareStatement("UPDATE tbl_run SET Status = ?, Time_Used = ?, Memory_Used = ? ,compile_error =?  WHERE Run_ID = ?");
-				//	cout<<"error coneten:   "<<col[i]->getCompilerError()<<endl;
-				pstm->setInt(1,col[i]->getLastState());
-				/*
-				   pstm->setInt(2,totolTimeconsumption);
-				   pstm->setInt(3,totolMemoryConsumption);
-				   */
-				pstm->setInt(2,col[i]->getTimeConsumption());
-				pstm->setInt(3,col[i]->getMemoryConsumption());
-
-
-				pstm->setString(4,col[i]->getCompilerError());
-				pstm->setInt(5,col[i]->getRunId());
-				pstm->executeUpdate();
-				delete pstm;
-				cout<<"last result of run ID "<<col[i]->getRunId()<<" time consumption:"<<col[i]->getTimeConsumption()<<" memory consumption: "<<
-					col[i]->getMemoryConsumption()<<" status: "<<col[i]->getLastState()<<endl<<endl;
-				//totolTimeconsumption = 0;
-				//totolMemoryConsumption=0;
 			}
-			delete col[i];
-			col[i] = NULL;
-			/*
-			 *ok,deal with one problem done!
-			 */
-		}
 
-		sleep(3);
-	}//end loop
-	cout<<"cloing sql"<<endl;
-	sqlconn->closeSQL();
-	return 0;
+			sleep(3);
+		}//end loop
+		cout<<"cloing sql"<<endl;
+		sqlconn->closeSQL();
+		return 0;
+	}
 }
 int readToString(string &fileName, string* str){
 
@@ -482,7 +569,8 @@ int startExecution(Collection * col){
 				{
 					if(WTERMSIG(status) == SIGKILL){
 						cout<<"signal kill"<<endl;
-						col->setLastState(RUNTIME_ERROR);
+						col->setJudgeState(RUNTIME_ERROR);
+						//col->setLastState(RUNTIME_ERROR);
 
 					}
 					break;
@@ -490,7 +578,8 @@ int startExecution(Collection * col){
 				if(!WIFSTOPPED(status)){
 					if (WTERMSIG(status))
 					{
-						col->setLastState(RUNTIME_ERROR);
+						col->setJudgeState(RUNTIME_ERROR);
+						//col->setLastState(RUNTIME_ERROR);
 
 					}	
 					break;
@@ -506,14 +595,15 @@ int startExecution(Collection * col){
 					if (sig == SIGXCPU || (col->getTimeConsumption() > col->getTimeLimit()))
 					{
 
-						col->setLastState(TIME_LIMIT_ERROR);
+						col->setJudgeState(TIME_LIMIT_ERROR);
 						printf("time exceeded\n");
 						//timeConsumption =(timeLimitation)*1000+1;
 						col->setTimeConsumption(col->getTimeLimit());
 						//col->setTimeConsumption((col[i]->getTimeLimit()+1));
 					}
 					else if( sig == SIGXFSZ){
-						col->setLastState(OUTPUT_LIMIT_ERROR);
+						col->setJudgeState(OUTPUT_LIMIT_ERROR);
+						//col->setLastState(OUTPUT_LIMIT_ERROR);
 
 					}
 					/*
@@ -523,17 +613,20 @@ int startExecution(Collection * col){
 					   }	
 					   */
 					else if( sig == SIGILL){
-						col->setLastState(RUNTIME_ERROR);
+						col->setJudgeState(RUNTIME_ERROR);
+						//col->setLastState(RUNTIME_ERROR);
 
 					}
 					else if( sig == SIGSEGV){
 
-						col->setLastState(SEGMENTATION_FAULT);
+						col->setJudgeState(SEGMENTATION_FAULT);
+						//col->setLastState(SEGMENTATION_FAULT);
 
 					}
 					else{
 						cout<<"unknow error"<<endl;
-						col->setLastState(RUNTIME_ERROR);
+						col->setJudgeState(RUNTIME_ERROR);
+						//col->setLastState(RUNTIME_ERROR);
 
 					}
 					break;
@@ -541,7 +634,8 @@ int startExecution(Collection * col){
 				}
 				if (ReadMemoryConsumption(pid) >= col->getMemoryLimit())
 				{
-					col->setLastState(MEMORY_LIMIT_ERROR);
+					col->setJudgeState(MEMORY_LIMIT_ERROR);
+					//col->setLastState(MEMORY_LIMIT_ERROR);
 
 					//memoryConsumption = memoryLimitation+1;
 					/*
@@ -563,7 +657,8 @@ int startExecution(Collection * col){
 				 * for x64
 				 if (disabled_syscall[regs.orig_rax]==1)
 				 */
-				if (disabled_syscall[regs.orig_rax]==1)
+				if (disabled_syscall[regs.SYSCALL_]==1)
+					//if (disabled_syscall[regs.orig_rax]==1)
 				{
 					if (firstExecute)
 					{
@@ -577,14 +672,14 @@ int startExecution(Collection * col){
 					}
 					else{
 						//the app is do somethin evil,so kill it!
-						col->setLastState(SYSCALL_RESTRICTION);
+						col->setJudgeState(SYSCALL_RESTRICTION);
 
 						ptrace(PTRACE_KILL,pid,NULL,NULL);	
 						break;
 					}
 
 				}	
-				if (regs.orig_rax == SYS_exit ||regs.orig_rax ==SYS_exit_group)
+				if (regs.SYSCALL_ == SYS_exit ||regs.SYSCALL_ ==SYS_exit_group)
 				{
 
 					/*
@@ -594,7 +689,7 @@ int startExecution(Collection * col){
 					 */
 
 					updateConsumption(pid,col);
-					col->setLastState(EXIT_NORMALLY);
+					col->setJudgeState(EXIT_NORMALLY);
 					//	col->setJudgeState(EXIT_NORMALLY);
 
 
@@ -866,7 +961,7 @@ int ReadTimeConsumption(pid_t pid){
 	FILE* fp = fopen(buffer,"r");
 	if (fp == NULL)
 	{
-//		printf("no stat found in proc\n");
+		//		printf("no stat found in proc\n");
 		return -1;
 	}
 	int stime,utime;
@@ -960,4 +1055,49 @@ void updateConsumption(pid_t pid,Collection* col){
 	   }	
 	   */
 }
+void daemon(void) {    
+	pid_t  pid;
 
+	/*
+	 *      * Become a session leader to lose controlling TTY.
+	 *           */
+
+	if ((pid = fork()) < 0) {        perror("fork");
+		exit(1);
+	} else if (pid != 0) /* parent */
+		exit(0);
+	setsid();
+
+	/*
+	 *      * Change the current working directory to the root.
+	 *           * if you are using database  just ignore this and comment them.
+	 *                */
+
+	/*if (chdir("/") < 0) {     perror("chdir");
+	 *      exit(1);
+	 *           }
+	 *                */
+	/*
+	 *      * Attach file descriptors 0, 1, and 2 to /dev/null.
+	 *           */
+
+	umask(0);
+	close(0);
+	close(1);
+	close(2);
+
+	open("/dev/null", O_RDWR);
+
+	dup2(0, 1);
+	dup2(0, 2);
+}
+
+
+void helpInfo(){
+
+	cout<<"GUETOJ Judger help information\nMandatory arguments to long options are mandatory for short options too."<<endl;
+	cout<<" -v, --verbose,none              verbosely list running detail"<<endl;
+	cout<<" -d, --daemon               run GUETOJ_Judger as daemon process"<<endl;
+
+
+}
