@@ -53,26 +53,27 @@ int main(int argc, char *argv[])
 		{
 			outputInfo =false;	
 		}
-
-		else if (argv1_str !="-v"||argv1_str !="--verbose"||argv1_str!="-d"||argv1_str !="--daemon")
+		if (argv1_str =="-h"||argv1_str =="--help")
 		{
-			if (argv1_str == "--help")
-			{
-				helpInfo();
-				/*
-				   cout<<"GUETOJ Judger application\nMandatory arguments to long options are mandatory for short options too."<<endl;
-				   cout<<" -v, --verbose,none              verbosely list running detail"<<endl;
-				   cout<<" -d, --daemon               run GUETOJ_Judger as daemon process"<<endl;
-				   */
-
-			}
-			else{
-				cout<<"invalid option -- '"<<argv1_str<<"'"<<endl;
-				cout<<"try 'guetoj_judger --help' for more information"<<endl;
-			}
+			helpInfo();
+			return 0;
 		}
+		/*
+		   else if (argv1_str !="-v"||argv1_str !="--verbose"||argv1_str!="-d"||argv1_str !="--daemon")
+		   {
+		   if (argv1_str == "--help")
+		   {
+		   helpInfo();
+		   }
+		   else{
+		   cout<<"invalid option -- '"<<argv1_str<<"'"<<endl;
+		   cout<<"try 'guetoj_judger --help' for more information"<<endl;
+		   }
+		   }
+		   */
 	}
-	else{
+	//	else
+	{
 		if (!outputInfo)
 		{
 			daemon();
@@ -172,7 +173,7 @@ int main(int argc, char *argv[])
 					tmp = res->getString("compiler_name");
 					if (outputInfo)
 					{
-						cout<<"compiler name:"<<tmp<<endl;
+						//	cout<<"compiler name:"<<tmp<<endl;
 					}
 					col[i]->setCompilerName(tmp);
 					tmp = res->getString("source_suffix");
@@ -325,8 +326,8 @@ int main(int argc, char *argv[])
 						writeFromString(stdFile,col[i]->getSTDOutput(),col[i]->getSTDOutput().length());
 						if (outputInfo)
 						{
-							cout<<"stdIn: "<<col[i]->getSTDIput()<<endl;
-							cout<<"stdOut: "<<col[i]->getSTDOutput()<<endl;
+							cout<<"stdIn: \n"<<col[i]->getSTDIput()<<endl;
+							cout<<"stdOut: \n"<<col[i]->getSTDOutput()<<endl;
 						}
 						/*
 						 *compile done start to  run user app and redirect the stdout to the file userOut file
@@ -341,7 +342,7 @@ int main(int argc, char *argv[])
 						readToString(stdFile,&strReadFromFile);
 						if (outputInfo)
 						{
-							cout<<"userOut: "<<strReadFromFile<<endl;
+							cout<<"userOut: \n"<<strReadFromFile<<endl;
 						}
 						if ( col[i]->getJudgeState() != EXIT_NORMALLY)
 							//if ( col[i]->getJudgeState() != EXIT_NORMALLY)
@@ -349,7 +350,7 @@ int main(int argc, char *argv[])
 							if (outputInfo)
 							{
 
-								cout<<"app running with failure and statu is: "<<col[i]->getLastState()<<endl;
+								cout<<"app running with failure and statu is: "<<col[i]->getJudgeState()<<endl;
 							}
 
 							col[i]->setLastState(col[i]->getJudgeState() );
@@ -463,6 +464,7 @@ int main(int argc, char *argv[])
 
 
 
+					col[i]->setTimeConsumption(1);
 					sql::PreparedStatement *pstm=sqlconn->con->prepareStatement("UPDATE tbl_run SET Status = ?, Time_Used = ?, Memory_Used = ? ,compile_error =?  WHERE Run_ID = ?");
 					//	cout<<"error coneten:   "<<col[i]->getCompilerError()<<endl;
 					pstm->setInt(1,col[i]->getLastState());
@@ -478,6 +480,7 @@ int main(int argc, char *argv[])
 					pstm->setInt(5,col[i]->getRunId());
 					pstm->executeUpdate();
 					delete pstm;
+					cout<<"time limitation: "<<col[i]->getTimeLimit()<<" memory limitation: "<<col[i]->getMemoryLimit()<<endl;
 					cout<<"last result of run ID "<<col[i]->getRunId()<<" time consumption:"<<col[i]->getTimeConsumption()<<" memory consumption: "<<
 						col[i]->getMemoryConsumption()<<" status: "<<col[i]->getLastState()<<endl<<endl;
 					//totolTimeconsumption = 0;
@@ -544,7 +547,7 @@ int startExecution(Collection * col){
 		int status;
 		//long tmp;
 
-		cout<<"time limitation: "<<col->getTimeLimit()<<" memory limitation: "<<col->getMemoryLimit()<<endl;
+		//		cout<<"start executing: time limitation: "<<col->getTimeLimit()<<" memory limitation: "<<col->getMemoryLimit()<<endl;
 
 		struct rlimit executableLimit;
 
@@ -598,11 +601,13 @@ int startExecution(Collection * col){
 						col->setJudgeState(TIME_LIMIT_ERROR);
 						printf("time exceeded\n");
 						//timeConsumption =(timeLimitation)*1000+1;
-						col->setTimeConsumption(col->getTimeLimit());
+						col->setTimeConsumption(col->getTimeLimit()+1);
+						break;
 						//col->setTimeConsumption((col[i]->getTimeLimit()+1));
 					}
 					else if( sig == SIGXFSZ){
 						col->setJudgeState(OUTPUT_LIMIT_ERROR);
+						break;
 						//col->setLastState(OUTPUT_LIMIT_ERROR);
 
 					}
@@ -614,27 +619,43 @@ int startExecution(Collection * col){
 					   */
 					else if( sig == SIGILL){
 						col->setJudgeState(RUNTIME_ERROR);
+						break;
 						//col->setLastState(RUNTIME_ERROR);
 
 					}
 					else if( sig == SIGSEGV){
 
 						col->setJudgeState(SEGMENTATION_FAULT);
+						break;
 						//col->setLastState(SEGMENTATION_FAULT);
 
 					}
-					else{
-						cout<<"unknow error"<<endl;
-						col->setJudgeState(RUNTIME_ERROR);
-						//col->setLastState(RUNTIME_ERROR);
+					/*
+					   else
+					   {
+					   cout<<"unknow error"<<endl;
+					   col->setJudgeState(RUNTIME_ERROR);
+					   break;
+					//col->setLastState(RUNTIME_ERROR);
 
 					}
-					break;
-					//	ptrace(PTRACE_SYSCALL, pid, NULL, sig);
+					*/
+					ptrace(PTRACE_SYSCALL, pid, NULL, sig);
 				}
+				/*
+				   if (ReadTimeConsumption(pid) >= col->getTimeLimit());
+				   {
+				   col->setJudgeState(TIME_LIMIT_ERROR);
+				   col->setTimeConsumption(col->getTimeLimit()+1);
+				   ptrace(PTRACE_KILL,pid,NULL,NULL);	
+				   break;
+
+				   }	
+				   */
 				if (ReadMemoryConsumption(pid) >= col->getMemoryLimit())
 				{
 					col->setJudgeState(MEMORY_LIMIT_ERROR);
+					col->setTimeConsumption(col->getMemoryLimit()+1);
 					//col->setLastState(MEMORY_LIMIT_ERROR);
 
 					//memoryConsumption = memoryLimitation+1;
@@ -725,7 +746,14 @@ int startExecution(Collection * col){
 					//	cout<<"time limit:"<<col->getTimeLimit()<<endl;
 					//executableLimit.rlim_cur = 2;
 					//second
-					executableLimit.rlim_cur = col->getTimeLimit()/1000 ;
+					if (col->getTimeConsumption() > 1000)
+					{
+						executableLimit.rlim_cur = (col->getTimeLimit()/1000);
+					}
+					else
+					{
+						executableLimit.rlim_cur =1;
+					}
 					if (setrlimit(RLIMIT_CPU, &executableLimit) == 0)
 					{
 						//		cout<<"set time limit done!"<<endl;
@@ -737,91 +765,6 @@ int startExecution(Collection * col){
 		}
 	}
 }
-
-/*
-   int startExecution(Collection * col){
-
-   int pid;
-   int status;
-   float passTime;
-   long tmp;
-   struct rusage executableResourceUsage;
-   struct rlimit executableLimit;
-
-   struct timeval before, after;
-   struct timeval before1, after1;
-   pid = fork();
-   if (pid)
-   {
-
-   gettimeofday(&before1, NULL);
-   wait(&status);
-
-//cout<<"status:"<<status<<endl;
-// col->setLastState(RUNTIME_ERROR);
-if (WIFEXITED(status))
-{
-col->setLastState(EXIT_NORMALLY);
-}
-else if (WIFSIGNALED(status))
-{
-if (SIGXCPU == WTERMSIG(status))
-{
-col->setLastState(TIME_LIMIT_ERROR);
-}
-else if ( SIGSEGV == WTERMSIG(status))
-{
-col->setLastState(MEMORY_LIMIT_ERROR);
-}
-else if ( SIGKILL == WTERMSIG(status))
-{
-col->setLastState(SYSTEM_ERROR);
-}
-
-}
-
-gettimeofday(&after1, NULL);
-//microseconds:us
-tmp = ((long long)after1.tv_sec)*1000*1000 +
-((long long)after1.tv_usec) -
-((long long)before1.tv_sec)*1000*1000 -
-((long long)before1.tv_usec);
-col->setTimeComsupted(tmp);
-getrusage(RUSAGE_CHILDREN, &executableResourceUsage);
-col->setMemoryComsupted(executableResourceUsage.ru_maxrss);
-}
-else
-{
-freopen("./stdIn", "r", stdin);
-freopen("./userOut", "w+", stdout);
-
-if (col->getLanguageId() ==4)
-{
-execl("/usr/java/bin/java", "/usr/java/bin/java","Main", (char *) NULL);
-}
-else{
-if ( getrlimit(RLIMIT_AS,&executableLimit) == 0)
-{
-executableLimit.rlim_cur = 2 * col->getMemoryLimit() * 1024;
-//	if (setrlimit(RLIMIT_AS, &executableLimit) == 0)
-{
-//	cout<<"set memory limit done!"<<endl;
-}
-}
-if ( getrlimit(RLIMIT_CPU,&executableLimit) == 0)
-{
-	//	cout<<"time limit:"<<col->getTimeLimit()<<endl;
-	executableLimit.rlim_cur = 2 * col->getTimeLimit()/1000 ;
-	if (setrlimit(RLIMIT_CPU, &executableLimit) == 0)
-	{
-		//		cout<<"set time limit done!"<<endl;
-	}
-}
-execl("./Main", "./Main", (char *) NULL);
-}
-}
-}
-*/
 
 int diffCasesJudge(Collection* col){
 
@@ -1091,6 +1034,8 @@ void daemon(void) {
 	dup2(0, 1);
 	dup2(0, 2);
 }
+
+
 
 
 void helpInfo(){

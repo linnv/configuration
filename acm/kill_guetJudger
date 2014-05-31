@@ -1,1 +1,1 @@
-ps -aux | grep *guetJudger | awk '{print $2}'| xargs kill -9
+ps -axu | grep guetJudger | awk '{print $2}'| xargs kill -9
