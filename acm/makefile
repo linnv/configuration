@@ -12,4 +12,5 @@ all:
 .phony:clean
 clean:
 	rm -f $(d)
+	rm ./tmp/*	
 

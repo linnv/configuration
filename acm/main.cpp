@@ -93,7 +93,8 @@ int main(int argc, char *argv[])
 		string mainName;
 		string errorfile;
 		FILE* generateFile;
-
+		string dos2unixFile;
+		int tmpStatu;
 		/*
 		 * loop for headp problems
 		 */
@@ -188,8 +189,14 @@ int main(int argc, char *argv[])
 				 */
 				//cout<<"source code: "<<endl<<content<<endl;
 				writeFromString(file,content,content.length());
+
+				/*
+				 * unconfirm whether format source code by using dos2unix or not
+				 *
 				string dos2unix_source_code="dos2unix "+file;
-				//system(dos2unix_source_code.c_str());
+				system(dos2unix_source_code.c_str());
+				*/
+				
 				cout<<"format source code done!"<<endl;
 				if (col[i]->getLanguageId() == 4)// java
 				{
@@ -299,7 +306,7 @@ int main(int argc, char *argv[])
 					caseCount = sqlconn->getRowsCount();
 					cout<<"there are "<<caseCount<<"cases to test"<<endl;
 
-					int tmpStatu=0;
+					tmpStatu=0;
 
 					while(res->next()){
 						/*
@@ -318,7 +325,7 @@ int main(int argc, char *argv[])
 						writeFromString(stdFile,col[i]->getSTDIput(),col[i]->getSTDIput().length());
 
 						//cout<<"dos2unix is working"<<endl;
-						string dos2unixFile="dos2unix "+stdFile;
+						dos2unixFile="dos2unix "+stdFile;
 						system(dos2unixFile.c_str());
 					//	cout<<"dos2unix worked done!"<<endl;
 
