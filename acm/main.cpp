@@ -53,24 +53,16 @@ int main(int argc, char *argv[])
 		{
 			outputInfo =false;	
 		}
-		if (argv1_str =="-h"||argv1_str =="--help")
+		else if (argv1_str =="-h"||argv1_str =="--help")
 		{
 			helpInfo();
-			return 0;
+			return 1;
 		}
-		/*
-		   else if (argv1_str !="-v"||argv1_str !="--verbose"||argv1_str!="-d"||argv1_str !="--daemon")
-		   {
-		   if (argv1_str == "--help")
-		   {
-		   helpInfo();
-		   }
-		   else{
+		else{
 		   cout<<"invalid option -- '"<<argv1_str<<"'"<<endl;
-		   cout<<"try 'guetoj_judger --help' for more information"<<endl;
+		   cout<<"try 'guetoj_judger -h or --help' for more information"<<endl;
+		   return 1;
 		   }
-		   }
-		   */
 	}
 	//	else
 	{
@@ -642,16 +634,15 @@ int startExecution(Collection * col){
 					*/
 					ptrace(PTRACE_SYSCALL, pid, NULL, sig);
 				}
-				/*
-				   if (ReadTimeConsumption(pid) >= col->getTimeLimit());
+				   if (ReadTimeConsumption(pid) >= 2*col->getTimeLimit());
 				   {
+					   cout<<"TLC: ts:"<<ReadTimeConsumption(pid)<<endl;
 				   col->setJudgeState(TIME_LIMIT_ERROR);
 				   col->setTimeConsumption(col->getTimeLimit()+1);
 				   ptrace(PTRACE_KILL,pid,NULL,NULL);	
 				   break;
 
 				   }	
-				   */
 				if (ReadMemoryConsumption(pid) >= col->getMemoryLimit())
 				{
 					col->setJudgeState(MEMORY_LIMIT_ERROR);
