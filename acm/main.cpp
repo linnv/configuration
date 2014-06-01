@@ -361,6 +361,8 @@ int main(int argc, char *argv[])
 							}
 
 							col[i]->setLastState(col[i]->getJudgeState() );
+
+								tmpStatu =col[i]->getJudgeState();
 							//dontSetAccptedNextTime = true;
 							break;
 
@@ -385,8 +387,8 @@ int main(int argc, char *argv[])
 							if (col[i]->getJudgeState() !=ACCEPTED ) {
 								//wtd
 								//select * from tbl_run_testcase where run_id=%ld and testcase_id=%d
-								tmpStatu =col[i]->getJudgeState();
 
+								tmpStatu =col[i]->getJudgeState();
 								sqlconn->querySQL("select * from tbl_run_testcase where run_id="+std::to_string(col[i]->getRunId()) +" and testcase_id= "+std::to_string(col[i]->getTestcaseID()));
 								//sql::ResultSet *res = sqlconn->getResultSet();
 								//cout<<"dealing with "<<sqlconn->getRowsCount()<<" source code(s)"<<endl<<endl;
