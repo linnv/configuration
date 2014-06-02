@@ -784,17 +784,19 @@ int startExecution(Collection * col){
 					//         printf("Set New Limit for file size output limit  successed!\n");
 				}
 			}
+			/*
 				if ( getrlimit(RLIMIT_STACK,&executableLimit) == 0)
 				{
 					// executableLimit.rlim_cur = 2 * 1024;
 				//	cout<<"default stack value cur: "<<executableLimit.rlim_cur<<"\n max: "<<executableLimit.rlim_max<<endl<<endl;
 					executableLimit.rlim_cur =  col->getMemoryLimit() * 1024;
 
-					//	if (setrlimit(RLIMIT_AS, &executableLimit) == 0)
+				//		if (setrlimit(RLIMIT_AS, &executableLimit) == 0)
 					{
 						//	cout<<"set memory limit done!"<<endl;
 					}
 				}
+					*/
 				if ( getrlimit(RLIMIT_AS,&executableLimit) == 0)
 				{
 					// executableLimit.rlim_cur = 2 * 1024;
@@ -802,7 +804,7 @@ int startExecution(Collection * col){
 					
 					executableLimit.rlim_cur =  col->getMemoryLimit() * 1024;
 
-				//	if (setrlimit(RLIMIT_AS, &executableLimit) == 0)
+					if (setrlimit(RLIMIT_AS, &executableLimit) == 0)
 					{
 						//	cout<<"set memory limit done!"<<endl;
 					}
