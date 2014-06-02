@@ -300,6 +300,25 @@ int main(int argc, char *argv[])
 						col[i]->setMemoryLimit(tmpInt);
 
 					}
+					/*
+					 * check if any testcase exist or not, yes: delete; no: skip
+					 */
+					sqlconn->querySQL("select * from tbl_run_testcase where run_id="+std::to_string(col[i]->getRunId()) );
+								//sql::ResultSet *res = sqlconn->getResultSet();
+								//cout<<"dealing with "<<sqlconn->getRowsCount()<<" source code(s)"<<endl<<endl;
+								if (sqlconn->getRowsCount())
+								{
+									if (outputInfo)
+									{
+										cout<<"previous testcase(s)  exist,now delete all these testcase(s)"<<endl;
+									}
+
+									sqlconn->querySQL("delete from tbl_run_testcase where run_id="+std::to_string(col[i]->getRunId()) );
+
+
+								}
+
+
 
 					sqlconn->querySQL("SELECT * FROM tbl_testcase_problem  WHERE Problem_ID ="+std::to_string(col[i]->getProblemId()));
 					res = sqlconn->getResultSet();
@@ -308,7 +327,11 @@ int main(int argc, char *argv[])
 
 					tmpStatu=0;
 
+					int acCount=0;
+					int totalCount=0;
+
 					while(res->next()){
+						totalCount++;	
 						/*
 						 * use every test data to test the executive app
 						 * default:
@@ -361,8 +384,7 @@ int main(int argc, char *argv[])
 							}
 
 							col[i]->setLastState(col[i]->getJudgeState() );
-
-								tmpStatu =col[i]->getJudgeState();
+							tmpStatu =col[i]->getJudgeState();
 							//dontSetAccptedNextTime = true;
 							break;
 
@@ -413,11 +435,6 @@ int main(int argc, char *argv[])
 									delete pstm;
 								}
 
-
-
-
-
-
 								/*
 								 * judge statu now can not be exit normally
 								 * just check it's AC or not
@@ -427,6 +444,7 @@ int main(int argc, char *argv[])
 							}
 							else{
 								col[i]->setLastState(col[i]->getJudgeState());
+								acCount++;	
 							}
 
 
@@ -440,7 +458,6 @@ int main(int argc, char *argv[])
 						system(delteComand.c_str());
 						/*
 						 * use the max consumiption
-
 						 *if choose the max consumption, the following will not need anymore,just
 						 modiry the colleciont's setTimeConsumption() and setMemoryConsumption()
 						 *
@@ -475,6 +492,8 @@ int main(int argc, char *argv[])
 
 					col[i]->setTimeConsumption(1);
 					sql::PreparedStatement *pstm=sqlconn->con->prepareStatement("UPDATE tbl_run SET Status = ?, Time_Used = ?, Memory_Used = ? ,compile_error =?  WHERE Run_ID = ?");
+					cout<<"ac count: "<<acCount<<" totalCount: "<<totalCount<<endl;
+
 					//	cout<<"error coneten:   "<<col[i]->getCompilerError()<<endl;
 					pstm->setInt(1,col[i]->getLastState());
 					/*
@@ -635,6 +654,7 @@ int startExecution(Collection * col){
 					}
 					else if( sig == SIGSEGV){
 
+						cout<<"segment fault sig: "<<sig<<endl;
 						col->setJudgeState(SEGMENTATION_FAULT);
 						break;
 						//col->setLastState(SEGMENTATION_FAULT);
@@ -764,12 +784,25 @@ int startExecution(Collection * col){
 					//         printf("Set New Limit for file size output limit  successed!\n");
 				}
 			}
+				if ( getrlimit(RLIMIT_STACK,&executableLimit) == 0)
+				{
+					// executableLimit.rlim_cur = 2 * 1024;
+				//	cout<<"default stack value cur: "<<executableLimit.rlim_cur<<"\n max: "<<executableLimit.rlim_max<<endl<<endl;
+					executableLimit.rlim_cur =  col->getMemoryLimit() * 1024;
+
+					//	if (setrlimit(RLIMIT_AS, &executableLimit) == 0)
+					{
+						//	cout<<"set memory limit done!"<<endl;
+					}
+				}
 				if ( getrlimit(RLIMIT_AS,&executableLimit) == 0)
 				{
 					// executableLimit.rlim_cur = 2 * 1024;
 					// byte
+					
 					executableLimit.rlim_cur =  col->getMemoryLimit() * 1024;
-					//	if (setrlimit(RLIMIT_AS, &executableLimit) == 0)
+
+				//	if (setrlimit(RLIMIT_AS, &executableLimit) == 0)
 					{
 						//	cout<<"set memory limit done!"<<endl;
 					}
