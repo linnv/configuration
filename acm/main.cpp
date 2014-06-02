@@ -356,8 +356,8 @@ int main(int argc, char *argv[])
 						writeFromString(stdFile,col[i]->getSTDOutput(),col[i]->getSTDOutput().length());
 						if (outputInfo)
 						{
-							cout<<"stdIn: \n"<<col[i]->getSTDIput()<<endl;
-							cout<<"stdOut: \n"<<col[i]->getSTDOutput()<<endl;
+							cout<<"stdInput: \n"<<col[i]->getSTDIput()<<endl;
+							cout<<"stdOutput: \n"<<col[i]->getSTDOutput()<<endl;
 						}
 						/*
 						 *compile done start to  run user app and redirect the stdout to the file userOut file
@@ -372,7 +372,7 @@ int main(int argc, char *argv[])
 						readToString(stdFile,&strReadFromFile);
 						if (outputInfo)
 						{
-							cout<<"userOut: \n"<<strReadFromFile<<endl;
+							cout<<"userOutput: \n"<<strReadFromFile<<endl;
 						}
 						if ( col[i]->getJudgeState() != EXIT_NORMALLY)
 							//if ( col[i]->getJudgeState() != EXIT_NORMALLY)
