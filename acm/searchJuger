@@ -1,1 +1,0 @@
-ps -axu | grep guet

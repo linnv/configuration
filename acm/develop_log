@@ -1,0 +1,6 @@
+
+1.0_Tue Jun  3 00:03:26 CST 2014
+fix testcase bug:befor rejudge check if any testcases of runid exit or not,
+yes:delete all testace record
+no: skip detele any record in database
+
