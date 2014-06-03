@@ -600,7 +600,12 @@ int startExecution(Collection * col){
 			 */
 			while(waitpid(pid,&status,0) > 0){
 				updateConsumption(pid,col);
+				if (WIFEXITED(status))
+				{
+					col->setJudgeState(EXIT_NORMALLY);
 
+				}
+	
 				if (WIFSIGNALED(status))
 				{
 					if(WTERMSIG(status) == SIGKILL){
@@ -668,19 +673,18 @@ int startExecution(Collection * col){
 					else if( sig == SIGXFSZ){
 						col->setJudgeState(OUTPUT_LIMIT_ERROR);
 						break;
-				}
+						}
 
-					/*
 					   else
 					   {
-					   cout<<"unknow error"<<endl;
+						   
+					   cout<<"unknow error sig:"<<sig<<endl;
 					   col->setJudgeState(RUNTIME_ERROR);
 					   break;
 					//col->setLastState(RUNTIME_ERROR);
 
 					}
-					*/
-					ptrace(PTRACE_SYSCALL, pid, NULL, sig);
+					//ptrace(PTRACE_SYSCALL, pid, NULL, sig);
 				}
 				/*
 				   if (ReadTimeConsumption(pid) >= 2*col->getTimeLimit())
@@ -698,6 +702,7 @@ int startExecution(Collection * col){
 				{
 					col->setJudgeState(MEMORY_LIMIT_ERROR);
 					col->setTimeConsumption(col->getMemoryLimit()+1);
+
 					//col->setLastState(MEMORY_LIMIT_ERROR);
 
 					//memoryConsumption = memoryLimitation+1;
@@ -742,23 +747,27 @@ int startExecution(Collection * col){
 					}
 
 				}	
+
 				if (regs.SYSCALL_ == SYS_exit ||regs.SYSCALL_ ==SYS_exit_group)
 				{
 
-					/*
+				       	/*
+					 *
 					 * comment by:Jialin Wu
 					 * if the user app is exit normally,it will call SYS_exit or SYS_exit_group
 					 * detect these two syscall to judge the app is exit normally or not
-					 */
-
+					 *
+					*/
 					updateConsumption(pid,col);
 					col->setJudgeState(EXIT_NORMALLY);
 					//	col->setJudgeState(EXIT_NORMALLY);
 
 
 				}
+
 				ptrace(PTRACE_SYSCALL,pid,NULL,NULL);
 			}
+			cout<<"in execution: run statu: "<<col->getJudgeState()<<endl;
 
 } else {
 			ptrace(PTRACE_TRACEME,0,NULL,NULL);
