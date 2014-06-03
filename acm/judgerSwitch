@@ -76,11 +76,12 @@ PROG="guetojJudger"
 
 PROG_PATH="/home/jialin/OpenDemo/acm" ## Not need, but sometimes helpful (if $PROG resides in /opt for example).
 
-process_pid=`ps -axu |grep -v 'grep' |egrep "$PROG"|awk '{print $2}'`
 
 
 
 start() {
+
+	process_pid=`ps -axu |grep -v 'grep' |egrep "$PROG"|awk '{print $2}'`
 	if [ -z $process_pid ];  then
     		$PROG_PATH/$PROG
 		echo "start $PROG successfully,$PROG is running~"
@@ -95,6 +96,8 @@ start() {
 
 
 stop() {
+
+	process_pid=`ps -axu |grep -v 'grep' |egrep "$PROG"|awk '{print $2}'`
 	if [ -z $process_pid ];  then
 		echo "$PROG is not running~"
 	else
@@ -112,10 +115,12 @@ stop() {
 }
 
 statu() {
+
+	process_pid=`ps -axu |grep -v 'grep' |egrep "$PROG"|awk '{print $2}'`
 	if [ -z $process_pid ];  then
 		echo "$PROG is not running~"
 	else
-		echo "$PROG is running,pid is $process_pid,don't start again"
+		echo "statu:$PROG is running,pid is $process_pid,don't start again"
 	fi
 }
 
