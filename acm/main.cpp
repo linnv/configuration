@@ -44,7 +44,7 @@ enum exitStatus {COMPILING = 100000, ACCEPTED=100001, PRESENTATION_ERROR, TIME_L
 int main(int argc, char *argv[])
 {
 	string argv1_str;
-	bool outputInfo=true;
+	bool outputInfo=false;
 
 	if (argc >=2)
 	{
@@ -57,6 +57,10 @@ int main(int argc, char *argv[])
 		{
 			helpInfo();
 			return 1;
+		}
+		else if (argv1_str =="-v"||argv1_str =="--verbose")
+		{
+			outputInfo =true;	
 		}
 		else{
 		   cout<<"invalid option -- '"<<argv1_str<<"'"<<endl;
@@ -74,8 +78,8 @@ int main(int argc, char *argv[])
 
 		SQL* sqlconn =  new SQL();
 		sqlconn->setHost("tcp://127.0.0.1:3306");
-		sqlconn->setUser("root");
-		sqlconn->setPasswd("a");
+		sqlconn->setUser("guetoj");
+		sqlconn->setPasswd("guetoj");
 		sqlconn->connectSQL();
 		sqlconn->useDatabase("goj");
 
@@ -356,8 +360,8 @@ int main(int argc, char *argv[])
 						writeFromString(stdFile,col[i]->getSTDOutput(),col[i]->getSTDOutput().length());
 						if (outputInfo)
 						{
-							cout<<"stdInput: \n"<<col[i]->getSTDIput()<<endl;
-							cout<<"stdOutput: \n"<<col[i]->getSTDOutput()<<endl;
+							cout<<"stdInput: \n========start==========\n"<<col[i]->getSTDIput()<<"\n========end====================\n"<<endl;
+							cout<<"stdOutput:\n========start==========\n"<<col[i]->getSTDOutput()<<"\n========end====================\n"<<endl;
 						}
 						/*
 						 *compile done start to  run user app and redirect the stdout to the file userOut file
@@ -372,7 +376,8 @@ int main(int argc, char *argv[])
 						readToString(stdFile,&strReadFromFile);
 						if (outputInfo)
 						{
-							cout<<"userOutput: \n"<<strReadFromFile<<endl;
+							cout<<"userOutput: \n========start==========\n"<<strReadFromFile<<"\n========end====================\n"<<endl;
+							//cout<<"userOutput: \n"<<strReadFromFile<<endl;
 						}
 						if ( col[i]->getJudgeState() != EXIT_NORMALLY)
 							//if ( col[i]->getJudgeState() != EXIT_NORMALLY)
@@ -1110,8 +1115,9 @@ void daemon(void) {
 void helpInfo(){
 
 	cout<<"GUETOJ Judger help information\nMandatory arguments to long options are mandatory for short options too."<<endl;
-	cout<<" -v, --verbose,none              verbosely list running detail"<<endl;
-	cout<<" -d, --daemon               run GUETOJ_Judger as daemon process"<<endl;
+	cout<<" -v, --verbose              verbosely list running detail"<<endl;
+	cout<<" -d, --daemon,none          run GUETOJ_Judger as daemon process"<<endl;
+	cout<<" -h, --help 		   help page"<<endl;
 
 
 }

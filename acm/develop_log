@@ -4,3 +4,9 @@ fix testcase bug:befor rejudge check if any testcases of runid exit or not,
 yes:delete all testace record
 no: skip detele any record in database
 
+1.1Tue Jun  3 09:41:50 CST 2014
+update script: search and kill guetojJudger expilicitly
+update daemon script which can cooperate with crontab
+modiry guetojJudger's default running statu to daemon
+
+

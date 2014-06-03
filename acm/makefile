@@ -1,5 +1,5 @@
 s=main.cpp
-d=guetJudger
+d=guetojJudger
 #d=MainExecution
 all:
 #	clang $(s) -lmysqlcppconn -std=c++11 -o $(d)
@@ -8,7 +8,7 @@ all:
 #	/usr/local/gcc4.9/bin/g++ $(s) -lmysqlcppconn -std=c++11 -o $(d)
 
 	g++ $(s) -lmysqlcppconn -std=c++11 -o $(d)
-	./$(d)
+#	./$(d)
 .phony:clean
 clean:
 	rm -f $(d)

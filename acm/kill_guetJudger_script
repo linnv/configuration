@@ -1,1 +1,1 @@
-ps -axu | grep guetJudger | awk '{print $2}'| xargs kill -9
+ ps axu |grep -v 'grep' |egrep "guetojJudger"|awk '{system("kill -9 "$2)}'
