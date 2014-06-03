@@ -818,7 +818,7 @@ int startExecution(Collection * col){
 					
 					executableLimit.rlim_cur =  col->getMemoryLimit() * 1024;
 
-					if (setrlimit(RLIMIT_AS, &executableLimit) == 0)
+					//if (setrlimit(RLIMIT_AS, &executableLimit) == 0)
 					{
 						//	cout<<"set memory limit done!"<<endl;
 					}

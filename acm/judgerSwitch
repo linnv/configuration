@@ -72,30 +72,51 @@
 
 ## Fill in name of program here.
 
-PROG="mainExecution"
+PROG="guetojJudger"
 
-PROG_PATH="/home/jialin/tmp/demo" ## Not need, but sometimes helpful (if $PROG resides in /opt for example).
+PROG_PATH="/home/jialin/OpenDemo/acm" ## Not need, but sometimes helpful (if $PROG resides in /opt for example).
+
+process_pid=`ps -axu |grep -v 'grep' |egrep "$PROG"|awk '{print $2}'`
 
 
 
 start() {
+	if [ -z $process_pid ];  then
+    		$PROG_PATH/$PROG
+		echo "start $PROG successfully,$PROG is running~"
+	else
+		echo "$PROG is running,don't start again"
+	fi
 
-    $PROG_PATH/$PROG
 
-        echo "$PROG started"
 
 }
 
 
 
 stop() {
+	if [ -z $process_pid ];  then
+		echo "$PROG is not running~"
+	else
+		kill -9 $process_pid
+		echo "$PROG is stopped"
+	fi
 
-    echo "stopping $PROG"
+
+#  echo "stopping $PROG"
 #    ps axu |grep -v 'grep' |egrep "$PROG"|awk '{system("echo "$2)}'
-ps axu |grep -v 'grep' |egrep "$PROG"|awk '{system("kill -9 "$2)}'
+#ps axu |grep -v 'grep' |egrep "$PROG"|awk '{system("kill -9 "$2)}'
        
-        echo "$PROG stopped"
+#        echo "$PROG stopped"
 
+}
+
+statu() {
+	if [ -z $process_pid ];  then
+		echo "$PROG is not running~"
+	else
+		echo "$PROG is running,pid is $process_pid,don't start again"
+	fi
 }
 
 case "$1" in
@@ -122,9 +143,19 @@ case "$1" in
 
         start
 
+       	statu 
+
         exit 0
 
     ;;
+    statu)
+
+       	statu 
+
+        exit 0
+
+    ;;
+
 
     **)
 
