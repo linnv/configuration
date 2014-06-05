@@ -49,6 +49,7 @@ int main(int argc, char *argv[])
 	if (argc >=2)
 	{
 		argv1_str= argv[1];
+
 		if (argv1_str =="-d"||argv1_str =="--daemon")
 		{
 			outputInfo =false;	
@@ -63,10 +64,10 @@ int main(int argc, char *argv[])
 			outputInfo =true;	
 		}
 		else{
-		   cout<<"invalid option -- '"<<argv1_str<<"'"<<endl;
-		   cout<<"try 'guetoj_judger -h or --help' for more information"<<endl;
-		   return 1;
-		   }
+			cout<<"invalid option -- '"<<argv1_str<<"'"<<endl;
+			cout<<"try 'guetoj_judger -h or --help' for more information"<<endl;
+			return 1;
+		}
 	}
 	//	else
 	{
@@ -197,10 +198,10 @@ int main(int argc, char *argv[])
 				/*
 				 * unconfirm whether format source code by using dos2unix or not
 				 *
-				string dos2unix_source_code="dos2unix "+file;
-				system(dos2unix_source_code.c_str());
-				*/
-				
+				 string dos2unix_source_code="dos2unix "+file;
+				 system(dos2unix_source_code.c_str());
+				 */
+
 				cout<<"format source code done!"<<endl;
 				if (col[i]->getLanguageId() == 4)// java
 				{
@@ -308,19 +309,19 @@ int main(int argc, char *argv[])
 					 * check if any testcase exist or not, yes: delete; no: skip
 					 */
 					sqlconn->querySQL("select * from tbl_run_testcase where run_id="+std::to_string(col[i]->getRunId()) );
-								//sql::ResultSet *res = sqlconn->getResultSet();
-								//cout<<"dealing with "<<sqlconn->getRowsCount()<<" source code(s)"<<endl<<endl;
-								if (sqlconn->getRowsCount())
-								{
-									if (outputInfo)
-									{
-										cout<<"previous testcase(s)  exist,now delete all these testcase(s)"<<endl;
-									}
+					//sql::ResultSet *res = sqlconn->getResultSet();
+					//cout<<"dealing with "<<sqlconn->getRowsCount()<<" source code(s)"<<endl<<endl;
+					if (sqlconn->getRowsCount())
+					{
+						if (outputInfo)
+						{
+							cout<<"previous testcase(s)  exist,now delete all these testcase(s)"<<endl;
+						}
 
-									sqlconn->querySQL("delete from tbl_run_testcase where run_id="+std::to_string(col[i]->getRunId()) );
+						sqlconn->querySQL("delete from tbl_run_testcase where run_id="+std::to_string(col[i]->getRunId()) );
 
 
-								}
+					}
 
 
 
@@ -354,7 +355,7 @@ int main(int argc, char *argv[])
 						//cout<<"dos2unix is working"<<endl;
 						dos2unixFile="dos2unix "+stdFile;
 						system(dos2unixFile.c_str());
-					//	cout<<"dos2unix worked done!"<<endl;
+						//	cout<<"dos2unix worked done!"<<endl;
 
 						stdFile = "./tmp/stdOut";
 						writeFromString(stdFile,col[i]->getSTDOutput(),col[i]->getSTDOutput().length());
@@ -605,7 +606,7 @@ int startExecution(Collection * col){
 					col->setJudgeState(EXIT_NORMALLY);
 
 				}
-	
+
 				if (WIFSIGNALED(status))
 				{
 					if(WTERMSIG(status) == SIGKILL){
@@ -673,15 +674,15 @@ int startExecution(Collection * col){
 					else if( sig == SIGXFSZ){
 						col->setJudgeState(OUTPUT_LIMIT_ERROR);
 						break;
-						}
+					}
 
-					   else
-					   {
-						   
-					   cout<<"unknow error sig:"<<sig<<endl;
-					   col->setJudgeState(RUNTIME_ERROR);
-					   break;
-					//col->setLastState(RUNTIME_ERROR);
+					else
+					{
+
+						cout<<"unknow error sig:"<<sig<<endl;
+						col->setJudgeState(RUNTIME_ERROR);
+						break;
+						//col->setLastState(RUNTIME_ERROR);
 
 					}
 					//ptrace(PTRACE_SYSCALL, pid, NULL, sig);
@@ -690,7 +691,7 @@ int startExecution(Collection * col){
 				   if (ReadTimeConsumption(pid) >= 2*col->getTimeLimit())
 
 				   {
-					cout<<"TLC: ts:"<<ReadTimeConsumption(pid)<<endl;
+				   cout<<"TLC: ts:"<<ReadTimeConsumption(pid)<<endl;
 				   col->setJudgeState(TIME_LIMIT_ERROR);
 				   col->setTimeConsumption(col->getTimeLimit()+1);
 				   ptrace(PTRACE_KILL,pid,NULL,NULL);	
@@ -751,13 +752,13 @@ int startExecution(Collection * col){
 				if (regs.SYSCALL_ == SYS_exit ||regs.SYSCALL_ ==SYS_exit_group)
 				{
 
-				       	/*
+					/*
 					 *
 					 * comment by:Jialin Wu
 					 * if the user app is exit normally,it will call SYS_exit or SYS_exit_group
 					 * detect these two syscall to judge the app is exit normally or not
 					 *
-					*/
+					 */
 					updateConsumption(pid,col);
 					col->setJudgeState(EXIT_NORMALLY);
 					//	col->setJudgeState(EXIT_NORMALLY);
@@ -769,9 +770,9 @@ int startExecution(Collection * col){
 			}
 			cout<<"in execution: run statu: "<<col->getJudgeState()<<endl;
 
-} else {
+		} else {
 			ptrace(PTRACE_TRACEME,0,NULL,NULL);
-					//cout<<"test output:"<<endl;
+			//cout<<"test output:"<<endl;
 			//fopen("./tmp/userOut", "w+");
 
 			if (col->getLanguageId() ==4)
@@ -779,43 +780,43 @@ int startExecution(Collection * col){
 				execl("/usr/java/bin/java", "/usr/java/bin/java","Main", (char *) NULL);
 			}
 			else{
-			if (getrlimit(RLIMIT_FSIZE, &executableLimit) == 0)
-			{
-				/*
-
-				   executableLimit.rlim_cur);
-				   printf("Hard Limit for virtual memory : %ld\n",
-				   executableLimit.rlim_max);
-				   */
-
-				/*
-				 *comment by: Jialin Wu
-				 *output limitation is set the const value: 5MB
-				 */
-				executableLimit.rlim_cur = 5 * 1024* 1024;  //MB
-				if (setrlimit(RLIMIT_FSIZE, &executableLimit) == 0)
+				if (getrlimit(RLIMIT_FSIZE, &executableLimit) == 0)
 				{
-					//         printf("Set New Limit for file size output limit  successed!\n");
-				}
-			}
-			/*
-				if ( getrlimit(RLIMIT_STACK,&executableLimit) == 0)
-				{
-					// executableLimit.rlim_cur = 2 * 1024;
-				//	cout<<"default stack value cur: "<<executableLimit.rlim_cur<<"\n max: "<<executableLimit.rlim_max<<endl<<endl;
-					executableLimit.rlim_cur =  col->getMemoryLimit() * 1024;
+					/*
 
-				//		if (setrlimit(RLIMIT_AS, &executableLimit) == 0)
+					   executableLimit.rlim_cur);
+					   printf("Hard Limit for virtual memory : %ld\n",
+					   executableLimit.rlim_max);
+					   */
+
+					/*
+					 *comment by: Jialin Wu
+					 *output limitation is set the const value: 5MB
+					 */
+					executableLimit.rlim_cur = 5 * 1024* 1024;  //MB
+					if (setrlimit(RLIMIT_FSIZE, &executableLimit) == 0)
 					{
-						//	cout<<"set memory limit done!"<<endl;
+						//         printf("Set New Limit for file size output limit  successed!\n");
 					}
 				}
-					*/
+				/*
+				   if ( getrlimit(RLIMIT_STACK,&executableLimit) == 0)
+				   {
+				// executableLimit.rlim_cur = 2 * 1024;
+				//	cout<<"default stack value cur: "<<executableLimit.rlim_cur<<"\n max: "<<executableLimit.rlim_max<<endl<<endl;
+				executableLimit.rlim_cur =  col->getMemoryLimit() * 1024;
+
+				//		if (setrlimit(RLIMIT_AS, &executableLimit) == 0)
+				{
+				//	cout<<"set memory limit done!"<<endl;
+				}
+				}
+				*/
 				if ( getrlimit(RLIMIT_AS,&executableLimit) == 0)
 				{
 					// executableLimit.rlim_cur = 2 * 1024;
 					// byte
-					
+
 					executableLimit.rlim_cur =  col->getMemoryLimit() * 1024;
 
 					//if (setrlimit(RLIMIT_AS, &executableLimit) == 0)
@@ -841,9 +842,9 @@ int startExecution(Collection * col){
 						//		cout<<"set time limit done!"<<endl;
 					}
 				}
-			freopen("./tmp/stdIn", "r", stdin);
-			freopen("./tmp/userOut", "w+", stdout);
-			execl("./Main", "./Main", (char *) NULL);
+				freopen("./tmp/stdIn", "r", stdin);
+				freopen("./tmp/userOut", "w+", stdout);
+				execl("./Main", "./Main", (char *) NULL);
 			}
 		}
 	}
@@ -1098,6 +1099,12 @@ void daemon(void) {
 	 *      * Change the current working directory to the root.
 	 *           * if you are using database  just ignore this and comment them.
 	 *                */
+
+	//if (chdir("/home/xgqin/guetoj_judger") < 0) 
+	if (chdir("/home/jialin/OpenDemo/acm") < 0) 
+	{     perror("chdir");
+		exit(1);
+	}
 
 	/*if (chdir("/") < 0) {     perror("chdir");
 	 *      exit(1);
