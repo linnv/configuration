@@ -28,7 +28,7 @@
 using namespace std;
 
 
-enum exitStatus {COMPILING = 100000, ACCEPTED=100001, PRESENTATION_ERROR, TIME_LIMIT_ERROR, MEMORY_LIMIT_ERROR, WRONG_ANSWER, RUNTIME_ERROR, OUTPUT_LIMIT_ERROR, COMPILE_ERROR, SYSTEM_ERROR, VALIATOR_ERROR, EXIT_NORMALLY,SYSCALL_RESTRICTION,SEGMENTATION_FAULT};
+enum exitStatus {COMPILING = 100000, ACCEPTED=100001, PRESENTATION_ERROR, TIME_LIMIT_ERROR, MEMORY_LIMIT_ERROR, WRONG_ANSWER, RUNTIME_ERROR, OUTPUT_LIMIT_ERROR, COMPILE_ERROR, SYSTEM_ERROR, VALIATOR_ERROR, EXIT_NORMALLY,SYSCALL_RESTRICTION,SEGMENTATION_FAULT,FLOATING_POINT_ERROR};
 
 int ReadTimeConsumption(pid_t pid);
 int ReadMemoryConsumption(pid_t pid);
@@ -36,14 +36,15 @@ void updateConsumption(pid_t pid,Collection* col);
 void daemon(void);
 void helpInfo();
 
-bool compileSourceCode( const string &compileCommand);
 int writeFromString( string &fileName, const string& buffer, size_t count);
 int readToString(string &fileName, string* str);
 int startExecution(Collection *col);
 int diffCasesJudge(Collection* col);
 void find_next_nonspace(int * c1, int * c2, FILE * stdf, FILE * usrf,Collection * col);
+
+bool compileSourceCode( const string &compileCommand);
 int compilingPid;
-void timeLimitationHandler(int signo)
+void timeLimitationHandler(int sig)
 {
 	  printf("compile Time Limit Error!\n");
         kill(compilingPid, SIGKILL);
@@ -108,6 +109,7 @@ int main(int argc, char *argv[])
 		FILE* generateFile;
 		string dos2unixFile;
 		int tmpStatu;
+		bool compileSuccess;
 		/*
 		 * loop for headp problems
 		 */
@@ -224,28 +226,22 @@ int main(int argc, char *argv[])
 				{
 					cout<<"compile command is: "<<endl<<compileCommand<<endl;
 				}
-				
 				/*
-				 * fork to run compiling
-				 * void source code contains like "#include"/dev/random" 
-				 */
-				bool compileSuccess;
-				compileSuccess=false;
-				compileSuccess = compileSourceCode(compileCommand);
+				//write error to database
+				if(strReadFromFile.length() >10){
+				cout<<"write error to sql,conten:"<<strReadFromFile<<endl;
+				col[i]->setCompilerError(strReadFromFile);
+				}
+				else{
+				strReadFromFile = " ";
+				col[i]->setCompilerError(strReadFromFile);
+				}
+				*/
 
 				//system(compileCommand.c_str());
 
-				/*
-				 *rename mainName to execute app's name
-				 */
-				if (col[i]->getLanguageId() ==4)
-				{
-					mainName = "./Main.class";
-				}
-				else{
-					mainName ="./Main";
-				}
-
+				compileSuccess=false;
+				compileSuccess = compileSourceCode(compileCommand);
 				if (!compileSuccess)
 				{
 					cout<<"compile with evil"<<endl;
@@ -254,6 +250,7 @@ int main(int argc, char *argv[])
 					 *
 					 */
 					//readToString(errorfile,&strReadFromFile);
+					strReadFromFile.clear();
 					strReadFromFile+=" dont' t be evil!";
 					col[i]->setCompilerError(strReadFromFile);
 					col[i]->setLastState(COMPILE_ERROR);
@@ -284,6 +281,17 @@ int main(int argc, char *argv[])
 				}
 				else{//test
 
+				/*
+				 *rename mainName to execute app's name
+				 */
+				if (col[i]->getLanguageId() ==4)
+				{
+					mainName = "./Main.class";
+				}
+				else{
+					mainName ="./Main";
+				}
+
 				generateFile =fopen(mainName.c_str(),"r");
 
 				//cout<<"finish exectue compile command"<<endl;
@@ -295,7 +303,8 @@ int main(int argc, char *argv[])
 					 *
 					 */
 					readToString(errorfile,&strReadFromFile);
-					strReadFromFile+=" from null";
+					cout<<"error info: "<<strReadFromFile<<endl;
+				//	strReadFromFile+=" from null";
 					col[i]->setCompilerError(strReadFromFile);
 					col[i]->setLastState(COMPILE_ERROR);
 					/*
@@ -318,7 +327,6 @@ int main(int argc, char *argv[])
 					//pstm->setString(4,col[i]->getCompilerError());
 					pstm->setInt(3,col[i]->getRunId());
 					pstm->executeUpdate();
-					cout<<"error info: "<<col[i]->getCompilerError()<<endl;
 					delete pstm;
 
 					//totolTimeconsumption = 0;
@@ -655,13 +663,15 @@ int startExecution(Collection * col){
 				if (WIFSIGNALED(status))
 				{
 					if(WTERMSIG(status) == SIGKILL){
-						cout<<"signal kill"<<endl;
+						//cout<<"signal kill"<<endl;
 						col->setJudgeState(RUNTIME_ERROR);
 						//col->setLastState(RUNTIME_ERROR);
+					break;
 
 					}
-					break;
 				}
+
+				/*
 				if(!WIFSTOPPED(status)){
 					if (WTERMSIG(status))
 					{
@@ -671,6 +681,7 @@ int startExecution(Collection * col){
 					}	
 					break;
 				}
+				*/
 				/*
 				 * comment by: Jialin Wu
 				 *copy from referrence manual: While being traced, the tracee will stop each time a signal is delivered, even if the signal is being ignored. (An exception is SIGKILL, which has its usual effect.) The tracer will be notified at its next call to waitpid(2) (or one of the related "wait" system calls); that call will return a status value containing information that indicates the cause of the stop in the tracee. While the tracee is stopped, the tracer can use various ptrace requests to inspect and modify the tracee. The tracer then causes the tracee to continue, optionally ignoring the delivered signal (or even delivering a different signal instead).
@@ -708,7 +719,7 @@ int startExecution(Collection * col){
 						//col->setLastState(RUNTIME_ERROR);
 
 					}
-					else if( sig == SIGSEGV){
+					else if( sig == SIGSEGV||sig == SIGBUS){
 
 						cout<<"segment fault sig: "<<sig<<endl;
 						col->setJudgeState(SEGMENTATION_FAULT);
@@ -720,17 +731,20 @@ int startExecution(Collection * col){
 						col->setJudgeState(OUTPUT_LIMIT_ERROR);
 						break;
 					}
-
+					else if( sig ==SIGFPE){
+						col->setJudgeState(FLOATING_POINT_ERROR);
+						break;
+					}
 					else
 					{
 
 						cout<<"unknow error sig:"<<sig<<endl;
-						col->setJudgeState(RUNTIME_ERROR);
-						break;
+				//		col->setJudgeState(RUNTIME_ERROR);
+						//break;
 						//col->setLastState(RUNTIME_ERROR);
 
 					}
-					//ptrace(PTRACE_SYSCALL, pid, NULL, sig);
+					ptrace(PTRACE_SYSCALL, pid, NULL, sig);
 				}
 				/*
 				   if (ReadTimeConsumption(pid) >= 2*col->getTimeLimit())
@@ -785,9 +799,10 @@ int startExecution(Collection * col){
 						ptrace(PTRACE_SYSCALL,pid,NULL,NULL);	
 					}
 					else{
+
+						cout<<"syscal restrictive num: "<<regs.SYSCALL_<<endl;
 						//the app is do somethin evil,so kill it!
 						col->setJudgeState(SYSCALL_RESTRICTION);
-
 						ptrace(PTRACE_KILL,pid,NULL,NULL);	
 						break;
 					}
@@ -1145,8 +1160,8 @@ void daemon(void) {
 	 *           * if you are using database  just ignore this and comment them.
 	 *                */
 
+	if (chdir("~/guetoj/judger/cpp_version_judger") < 0) 
 	//if (chdir("/home/xgqin/guetoj_judger") < 0) 
-	if (chdir("/home/jialin/OpenDemo/acm") < 0) 
 	{     perror("chdir");
 		exit(1);
 	}
@@ -1170,6 +1185,7 @@ void daemon(void) {
 	dup2(0, 2);
 }
 
+
 bool compileSourceCode( const string &compileCommand){
 	compilingPid=0;
 	int statu;
@@ -1192,7 +1208,7 @@ bool compileSourceCode( const string &compileCommand){
 				//cout<<"time limitation exceeded be killed\n";
 				kill(pid,9);
 				return false;
-					
+
 			}
 					/*
 			if (WTERMSIG(statu) == SIGXCPU){
@@ -1205,7 +1221,7 @@ bool compileSourceCode( const string &compileCommand){
 
 
 
-		
+
 		}
 	}
 	else{
@@ -1217,16 +1233,15 @@ bool compileSourceCode( const string &compileCommand){
 								cout<<"set time limit done!"<<endl;
 					}
 					*/
-		
+
 		const char* commands[] = {"/bin/sh", "sh", "-c", compileCommand.c_str(), NULL};
  		execv(commands[0], (char**)(commands + 1));
 		printf("exec command faild%s\n", *commands);
-	
+
 	}
 
 return true;
 }
-
 
 
 void helpInfo(){

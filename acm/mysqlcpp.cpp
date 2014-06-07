@@ -118,6 +118,7 @@ class SQL{
 		}
 	
 };
+/*
 int mainn(void)
 {
 	SQL* sqlDemo = new SQL();
@@ -137,3 +138,4 @@ int mainn(void)
 	cout << endl;
 return EXIT_SUCCESS;
 }
+*/
