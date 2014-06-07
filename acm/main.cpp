@@ -28,6 +28,7 @@
 using namespace std;
 
 
+enum exitStatus {COMPILING = 100000, ACCEPTED=100001, PRESENTATION_ERROR, TIME_LIMIT_ERROR, MEMORY_LIMIT_ERROR, WRONG_ANSWER, RUNTIME_ERROR, OUTPUT_LIMIT_ERROR, COMPILE_ERROR, SYSTEM_ERROR, VALIATOR_ERROR, EXIT_NORMALLY,SYSCALL_RESTRICTION,SEGMENTATION_FAULT};
 
 int ReadTimeConsumption(pid_t pid);
 int ReadMemoryConsumption(pid_t pid);
@@ -35,12 +36,19 @@ void updateConsumption(pid_t pid,Collection* col);
 void daemon(void);
 void helpInfo();
 
+bool compileSourceCode( const string &compileCommand);
 int writeFromString( string &fileName, const string& buffer, size_t count);
 int readToString(string &fileName, string* str);
 int startExecution(Collection *col);
 int diffCasesJudge(Collection* col);
 void find_next_nonspace(int * c1, int * c2, FILE * stdf, FILE * usrf,Collection * col);
-enum exitStatus {COMPILING = 100000, ACCEPTED=100001, PRESENTATION_ERROR, TIME_LIMIT_ERROR, MEMORY_LIMIT_ERROR, WRONG_ANSWER, RUNTIME_ERROR, OUTPUT_LIMIT_ERROR, COMPILE_ERROR, SYSTEM_ERROR, VALIATOR_ERROR, EXIT_NORMALLY,SYSCALL_RESTRICTION,SEGMENTATION_FAULT};
+int compilingPid;
+void timeLimitationHandler(int signo)
+{
+	  printf("compile Time Limit Error!\n");
+        kill(compilingPid, SIGKILL);
+        }
+
 int main(int argc, char *argv[])
 {
 	string argv1_str;
@@ -202,7 +210,7 @@ int main(int argc, char *argv[])
 				 system(dos2unix_source_code.c_str());
 				 */
 
-				cout<<"format source code done!"<<endl;
+				//cout<<"format source code done!"<<endl;
 				if (col[i]->getLanguageId() == 4)// java
 				{
 					compileCommand = col[i]->getCompilerName() +" -Wall "+ file +" "+  col[i]->getCompilerOption() + " 2>" + errorfile;
@@ -216,19 +224,16 @@ int main(int argc, char *argv[])
 				{
 					cout<<"compile command is: "<<endl<<compileCommand<<endl;
 				}
+				
 				/*
-				//write error to database
-				if(strReadFromFile.length() >10){
-				cout<<"write error to sql,conten:"<<strReadFromFile<<endl;
-				col[i]->setCompilerError(strReadFromFile);
-				}
-				else{
-				strReadFromFile = " ";
-				col[i]->setCompilerError(strReadFromFile);
-				}
-				*/
+				 * fork to run compiling
+				 * void source code contains like "#include"/dev/random" 
+				 */
+				bool compileSuccess;
+				compileSuccess=false;
+				compileSuccess = compileSourceCode(compileCommand);
 
-				system(compileCommand.c_str());
+				//system(compileCommand.c_str());
 
 				/*
 				 *rename mainName to execute app's name
@@ -240,6 +245,44 @@ int main(int argc, char *argv[])
 				else{
 					mainName ="./Main";
 				}
+
+				if (!compileSuccess)
+				{
+					cout<<"compile with evil"<<endl;
+					/*
+					 *compile failed
+					 *
+					 */
+					//readToString(errorfile,&strReadFromFile);
+					strReadFromFile+=" dont' t be evil!";
+					col[i]->setCompilerError(strReadFromFile);
+					col[i]->setLastState(COMPILE_ERROR);
+					/*
+					 *delete the source file and error file when it's needless
+					 */
+					errorfile = "./"+errorfile;
+					delteComand="rm "+file + " " +errorfile;
+					system(delteComand.c_str());
+					//cout<<"time used:"<<col[i]->getTimeComsupted()<<"ns   memory used:"<<col[i]->getMemoryComsupted()<<"kb state: "<<col[i]->getLastState()<<endl;
+					//cout<<"last result of run ID "<<col[i]->getRunId()<<" time consumption:"<<col[i]->getTimeConsumption()<<" memory consumption: "<<
+					//	col[i]->getMemoryConsumption()<<" status: "<<col[i]->getLastState()<<endl<<endl;
+
+					sql::PreparedStatement *pstm=sqlconn->con->prepareStatement("UPDATE tbl_run SET Status = ?,compile_error = ?  WHERE Run_ID = ?");
+					pstm->setInt(1,col[i]->getLastState());
+					pstm->setString(2,col[i]->getCompilerError());
+					//pstm->setInt(2,totolTimeconsumption);
+					//pstm->setInt(2,col[i]->getTimeComsupted());
+					//pstm->setInt(3,col[i]->getMemoryComsupted());
+					//pstm->setInt(3,totolMemoryConsumption);
+					//pstm->setString(4,col[i]->getCompilerError());
+					pstm->setInt(3,col[i]->getRunId());
+					pstm->executeUpdate();
+					delete pstm;
+
+
+
+				}
+				else{//test
 
 				generateFile =fopen(mainName.c_str(),"r");
 
@@ -275,6 +318,7 @@ int main(int argc, char *argv[])
 					//pstm->setString(4,col[i]->getCompilerError());
 					pstm->setInt(3,col[i]->getRunId());
 					pstm->executeUpdate();
+					cout<<"error info: "<<col[i]->getCompilerError()<<endl;
 					delete pstm;
 
 					//totolTimeconsumption = 0;
@@ -519,6 +563,7 @@ int main(int argc, char *argv[])
 						col[i]->getMemoryConsumption()<<" status: "<<col[i]->getLastState()<<endl<<endl;
 					//totolTimeconsumption = 0;
 					//totolMemoryConsumption=0;
+				}
 				}
 				delete col[i];
 				col[i] = NULL;
@@ -1125,6 +1170,62 @@ void daemon(void) {
 	dup2(0, 2);
 }
 
+bool compileSourceCode( const string &compileCommand){
+	compilingPid=0;
+	int statu;
+	int pid = fork();
+	if (pid)
+	{
+		compilingPid=pid;
+		alarm(5);
+		signal(SIGALRM, timeLimitationHandler);
+		while(waitpid(pid,&statu,0)>0){
+
+					if (WIFEXITED(statu))
+				{
+					cout<<"compile successfully!"<<endl;
+					alarm(0);
+					return true;
+
+				}
+				if (WTERMSIG(statu) == SIGKILL){
+				//cout<<"time limitation exceeded be killed\n";
+				kill(pid,9);
+				return false;
+					
+			}
+					/*
+			if (WTERMSIG(statu) == SIGXCPU){
+				cout<<"time limitation exceeded\n";
+				kill(pid,9);
+				return false;
+					
+			}
+			*/
+
+
+
+		
+		}
+	}
+	else{
+		/*
+		struct rlimit executableLimit;
+		executableLimit.rlim_cur =1;
+		if (setrlimit(RLIMIT_CPU, &executableLimit) == 0)
+					{
+								cout<<"set time limit done!"<<endl;
+					}
+					*/
+		
+		const char* commands[] = {"/bin/sh", "sh", "-c", compileCommand.c_str(), NULL};
+ 		execv(commands[0], (char**)(commands + 1));
+		printf("exec command faild%s\n", *commands);
+	
+	}
+
+return true;
+}
 
 
 
