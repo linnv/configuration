@@ -217,12 +217,17 @@ int main(int argc, char *argv[])
 				{
 					compileCommand = col[i]->getCompilerName() +" -Wall "+ file +" "+  col[i]->getCompilerOption() + " 2>" + errorfile;
 				}
+				else if (col[i]->getLanguageId() == 5)// pascal
+				{
+					compileCommand = col[i]->getCompilerName()+" "+ file + " "+ col[i]->getCompilerOption() +" 2>" +errorfile;
+				
+				}
 				else{
 					//cout<<"start compiling "<<endl;
 					compileCommand = col[i]->getCompilerName() +" -o "+ mainName+" "+ file + " "+ col[i]->getCompilerOption() +" 2>" +errorfile;
 					//compileCommand = col[i]->getCompilerName() +" "+ file +" "+  col[i]->getCompilerOption()+" -o "+  mainName +"  2>" +errorfile;
 				}
-				if (outputInfo)
+				//if (outputInfo)
 				{
 					cout<<"compile command is: "<<endl<<compileCommand<<endl;
 				}
@@ -532,7 +537,13 @@ int main(int argc, char *argv[])
 					 * delete the source code file error file and execute file when they are needless
 					 * for example: rm ./Main main.cpp error
 					 */
+					if (col[i]->getLanguageId() ==5)
+					{
+					delteComand="rm "+mainName+" "+file + " " +errorfile + " Main.o";
+					}
+					else{
 					delteComand="rm "+mainName+" "+file + " " +errorfile;
+					}
 					system(delteComand.c_str());
 
 					//totolTimeconsumption /=(caseCount*1000);   //milis but not micros?

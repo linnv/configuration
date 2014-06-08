@@ -12,3 +12,6 @@ modiry guetojJudger's default running statu to daemon
 
 Tue Jun  3 16:18:53 CST 2014
 fix daemon issue: enable chdir to make guetojJudger working well
+
+Sun Jun  8 08:09:04 CST 2014
+support pascal whit no security promise
