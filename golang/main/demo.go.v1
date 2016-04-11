@@ -1,0 +1,292 @@
+// Package main provides ...
+package main
+
+import (
+	"os/exec"
+	// "ssp_web/lib/mdb"
+
+	"color"
+	"os"
+	// "strings"
+	"syscall"
+	// "encoding/json"
+	"fmt"
+	// "os"
+	// "flag"
+	"runtime"
+	// "path/filepath"
+	"reflect"
+)
+
+type B struct {
+	Name string
+	Life int
+}
+
+func (t *B) fly() {
+
+	red := color.New(color.FgRed).PrintfFunc()
+	red("Warning")
+}
+
+type C struct {
+	B
+	Life int
+	// *B
+}
+type Foo struct {
+	FirstName string `tag_name:"tag 1"`
+	LastName  string `tag_name:"tag 2"`
+	Age       int    `tag_name:"tag 3"`
+}
+
+func testB(n int) bool {
+	if n > 0 {
+		return true
+	}
+	return false
+}
+func bb(n int) bool {
+	return testB(n)
+}
+
+func (f *Foo) reflect() {
+	val := reflect.ValueOf(f).Elem()
+
+	for i := 0; i < val.NumField(); i++ {
+		valueField := val.Field(i)
+		typeField := val.Type().Field(i)
+		tag := typeField.Tag
+
+		fmt.Printf("Field Name: %s,\t Field Value: %v,\t Tag Value: %s\n", typeField.Name, valueField.Interface(), tag.Get("tag_name"))
+		fmt.Printf("%+v\n", val.Len())
+
+	}
+
+}
+
+//
+// func tmpMain() type {
+//
+// 	fmt.Printf("%#v\n", bb(19))
+// 	fmt.Printf("%#v\n", bb(-19))
+//
+// 	demo := &B{"jialin", 1000}
+// 	s := reflect.ValueOf(demo).Elem()
+// 	typeOfT := s.Type()
+// 	for i := 0; i < s.NumField(); i++ {
+// 		f := s.Field(i)
+// 		fmt.Printf("%d: %s %s =%#v\n", i, typeOfT.Field(i).Name, f.Type(), f.Interface())
+// 	}
+// 	d := &C{B{"a", 100}, 10}
+// 	// d := &C{&B{"a", 100}}
+// 	d.fly()
+// 	fmt.Printf("%+v\n", d.B)
+// 	fmt.Printf("%+v\n", d.Life)
+// 	// fmt.Printf("%+v\n", d.B.life)
+// 	fmt.Println("==============")
+// 	var intArry = []int{}
+// 	for i := 0; i < 10; i++ {
+//
+// 		intArry = append(intArry, i)
+// 	}
+// 	fmt.Printf("%+v\n", intArry)
+// 	println("------ pause \n========================\n")
+//
+// 	tmpm := make(map[string]int)
+// 	tmpm["a"] = 1
+// 	tmpm["b"] = 2
+// 	b, err := json.Marshal(tmpm)
+// 	if err != nil {
+// 		panic(err.Error())
+// 	}
+// 	fmt.Printf("%s\n", string(b))
+//
+// }
+
+func GetCurrentPath() string {
+	_, filename, _, _ := runtime.Caller(1)
+	fmt.Printf("%+v\n", filename)
+	return filename
+
+}
+
+func envExecute() {
+
+	binary, lookErr := exec.LookPath("ls")
+	if lookErr != nil {
+		panic(lookErr)
+
+	}
+	args := []string{"ls", "-a", "-l", "-h"}
+
+	env := os.Environ()
+
+	execErr := syscall.Exec(binary, args, env)
+	if execErr != nil {
+		panic(execErr)
+
+	}
+}
+
+func checkErr(err error) {
+	if err != nil {
+		panic(err.Error())
+	}
+}
+func trashb() {
+	{
+		err := exec.Command("sh", "./d.sh").Run()
+		checkErr(err)
+
+		// fmt.Println(string(out))
+
+		// args := []string{"--db", "ssp_jialin", "--collection", "Category", "--out", "categoryhaha.json"}
+		// // args := []string{" --db ", dbName, " --collection ", CATEGORY, " --out ", exportFile}
+		//
+		// env := os.Environ()
+		//
+		// execErr := syscall.Exec(binary, args, env)
+		// if execErr != nil {
+		// 	panic(execErr)
+		//
+		// }
+
+		// binary, lookErr := exec.LookPath("mongoexport")
+		// if lookErr != nil {
+		// 	panic(lookErr)
+		//
+		// }
+		// args := []string{"--db", "ssp_jialin", "--collection", "Category", "--out", "categoryhaha.json"}
+		// tm := binary + " " + strings.Join(args, " ")
+		// fmt.Printf("%+v\n", tm)
+		//
+		// fmt.Println(GetCurrentPath())
+		// dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+		// checkErr(err)
+		// fmt.Println(dir)
+		// err := exec.Command("/usr/local/bin/mongoexport", args...).Run()
+		// err := exec.Command(binary, args...).Run()
+		// if err != nil {
+		// 	panic(err.Error())
+		// }
+
+		//
+		// execErr := syscall.Exec(binary, args, env)
+		// if execErr != nil {
+		// 	panic(execErr)
+		//
+		// }
+		// err := exec.Command("ls").Run()
+		// cmdArgs := []string{}
+		// cmdArgs = append(cmdArgs, "-all")
+		// cmdArgs = append(cmdArgs, "-h")
+		// fmt.Sprintf(" mongoexport --db %s --collection %s --out category.json")
+		// out, err := exec.Command("/bin/sh", "ls", "-all", "../").Output()
+
+		// cleanOption := flag.Bool("truncate", false, "clean all data before doing  importation ")
+
+		// err := exec.Command("/usr/local/bin/mongoexport", "--db", "ssp_jialin", "--collection", "Category", "--out", "categoryhaha.json").Run()
+		// if err != nil {
+		// 	panic(err.Error())
+		// }
+		// println("export successfully!")
+		//
+		// Create a custom print function for convenience
+		// Output := color.NewAnsiColorWriter(os.Stdout)
+		// red := color.New(color.FgRed).PrintfFunc()
+		// red("Warning")
+
+		// red("Error: %s", err)
+
+		// Mix up multiple attributes
+		// notice := color.New(color.Bold, color.FgGreen).PrintlnFunc()
+		// notice("Don't forget this...")
+	}
+}
+
+type m struct {
+	Id   int `bson:"_id"` //pk
+	Name string
+	Age  int
+}
+
+func main() {
+	// t := &m{
+	// 	12, "haha", 1111,
+	// }
+
+	// slice := make([]int, 0, 5)
+	// println(cap(slice))
+	// println(len(slice))
+	// for i := 0; i < 12; i++ {
+	// 	slice = append(slice, i)
+	// }
+	// fmt.Printf("%+v\n", slice)
+	// println(cap(slice))
+	// println(len(slice))
+
+	// fmt.Printf("%+v\n", string(t.Bytes()))
+	// intArray := []int{1, 2, 4}
+	// intSlice := make([]int, 0)        //0是better
+	// intSlice = append(intSlice, 8, 5) //logical
+	// intSlice = append(intSlice, 8, 5, intSlice...) //illogical
+	// for index, value := range intSlice {
+	// 	fmt.Printf("index %d ->%+v\n", index, value)
+	// }
+	// println(cap(intSlice))
+	// println(len(intSlice))
+
+	// arragetmp := []interface{}{"a", 2, "c", true}
+	// // arragetmp := []string{"a", "c"}
+	// for index, v := range arragetmp {
+	// 	fmt.Printf("index:%d ->%+v\n", index, v)
+	// }
+
+	// b := []rune(s)
+	// for index, runeInteger := range "abc" {
+	// 	character := string(runeInteger)
+	// 	fmt.Printf("index:%d ->%+v\n", index, runeInteger)
+	// 	fmt.Printf("index:%d ->%+v\n", index, character)
+	// }
+
+	// // var db = mdb.GetDb()
+	// id := mdb.AutoIncId("CATEGORY")
+	// println(id)
+	// var b *B
+	// b = nil
+	// var i interface{}
+	// i = nil
+	// if b == i {
+	// 	println("true")
+	// } else {
+	// 	fmt.Printf("one is %#v and another is %#v\n", i, b)
+	// 	println("false")
+	// }
+	//
+	// i = b
+	// if i == b {
+	// 	println("2 true")
+	// } else {
+	// 	println("2 false")
+	// }
+	//
+	//
+	// inslice := []int{}
+	// for i := 0; i < 10; i++ {
+	// 	inslice = append(inslice, i)
+	// }
+	//
+	// inslice = inslice[:9]
+	// fmt.Printf("%+v\n", inslice)
+	// slice := inslice[0:5] //index, len,max
+	// for i, v := range inslice {
+	// 	if v == 2 {
+	// 		inslice = inslice[(i + 1):]
+	// 	}
+	// }
+	// fmt.Printf("%+v\n", slice)
+	// end := inslice[:0]
+	// fmt.Printf("%+v\n", end)
+
+}

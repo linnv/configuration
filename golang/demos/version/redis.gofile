@@ -1,0 +1,260 @@
+// Package main provides ...
+package main
+
+import (
+	"encoding/json"
+	"errors"
+	"io/ioutil"
+	"os"
+	"os/signal"
+	"runtime"
+	"time"
+
+	"fmt"
+	"github.com/vmihailenco/redis"
+
+	// "log"
+	"reflect"
+	"strconv"
+
+	// "ssp_rocket/library/db/dbutil"
+)
+
+var defaultRC = &redisConfig{}
+
+type redisConfig struct {
+	Port string `json:"port"`
+	Host string `json:"host"`
+}
+
+var fm = funcManager{FunCount: 0}
+
+func init() {
+	b, err := ioutil.ReadFile("./redis.json")
+
+	if err != nil {
+		panic(err.Error())
+		return
+	}
+	err = json.Unmarshal(b, &defaultRC)
+	// println("demino")
+}
+
+func transaction(multi *redis.MultiClient) ([]redis.Req, error) {
+	get := multi.Get("key")
+	if err := get.Err(); err != nil && err != redis.Nil {
+		return nil, err
+
+	}
+
+	val, _ := strconv.ParseInt(get.Val(), 10, 64)
+	reqs, err := multi.Exec(func() {
+		multi.Set("key", strconv.FormatInt(val+1, 10))
+
+	})
+
+	// Transaction failed. Repeat.
+	if err == redis.Nil {
+		println("repeat transaction")
+		return transaction(multi)
+
+	}
+	return reqs, err
+
+}
+
+func checkErr(e error) {
+	if e != nil {
+		panic(e)
+	}
+
+}
+
+// type RuleMQ struct {
+// 	host   string
+// 	port   string
+// 	expire int64
+// 	MQ     *redis.Client
+// }
+
+// func writeDemo(){
+// defaultRC.Host = "jialin'host"
+// 	defaultRC.Port = "28773"
+// 	b, err := json.Marshal(defaultRC)
+// 	checkErr(err)
+// 	fmt.Printf("%+v", defaultRC)
+// 	f, err := os.Create("./redis.json")
+// 	checkErr(err)
+// 	writeCount, err := f.Write(b)
+// 	fmt.Printf("wrote %d bytes\n", writeCount)
+// 	f.Sync()
+// 	defer f.Close()
+//
+//
+// }
+
+func pubRedisDemo(client *redis.Client) {
+
+	ticker := time.NewTicker(time.Second * 2)
+	go func() {
+		for t := range ticker.C {
+			currentTime := time.Now()
+			pub := client.Publish("mychannel", currentTime.String())
+
+			currentTime = time.Now()
+			fmt.Println("===publish msg1 ", currentTime.String(), " now: ", t)
+			pub = client.Publish("mychannel", currentTime.String())
+
+			_ = pub.Err() //decleare and not use issue
+			fmt.Println("===publish msg2 ", currentTime.String(), " now: ", t)
+		}
+	}()
+}
+
+func subRedisDemoNewClient(nth int) {
+	s := fmt.Sprintf("%s:%s", defaultRC.Host, defaultRC.Port)
+	client := redis.NewTCPClient(s, "", 0)
+	// fm.Add("fun1", client.Close)
+	defer client.Close()
+	time.Sleep(time.Second)
+	// ticker := time.NewTicker(time.Second * 2)
+	// println(nth)
+	pubsub, err := client.PubSubClient()
+	defer pubsub.Close()
+	checkErr(err)
+	ch2 := make(chan *redis.Message)
+	ch2, err = pubsub.Subscribe("mychannel")
+	for c2 := range ch2 {
+		if len(c2.Message) > 0 {
+			fmt.Println("----suber new client ", nth, " get submsg:", c2.Message)
+		}
+	}
+}
+
+func closeClient(c *redis.Client) {
+	c.Close()
+}
+
+func subRedisDemo(nth int, client *redis.Client) {
+	time.Sleep(time.Second)
+	pubsub, err := client.PubSubClient()
+	checkErr(err)
+	ch2 := make(chan *redis.Message)
+	ch2, err = pubsub.Subscribe("mychannel")
+	for c2 := range ch2 {
+		if len(c2.Message) > 0 {
+			fmt.Println("----suber ", nth, " get submsg:", c2.Message)
+		}
+	}
+}
+
+type funcManager struct {
+	FunList  map[string]interface{}
+	FunCount int
+}
+
+func (t *funcManager) Add(name string, f func() interface{}) (e error) {
+	// func (t *funcManager) Add(name string, f func(interface{}) interface{}) (e error) {
+	for k, _ := range t.FunList {
+		if k == name {
+			e = fmt.Errorf("fun already exist!")
+			return
+		}
+	}
+	t.FunList[name] = f
+	t.FunCount++
+	return
+}
+
+func (t *funcManager) Remove(name string) (e error) {
+	delete(t.FunList, name)
+	return nil
+}
+
+func (t *funcManager) GetCount() int {
+	return len(t.FunList)
+}
+
+func (t *funcManager) ExecuteAll() error {
+	if t.GetCount() <= 0 {
+		return fmt.Errorf("nothing to do")
+	}
+	for k, f := range t.FunList {
+		fmt.Println(k, reflect.TypeOf(f))
+	}
+	return nil
+}
+
+func main() {
+	runtime.GOMAXPROCS(2)
+	fmt.Printf("%+v", defaultRC)
+	s := fmt.Sprintf("%s:%s", defaultRC.Host, defaultRC.Port)
+	client := redis.NewTCPClient(s, "", 0)
+	defer client.Close()
+	client2 := redis.NewTCPClient(s, "", 0)
+	defer client2.Close()
+
+	// try to ping redis to check client's status
+	pingRes := client.Ping()
+	if pingRes.Err() != nil {
+		panic("ping failed")
+	} else {
+		// fmt.Printf("ping successfully! %+v", pingRes.Err())
+		// fmt.Println(pingRes.Err(), pingRes.Val())
+		// Client uses connection pool to send commands.
+		client.ConnPool.(*redis.MultiConnPool).MaxCap = 20
+	}
+
+	//reconnect to redis server
+	if client != nil {
+		client.Close()
+	}
+	tmpclient := redis.NewTCPClient(defaultRC.Host+":"+defaultRC.Port, "", 0)
+	if tmpclient != nil {
+		tmpclient.ConnPool.(*redis.MultiConnPool).MaxCap = 5
+	} else {
+		fmt.Println(errors.New("Connect to redis server failed"))
+	}
+	client = tmpclient
+
+	//setter and getter
+	// set := client.Set("foo", "bar")
+	// fmt.Println(set.Err(), set.Val())
+	// get := client.Get("foo")
+	// fmt.Println(get.Err(), get.Val())
+
+	//using pipeline: all operation at one time
+	var set *redis.StatusReq
+	var get *redis.StringReq
+	reqs, err := client.Pipelined(func(c *redis.PipelineClient) {
+		set = c.Set("key1", "hello1")
+		get = c.Get("key2")
+
+	})
+	fmt.Println(set)
+	fmt.Println(get)
+
+	//using transaction
+	multi, err := client.MultiClient()
+	_ = err
+	defer multi.Close()
+	watch := multi.Watch("key")
+	_ = watch.Err()
+	reqs, err = transaction(multi)
+	fmt.Println("MultiClient: ", err, reqs)
+
+	//pub/sub
+	go pubRedisDemo(client)
+	for i := 0; i < 5; i++ {
+		go subRedisDemo(i, client2)
+		// go subRedisDemoNewClient(i)
+
+		//don't the same client as publisher need,or it will block
+		// 	go subRedisDemo(i, client)
+	}
+
+	//blocking process util enter c-c
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt, os.Kill)
+	<-c
+}

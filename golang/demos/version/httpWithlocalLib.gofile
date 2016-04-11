@@ -1,0 +1,45 @@
+// Package main provides ...
+package main
+
+import (
+	// "local.com/httphandler"
+	// "net/http"
+	"fmt"
+)
+
+func useReturnParameter() (r int) {
+	r = 100
+	defer func() {
+		r = 199
+	}()
+	return r
+}
+
+func useAssign() int {
+	n := 10
+	defer func() {
+		n = 111
+	}()
+	return n
+}
+
+func useAssignAddress() int {
+	n := 10
+	defer func(m *int) {
+		*m = 111
+	}(&n)
+	return n
+}
+func main() {
+	//
+	// httphandler.Abc()
+	// http.HandleFunc("/", httphandler.RootHandler)
+	// http.HandleFunc("/view/", httphandler.ViewHandler)
+	// http.HandleFunc("/html/", httphandler.HtmlHandler)
+	// http.ListenAndServe(":8089", nil)
+	//
+	fmt.Println(useAssign())
+	fmt.Println(useAssignAddress())
+	fmt.Println(useReturnParameter())
+	// fmt.Println(nn)
+}

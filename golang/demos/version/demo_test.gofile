@@ -1,0 +1,11 @@
+// package main
+//
+// import (
+// 	"fmt"
+// 	"github.com/smartystreets/goconvey/convey"
+// )
+//
+// func TestMain() {
+//
+// 	Convey("config should has a root dir", t, func() {
+// }

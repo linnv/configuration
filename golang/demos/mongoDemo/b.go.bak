@@ -1,0 +1,259 @@
+package mongoDemo
+
+import (
+	"fmt"
+
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
+)
+
+type JPerson struct {
+	Name  string
+	Phone string
+	Id    int `bson:"_id"`
+}
+
+// type BPerson struct {
+// 	Name  string `bson:"Name"`
+// 	Phone string `bson:"Phone"`
+// 	Id    int    `bson:"Id"`
+// }
+//
+// func StructTagDemo() (err error) {
+// 	println("<<<structTagDemo---------------------------")
+//
+// 	session, err := mgo.Dial("127.0.0.1:27017")
+// 	// session, err := mgo.Dial("192.168.100.44:27017")
+// 	if err != nil {
+// 		return
+// 	}
+// 	defer session.Close()
+// 	session.SetMode(mgo.Monotonic, true)
+// 	c := session.DB("testdb").C("demo")
+//
+// 	//warn: if not specific a bson tag, all file name will convert to lower case
+//
+// 	err = c.Insert(&JPerson{"json", "+222222222fjefei22", 1})
+// 	// err = c.Insert(&BPerson{"bson", "+222222222fjefei22", 1})
+// 	// if err != nil {
+// 	// 	return
+// 	// }
+//
+// 	result := []*BPerson{}
+//
+// 	err = c.Find(bson.M{}).All(&result)
+// 	if err != nil {
+// 		fmt.Println("not found")
+// 		return
+// 	}
+// 	fmt.Println("found")
+//
+// 	fmt.Printf("  len(result): %+v\n", len(result))
+// 	for k, v := range result {
+// 		fmt.Printf("%+v: %+v\n", k, v)
+// 	}
+// 	updateCon := bson.M{"$set": bson.M{"Phone": "33398t"}}
+// 	cf, err := c.UpdateAll(bson.M{}, updateCon)
+// 	if err != nil {
+// 		fmt.Println("not found")
+// 		return
+// 	}
+// 	fmt.Printf("  cf: %+v\n", cf)
+// 	fmt.Println("found")
+//
+// 	fmt.Printf("  after: \n")
+// 	// err = c.Find(bson.M{"Id": 1}).All(&result)
+// 	err = c.Find(bson.M{}).All(&result)
+// 	if err != nil {
+// 		fmt.Println("not found")
+// 		return
+// 	}
+// 	fmt.Println("found")
+// 	// fmt.Printf("singleResult: %+v\n",singleResult)
+//
+// 	fmt.Printf("  len(result): %+v\n", len(result))
+// 	for k, v := range result {
+// 		fmt.Printf("%+v: %+v\n", k, v)
+// 	}
+// 	println("-----------------------------structTagDemo>>>")
+// 	return
+// }
+//
+// func OrOperationDemo() (err error) {
+// 	println("//<<-------------------------OrOperationDemo start-----------")
+// 	// session, err := mgo.Dial("192.168.100.44:27017")
+// 	session, err := mgo.Dial("127.0.0.1:27017")
+// 	if err != nil {
+// 		return
+// 	}
+// 	defer session.Close()
+// 	session.SetMode(mgo.Monotonic, true)
+// 	c := session.DB("testdb").C("demo")
+//
+// 	// for i := 0; i < 5; i++ {
+// 	// 	err = c.Insert(&JPerson{"jialin", "+222222222fjefei22", i})
+// 	// 	if err != nil {
+// 	// 		return
+// 	// 	}
+// 	// }
+//
+// 	q := bson.M{}
+// 	q["a"] = 9
+// 	q["b"] = bson.M{"i": 11}
+// 	b := bson.M{"i": 11}
+// 	//@toDelete
+// 	fmt.Printf("  b: %+v\n", b)
+// 	// b["$or"]=[]bson.M{q["bb"]=99,q["b2b"]=99}
+// 	//@toDelete
+// 	fmt.Printf("  q: %+v\n", q)
+// 	result := []*JPerson{}
+// 	// orQeury := bson.M{"$or": []bson.M{bson.M{"name": "jialin"}, bson.M{"name": "jialin", "id": bson.M{"$in": []int{2}}}}}
+// 	// orQeury := bson.M{"$or": []bson.M{bson.M{"name": "jialin"}, bson.M{"id": bson.M{"$in": []int{2}}}}}
+// 	orQeury := bson.M{"$or": []bson.M{bson.M{"name": "jialin"}, bson.M{"id": bson.M{"$in": []int{2}}, "name": "jialin"}}}
+// 	//@toDelete
+// 	fmt.Printf("  orQeury: %+v\n", orQeury)
+// 	// err = c.Find(bson.M{}).All(&result)
+// 	err = c.Find(orQeury).All(&result)
+// 	if err != nil {
+// 		fmt.Println("not found")
+// 		return
+// 	}
+// 	fmt.Println("found")
+//
+// 	// for k, v := range result {
+// 	// 	fmt.Printf("%+v: %+v\n", k, v)
+// 	// }
+// 	println("//---------------------------OrOperationDemo end----------->>")
+// 	// query: map[$or:[map[OwnerId:7 UpdateTime:map[$gte:0 $lte:1448845381] IsDeleted:false Status:1 RTBStatus:1 _id:map[$in:[130]]] map[OwnerId:7 UpdateTime:map[$gte:0 $lte:1448845381] IsDeleted:false Status:1 RTBStatus:1 _id:map[$in:[130]]]]]
+// 	// {"$or":{{OwnerId:7,Updatetime:{"$gte":0,"$lte":1448845381},IsDeleted:false,Status:1,RTBStatus:1,_id:{"$in":{130}}},{OwnerId:7,Updatetime:{"$gte":0,"$lte":1448845381},IsDeleted:false,Status:1,RTBStatus:1,_id:{"$in":{130}}}}
+// 	return
+// }
+//
+// func RegularOperationDemo() (err error) {
+// 	println("//<<-------------------------REgularOperationDemo start-----------")
+// 	// session, err := mgo.Dial("192.168.100.44:27017")
+// 	session, err := mgo.Dial("127.0.0.1:27017")
+// 	if err != nil {
+// 		return
+// 	}
+// 	defer session.Close()
+// 	session.SetMode(mgo.Monotonic, true)
+// 	c := session.DB("demo").C("demo")
+//
+// 	// q := bson.M{}
+// 	// q["a"] = 9
+// 	// q["b"] = bson.M{"i": 11}
+// 	// b := bson.M{"i": 11}
+// 	// //@toDelete
+// 	// fmt.Printf("  b: %+v\n", b)
+// 	// // b["$or"]=[]bson.M{q["bb"]=99,q["b2b"]=99}
+// 	// //@toDelete
+// 	// fmt.Printf("  q: %+v\n", q)
+// 	result := []*JPerson{}
+// 	// orQeury := bson.M{"$or": []bson.M{bson.M{"name": "jialin"}, bson.M{"id": bson.M{"$in": []int{2}}, "name": "jialin"}}}
+// 	// regularQeury := bson.M{"$or": []bson.M{bson.M{"name": "jialin"}, bson.M{"id": bson.M{"$in": []int{2}}, "name": "jialin"}}}
+//
+// 	// regularQeury := append(querys, bson.M{"name": bson.M{"$regex": bson.RegEx{k, "i"}}})
+// 	// regularQeury := bson.M{"name": bson.M{"$regex": bson.RegEx{"/(.)*三(.)*j(.)*/", "s"}}}
+// 	// strs := []string{"三"}
+// 	strs := []string{"三", "四"}
+// 	// strs := []string{"四", "三"}
+// 	// strs := []string{"三", "六"}
+// 	// anyCharacter := "(.*)"
+// 	anyCharacter := ".*"
+// 	// anyCharacter := "*"
+// 	rStr := anyCharacter
+// 	// for _, v := range strs {
+// 	for i := 0; i < len(strs); i++ {
+// 		rStr += strs[i] + anyCharacter
+// 	}
+// 	// regularQeury := bson.M{"name": bson.M{"$regex": bson.RegEx{"(.)*三(.)*j(.)*", "i"}}}
+// 	regularQeury := bson.M{"name": bson.M{"$regex": bson.RegEx{rStr, "i"}}}
+//
+// 	// regularQeury := bson.M{"name": bson.M{"$regex": bson.RegEx{"三", "v"}}}
+// 	//@toDelete
+// 	fmt.Printf("  regularQeury: %+v\n", regularQeury)
+// 	// err = c.Find(bson.M{}).All(&result)
+// 	err = c.Find(regularQeury).All(&result)
+// 	if err != nil {
+// 		fmt.Println("not found")
+// 		return
+// 	}
+// 	fmt.Println("found")
+// 	for k, v := range result {
+// 		fmt.Printf("%+v: %+v\n", k, v)
+// 	}
+//
+// 	println("//---------------------------REgularOperationDemo end----------->>")
+// 	return
+// }
+
+func SuntengFindOperationDemo() (err error) {
+	println("//<<-------------------------OrOperationDemo start-----------")
+	session, err := mgo.Dial("192.168.10.35:3000")
+	// session, err := mgo.Dial("127.0.0.1:27017")
+	if err != nil {
+		return
+	}
+	defer session.Close()
+	// session.SetMode(mgo.Monotonic, true)
+	c := session.DB("ssp_dev").C("User")
+	for i := 0; i < 30; i++ {
+		err = c.Insert(&JPerson{"json", "sort demo", i})
+	}
+	var result []interface{}
+	// var result []*JPerson
+	// limit, offset := 0, 0
+	// sort := "Id"
+	doQeury := bson.M{"IsDeleted": false}
+
+	err = c.Find(doQeury).Sort("-_id").All(&result)
+	// err = c.Find(nil).Sort("Id").All(&result)  not work
+	if err != nil {
+		fmt.Println("not found")
+		return
+	}
+	fmt.Println("found")
+	for i := 0; i < len(result); i++ {
+		//@toDelete
+		fmt.Printf("  result[i]: %+v\n", result[i])
+	}
+
+	println("//---------------------------OrOperationDemo end----------->>")
+	return
+}
+
+func SuntengUpdateOperationDemo() (err error) {
+	println("//<<-------------------------OrOperationDemo start-----------")
+	// session, err := mgo.Dial("192.168.10.35:3000")
+	session, err := mgo.Dial("127.0.0.1:27017")
+	if err != nil {
+		return
+	}
+	defer session.Close()
+	// session.SetMode(mgo.Monotonic, true)
+	c := session.DB("ssp_dev").C("User")
+	for i := 0; i < 30; i++ {
+		err = c.Insert(&JPerson{"json", "sort demo", i})
+	}
+	var result []interface{}
+	// var result []*JPerson
+	// limit, offset := 0, 0
+	// sort := "Id"
+	doQeury := bson.M{"IsDeleted": false}
+
+	err = c.Find(doQeury).Sort("-_id").All(&result)
+	// err = c.Find(nil).Sort("Id").All(&result)  not work
+	if err != nil {
+		fmt.Println("not found")
+		return
+	}
+	fmt.Println("found")
+	for i := 0; i < len(result); i++ {
+		//@toDelete
+		fmt.Printf("  result[i]: %+v\n", result[i])
+	}
+
+	println("//---------------------------OrOperationDemo end----------->>")
+	return
+}
