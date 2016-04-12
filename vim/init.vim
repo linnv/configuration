@@ -181,8 +181,6 @@ map <silent> <leader>a ggvGV<cr>
 "exit without saving
 map <silent> <leader>q :q!<cr>
 vmap <Leader>y "+y
-vmap <Leader>1y "1y
-vmap <Leader>2y "2y
 
 vmap <Leader>d "+d
 nmap <Leader>p "+p
@@ -190,15 +188,6 @@ nmap <Leader>P "+P
 vmap <Leader>p "+p
 vmap <Leader>P "+P
 
-nmap <Leader>1p "1p
-nmap <Leader>1P "1P
-vmap <Leader>1p "1p
-vmap <Leader>1P "1P
-
-nmap <Leader>2p "2p
-nmap <Leader>2P "2P
-vmap <Leader>2p "2p
-vmap <Leader>2P "2P
 
 nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
 nnoremap <F5> :YcmForceCompileAndDiagnostics<CR>
