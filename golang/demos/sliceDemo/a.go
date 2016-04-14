@@ -65,7 +65,10 @@ func ReturnFalse() bool {
 func JustDemo() {
 	println("//<<-------------------------JustDemo start-----------")
 	start := time.Now()
-	CountOneDemo()
+	SimpleReverseLinkList()
+	// PinterDemo()
+	// ReverseLinkList()
+	// CountOneDemo()
 	// SwapMetrix()
 	// str := "-33fjefej"
 	// bs := []byte(str)
@@ -526,6 +529,21 @@ func NewNode(str string) *Node {
 	return &Node{str, nil}
 }
 
+func PinterDemo() {
+	println("//<<-------------------------PinterDemoDemo start-----------")
+	start := time.Now()
+	h := new(Node)
+	fmt.Printf("h: %p\n", h)
+	h = NewNode("header")
+	ah := NewNode(" auto header")
+	fmt.Printf("header: %p\n", h)
+	fmt.Printf(" auto header: %p\n", ah)
+	h = ah
+	fmt.Printf("header: %p\n", h)
+	fmt.Printf("PinterDemoDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------PinterDemoDemo end----------->>")
+}
+
 func GetLinkList() *Node {
 	root := NewNode("root")
 	tmp := root
@@ -536,16 +554,78 @@ func GetLinkList() *Node {
 	return root
 }
 
+func SimpleReverseLinkList() {
+	a := NewNode("a")
+	b := NewNode("b")
+	c := NewNode("c")
+	b.Next = c
+	a.Next = b
+	a.PrintAll()
+	println("------ pause \n========================\n")
+	// tmp := new(Node)
+	// pre, post := new(Node), a
+	// for post != nil {
+	// 	last := post.Next
+	// 	post.Next = pre
+	// 	pre = post
+	// 	if last == nil {
+	// 		break
+	// 	}
+	// 	post = last
+	// }
+	//
+	// pre, post := a, a.Next
+	// a.Next = nil
+	// for post != nil {
+	// 	last := post.Next
+	// 	post.Next = pre
+	// 	pre = post
+	// 	if last == nil {
+	// 		break
+	// 	}
+	// 	post = last
+	// }
+
+	// post := a.Next
+	// a.Next = nil
+	// for post != nil {
+	// 	last := post.Next
+	// 	post.Next = a
+	// 	a = post
+	// 	if last == nil {
+	// 		break
+	// 	}
+	// 	post = last
+	// }
+	// a = post
+
+	// pre := a
+	// a = a.Next
+	pre, a := a, a.Next
+	pre.Next = nil
+	for a != nil {
+		last := a.Next
+		a.Next = pre
+		pre = a
+		// if last == nil {
+		// 	break
+		// }
+		a = last
+	}
+	a = pre
+	a.PrintAll()
+}
+
 func ReverseLinkList() {
 	ll := GetLinkList()
 	ll.PrintAll()
 	pre := new(Node)
 	target := ll
 	for target != nil {
-		tmp := target.Next
+		last := target.Next
 		target.Next = pre
 		pre = target
-		target = tmp
+		target = last
 	}
 	os.Stdout.Write(append([]byte("reverse"), '\n'))
 	pre.PrintAll()

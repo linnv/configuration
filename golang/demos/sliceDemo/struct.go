@@ -33,9 +33,9 @@ func (n *Node) PrintAll() {
 		return
 	}
 	tmp := n
-	for tmp.Next != nil {
+	for tmp != nil {
 		//@toDelete
-		fmt.Printf("n.Data: %+v\n", tmp.Data)
+		fmt.Printf("n.Data: %+v %x\n", tmp.Data, tmp)
 		tmp = tmp.Next
 	}
 }
