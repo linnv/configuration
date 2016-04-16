@@ -9,9 +9,10 @@ import (
 )
 
 type JPerson struct {
-	Name  string
-	Phone string
-	Id    int `bson:"_id"`
+	Name     string
+	Phone    string
+	DateTime int64 `json:"DateTime"`
+	Id       int   `bson:"_id"`
 }
 
 const (
@@ -20,7 +21,7 @@ const (
 	// COLLECTION  = "demo"
 	ADDRESSPORT = "127.0.0.1:27017"
 	DB          = "demo"
-	COLLECTION  = "demo"
+	COLLECTION  = "acud"
 )
 
 func SuntengFindOperationDemo() (err error) {
@@ -32,22 +33,27 @@ func SuntengFindOperationDemo() (err error) {
 	defer session.Close()
 	// session.SetMode(mgo.Monotonic, true)
 	c := session.DB(DB).C(COLLECTION)
-	for i := 0; i < 30; i++ {
-		err = c.Insert(&JPerson{"json", "sort demo", i})
-	}
-	var result []interface{}
-	// var result []*JPerson
+	// for i := 0; i < 1; i++ {
+	// 	err = c.Insert(&JPerson{Name: "1json",
+	// 		Phone:    "sort demo",
+	// 		DateTime: time.Now().Unix(), Id: i})
+	// }
+	// var result []interface{}
+	var result []*JPerson
 	// limit, offset := 0, 0
 	// sort := "Id"
-	doQeury := bson.M{"IsDeleted": false}
+	// doQeury := bson.M{"IsDeleted": false}
+	// doQeury := bson.M{"Name": "1json"}
 
-	err = c.Find(doQeury).Sort("-_id").All(&result)
+	err = c.Find(nil).All(&result)
+	// err = c.Find(doQeury).All(&result)
 	// err = c.Find(nil).Sort("Id").All(&result)  not work
 	if err != nil {
 		fmt.Println("not found")
 		return
 	}
 	fmt.Println("found")
+	fmt.Printf("len(result): %+v\n", len(result))
 	for i := 0; i < len(result); i++ {
 		//@toDelete
 		fmt.Printf("  result[i]: %+v\n", result[i])

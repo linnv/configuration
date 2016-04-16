@@ -23,6 +23,7 @@ func TestStructTagDemo(t *testing.T) {
 		// So(r, ShouldEqual, ret)
 		// SuntengFindOperationDemo()
 		// SuntengUpdateOperationDemo()
-		AggregateQueryDemo()
+		SuntengFindOperationDemo()
+		// AggregateQueryDemo()
 	})
 }
