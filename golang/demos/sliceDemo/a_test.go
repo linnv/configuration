@@ -127,3 +127,8 @@ func TestJustDemo(t *testing.T) {
 	// fmt.Printf("sl[2:4]: %+v\n", sl[2:4])
 
 }
+
+//  go test -run=CountOneDemo
+func TestCountOneDemo(t *testing.T) {
+	// CountOneDemo()
+}

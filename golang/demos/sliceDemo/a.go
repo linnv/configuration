@@ -1,4 +1,3 @@
-// Package main provides ...
 package newDir
 
 import (
@@ -65,7 +64,18 @@ func ReturnFalse() bool {
 func JustDemo() {
 	println("//<<-------------------------JustDemo start-----------")
 	start := time.Now()
-	SimpleReverseLinkList()
+	// kpHashDemo()
+	// var s string = "jjj3"
+	// fmt.Printf("len(s): %+v\n", len(s))
+	// fmt.Printf("s[0]: %+v\n", s[0])
+	// fmt.Printf("s[0]: %+v\n", string(s[0]))
+	// if strings.Contains("aaeje j", "e j") {
+	// 	fmt.Println("contain e j")
+	// }
+
+	// Trap()
+	FindCenterNodeLinkList()
+	// SimpleReverseLinkList()
 	// PinterDemo()
 	// ReverseLinkList()
 	// CountOneDemo()
@@ -141,8 +151,47 @@ func JustDemo() {
 	// fmt.Printf("  s: %+v\n", s)
 	// var appIds, normalIds, illegalIds []int
 	// appIds, normalIds, illegalIds = make([]int, 0, 33)
+	// a := []int{1, 24, 5}
+	// b := [][]int{a}
+	// fmt.Printf("b: %+v\n", b)
+	// fmt.Printf("b[0]: %+v\n", b[0])
+
+	// var b []int
+	// a := []int{1, 2, 3, 4, 5}
+	// fmt.Printf("len(a): %+v\n", len(a))
+	// fmt.Printf("a[1:] %+v\n", a[1:])
+	// for k, v := range a {
+	// 	//@toDelete
+	// 	fmt.Printf("%+v: %+v\n", k, v)
+	// }
+	// b = FunSlice(a)
+	// fmt.Printf("a: %+v\n", a)
+	// b[2] = 999 //under line array of b is a, this operation will affect slice a
+	// fmt.Printf("a: %+v\n", a)
+	// a[4] = 10000
+	// fmt.Printf("b: %+v\n", b)
+
+	// s := strings.FieldsFunc("jjfe fejf ejw s  jxoe fejw ", unicode.IsSpace)
+	// s := strings.Split("jjfe,fejf,ejw s  jxoe fejw ", ",")
+	// fmt.Printf("len(s): %+v\n", len(s))
+	// fmt.Printf("s: %+v\n", s)
+
+	// bs := make([]byte, 4)
+	// ss := "jia"
+	// n := copy(bs, ss)
+	// fmt.Printf("bs: %+v\n", string(bs))
+	// fmt.Printf("bs: %v\n", bs)
+	// fmt.Printf("bs: %T\n", bs)
+	// fmt.Printf("n: %+v\n", n)
+
+	// fmt.Println(strings.Join([]string{"j", "i", "a"}, "----"))
+
 	fmt.Printf("JustDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
 	println("//---------------------------JustDemo end----------->>")
+}
+
+func FunSlice(a []int) []int {
+	return a[1:]
 }
 
 func BufferDemo() {
@@ -156,13 +205,21 @@ func BufferDemo() {
 }
 
 func Trap() {
-	arr := []int{1, 2, 3, 4, 5, 10}
-	slice := arr[1:2]
-	fmt.Println(slice)
-	//now the underly pointer points to index 2th of arr, append() add or update  element from this index of arr
-	slice = append(slice, 6, 7, 8)
-	fmt.Println(slice)
-	fmt.Println(arr)
+	// arr := []int{1, 2, 3, 4, 5, 10}
+	// slice := arr[1:2]
+	// fmt.Println(slice)
+	// //now the underly pointer points to index 2th of arr, append() add or update  element from this index of arr
+	// slice = append(slice, 6, 7, 8)
+	// fmt.Println(slice)
+	// fmt.Println(arr)
+	ss := make([]int, 10)
+	for i := 0; i < 10; i++ {
+		ss[i] = i
+	}
+	//@todoDelelte
+	fmt.Printf("ss: %+v,cap(ss):%d,len(ss):%d  \n", ss, cap(ss), len(ss))
+	ss = ss[:0]
+	fmt.Printf("after ss: %+v,cap(ss):%d,len(ss):%d  \n", ss, cap(ss), len(ss))
 }
 
 func InIntArray(i int, ints []int) bool {
@@ -554,6 +611,37 @@ func GetLinkList() *Node {
 	return root
 }
 
+func FindCenterNodeLinkList() {
+	a := NewNode("a")
+	b := NewNode("b")
+	c := NewNode("c")
+	d := NewNode("d")
+	e := NewNode("e")
+	d.Next = e
+	c.Next = d
+	b.Next = c
+	a.Next = b
+	a.PrintAll()
+
+	var nSlow, nFast *Node
+	nSlow, nFast = a, a
+	for nFast.Next != nil {
+		fmt.Printf("nSlow: %x\n", nSlow)
+		fmt.Printf("nFast: %x\n", nFast)
+		nSlow = nSlow.Next
+		//even count of link nodes
+		if nFast.Next.Next == nil {
+			nFast = nFast.Next
+			break
+		}
+		//prime count of link nodes
+		nFast = nFast.Next.Next
+	}
+
+	println("nSlow ", nSlow.Data)
+	println("nFast ", nFast.Data)
+}
+
 func SimpleReverseLinkList() {
 	a := NewNode("a")
 	b := NewNode("b")
@@ -703,4 +791,65 @@ func SwapMetrix() {
 	for i := 0; i < edgeLenth; i++ {
 		fmt.Printf("%s\n", metrixSlice[i])
 	}
+}
+
+func kpHashDemo() {
+	println("//<<-------------------------kpHashDemo start-----------")
+	start := time.Now()
+
+	// primeRK is the prime base used in Rabin-Karp algorithm.
+	const primeRK = 16777619
+
+	// hashStr returns the hash and the appropriate multiplicative
+	// factor for use in Rabin-Karp algorithm.
+	hashStr := func(sep string) (uint32, uint32) {
+		hash := uint32(0)
+		for i := 0; i < len(sep); i++ {
+			hash = hash*primeRK + uint32(sep[i])
+		}
+		var pow, sq uint32 = 1, primeRK
+		for i := len(sep); i > 0; i >>= 1 {
+			if i&1 != 0 {
+				pow *= sq
+			}
+			sq *= sq
+		}
+		return hash, pow
+	}
+
+	// hashStrRev returns the hash of the reverse of sep and the
+	// appropriate multiplicative factor for use in Rabin-Karp algorithm.
+	hashStrRev := func(sep string) (uint32, uint32) {
+		hash := uint32(0)
+		for i := len(sep) - 1; i >= 0; i-- {
+			hash = hash*primeRK + uint32(sep[i])
+		}
+		var pow, sq uint32 = 1, primeRK
+		for i := len(sep); i > 0; i >>= 1 {
+			if i&1 != 0 {
+				pow *= sq
+			}
+			sq *= sq
+		}
+		return hash, pow
+	}
+
+	str := "aaa"
+	hashStrA, powA := hashStr(str)
+	fmt.Printf("hashStrA,: %+v\n", hashStrA)
+	fmt.Printf("powA: %+v\n", powA)
+
+	hpa, ppa := hashStrRev(str)
+	fmt.Printf("hpa: %+v\n", hpa)
+	fmt.Printf("ppa: %+v\n", ppa)
+
+	fmt.Printf("10: %b\n", 10)
+	for i := 10; i > 0; i >>= 1 {
+		if i&1 != 0 {
+			fmt.Println("non zero bits")
+		}
+		fmt.Printf("i: %+v\n", i)
+	}
+	fmt.Printf("kpHashDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------kpHashDemo end----------->>")
 }
