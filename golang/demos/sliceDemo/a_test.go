@@ -7,6 +7,8 @@ import
 "testing"
 
 func TestJustDemo(t *testing.T) {
+	JustDemo()
+
 	// SortInt64Demo()
 	// s := "jjjj	xx|xxx yy\rrrr"
 	// CharactersDemo(s)
@@ -42,7 +44,6 @@ func TestJustDemo(t *testing.T) {
 	// //issue %!(EXTRA string=jialin)
 	// Llogf("first", strFormat, fmt.Sprintf, args)
 
-	JustDemo()
 	// tErr(nil, nil)
 
 	// ReverseLinkList()

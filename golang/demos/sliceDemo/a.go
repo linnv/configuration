@@ -64,6 +64,14 @@ func ReturnFalse() bool {
 func JustDemo() {
 	println("//<<-------------------------JustDemo start-----------")
 	start := time.Now()
+
+	rul := NewLRULink()
+	for i := 0; i < 201; i++ {
+		rul.Upsert(strconv.Itoa(i))
+	}
+	rul.Upsert("19")
+	rul.PrintAll()
+
 	// kpHashDemo()
 	// var s string = "jjj3"
 	// fmt.Printf("len(s): %+v\n", len(s))
@@ -74,7 +82,7 @@ func JustDemo() {
 	// }
 
 	// Trap()
-	FindCenterNodeLinkList()
+	// FindCenterNodeLinkList()
 	// SimpleReverseLinkList()
 	// PinterDemo()
 	// ReverseLinkList()
@@ -582,14 +590,15 @@ func SlicePointer() {
 //
 // }
 
-func NewNode(str string) *Node {
-	return &Node{str, nil}
-}
-
 func PinterDemo() {
 	println("//<<-------------------------PinterDemoDemo start-----------")
 	start := time.Now()
 	h := new(Node)
+	// var hh *Node
+	// if hh == nil {
+	// 	println(" var and nil")
+	// }
+
 	fmt.Printf("h: %p\n", h)
 	h = NewNode("header")
 	ah := NewNode(" auto header")
@@ -852,4 +861,12 @@ func kpHashDemo() {
 	}
 	fmt.Printf("kpHashDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
 	println("//---------------------------kpHashDemo end----------->>")
+}
+
+func LRULinkListDemo() {
+	println("//<<-------------------------LRULinkListDemo start-----------")
+	start := time.Now()
+
+	fmt.Printf("LRULinkListDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------LRULinkListDemo end----------->>")
 }
