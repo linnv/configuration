@@ -54,19 +54,26 @@ call vundle#begin()
 Plugin 'gmarik/Vundle.vim'
 Plugin 'scrooloose/nerdtree'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
+"
 Plugin 'Valloric/YouCompleteMe'
 let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/cpp/ycm/.ycm_extra_conf.py'
 let g:ycm_key_list_select_completion = ['<c-j>','<Down>']
 let g:ycm_key_list_previous_completion= ['<c-k>','<Up>']
 let g:ycm_key_invoke_completion = '<c-z>'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
 let g:UltiSnipsJumpForwardTrigger = "<c-l>"
 let g:UltiSnipsJumpBackwardTrigger="<c-h>"
 let g:UltiSnipsEditSplit="vertical"
 let g:UltiSnipsExpandTrigger="<tab>"
+
+" Markdown
+Plugin 'godlygeek/tabular'
+Plugin 'plasticboy/vim-markdown'
+" autocmd BufNewFile,BufRead *.{md,mkd,mkdn,mark*} set filetype=markdown
+autocmd BufNewFile,BufRead *.{md,mkd,mkdn,mark*}  nested setlocal filetype=markdown
 
 "error checker
 Plugin 'scrooloose/syntastic'
@@ -164,6 +171,8 @@ map <silent> <leader>a ggvGV<cr>
 "exit without saving
 map <silent> <leader>q :q!<cr>
 vmap <Leader>y "+y
+vmap <Leader>1y "1y
+vmap <Leader>2y "2y
 
 vmap <Leader>d "+d
 nmap <Leader>p "+p
@@ -171,6 +180,15 @@ nmap <Leader>P "+P
 vmap <Leader>p "+p
 vmap <Leader>P "+P
 
+nmap <Leader>1p "1p
+nmap <Leader>1P "1P
+vmap <Leader>1p "1p
+vmap <Leader>1P "1P
+
+nmap <Leader>2p "2p
+nmap <Leader>2P "2P
+vmap <Leader>2p "2p
+vmap <Leader>2P "2P
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 vmap <Leader>1t 1gt
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -181,6 +199,18 @@ map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Go to tab by number
+" noremap <leader>1 1gt
+" noremap <leader>2 2gt
+" noremap <leader>3 3gt
+" noremap <leader>4 4gt
+" noremap <leader>5 5gt
+" noremap <leader>6 6gt
+" noremap <leader>7 7gt
+" noremap <leader>8 8gt
+" noremap <leader>9 9gt
+" noremap <leader>0 :tablast<cr>
+
 nnoremap ; : 
 vnoremap // y/<C-R>"<CR>
 nmap    w=  :resize +20<CR>
@@ -189,8 +219,8 @@ nmap    w,  :vertical resize -20<CR>
 nmap    w.  :vertical resize +20<CR>
 "When .vimrc is edited, reload it
 "
-" hi Directory ctermfg=lightBlue
 hi Directory ctermfg=lightBlue
+" hi Directory ctermfg=black
 
 " switch between header/source with  hc for cpp
 map <silent> <leader>hc :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<cr>
