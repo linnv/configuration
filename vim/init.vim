@@ -1,4 +1,5 @@
 syntax on  			"must put ahead or enable syntax will conflict with ultisnips
+            "#Host":"127.0.0.1:27017",
 set ruler "display the current row and column on the right_bottom corner 
 set relativenumber
 set nu
@@ -6,6 +7,8 @@ set foldmethod=syntax "fold based on indent
 set foldnestmax=10      "deepest fold is 10 levels
 set nofoldenable        "dont fold by default
 set foldlevel=1         "this is just what i use
+
+set fillchars=stl:-,stlnc:-,vert:\ 
 
 " ignorecase and smartcase together make Vim deal with case-sensitive search intelligently. If you search for an all-lowercase string your search will be case-insensitive, but if one or more characters is uppercase the search will be case-sensitive. Most of the time this does what you want.
 set ignorecase
@@ -38,13 +41,12 @@ au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|
 filetype off                  " required: ultisnipes
 " ====================plugin manager=================
 set rtp+=~/.config/nvim/bundle/Vundle.vim
-call vundle#begin()
+call vundle#begin('~/.config/nvim/bundle')
 Plugin 'gmarik/Vundle.vim'
 Plugin 'scrooloose/nerdtree'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """""""""""""""""""""""""""""<code completion> start""""""""""""""""""""""""""""""""""
 Plugin 'Valloric/YouCompleteMe'
-let g:ycm_global_ycm_extra_conf = '~/.config/nvim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
 let g:ycm_key_list_select_completion = ['<c-j>','<Down>']
 let g:ycm_key_list_previous_completion= ['<c-k>','<Up>']
 let g:ycm_key_invoke_completion = '<c-z>'
@@ -57,12 +59,17 @@ set tags+=./.tags
 
 """""""""""""""""""""""""""""<code snippets> start""""""""""""""""""""""""""""""""""
 Plugin 'SirVer/ultisnips'
-Plugin 'honza/vim-snippets'
+"Plugin 'honza/vim-snippets'
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger = "<c-l>"
 let g:UltiSnipsJumpBackwardTrigger="<c-h>"
 let g:UltiSnipsEditSplit="vertical"
 """""""""""""""""""""""""""""<code snippets> end""""""""""""""""""""""""""""""""""""
+
+" Markdown
+autocmd BufNewFile,BufRead *.{md,mkd,mkdn,mark*}  nested setlocal filetype=markdown
+Plugin 'godlygeek/tabular'
+Plugin 'plasticboy/vim-markdown'
 
 """""""""""""""""""""""""""""<syntax checker> start""""""""""""""""""""""""""""""""""
 "error checker
@@ -108,10 +115,6 @@ let g:go_fmt_command = 'goimports'    "auto insert package
 au FileType go nmap <Leader>s <Plug>(go-def-split)
 au FileType go nmap <Leader>v <Plug>(go-def-vertical)
 au FileType go nmap <Leader>t <Plug>(go-def-tab)
-
-" Plugin 'dgryski/vim-godef'   "go to definition in vertical window
-" let g:godef_split=2  "slite window veriab
-" let g:godef_same_file_in_same_window=1
 """""""""""""""""""""""""""""<golang tool chain> end""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -156,7 +159,7 @@ let mapleader = "\<Space>"
 """""""""""""""""""""""""""""<show file edicted recently> start""""""""""""""""""""""""""""""""""
 " set runtimepath^=~/.vim/bundle/ctrlp.vim
 set runtimepath^=~/.config/nvim/bundle/ctrlp.vim
-map <silent> <leader>t :CtrlPMRU<cr>
+map <silent> <leader>r :CtrlPMRU<cr>
 " map <silent> <leader>t :CtrlPMixed<cr>
 " map <silent> <leader>t :CtrlP<cr>
 """""""""""""""""""""""""""""<show file edicted recently> end""""""""""""""""""""""""""""""""""""
@@ -181,6 +184,8 @@ map <silent> <leader>a ggvGV<cr>
 "exit without saving
 map <silent> <leader>q :q!<cr>
 vmap <Leader>y "+y
+vmap <Leader>1y "1y
+vmap <Leader>2y "2y
 
 vmap <Leader>d "+d
 nmap <Leader>p "+p
@@ -188,6 +193,15 @@ nmap <Leader>P "+P
 vmap <Leader>p "+p
 vmap <Leader>P "+P
 
+nmap <Leader>1p "1p
+nmap <Leader>1P "1P
+vmap <Leader>1p "1p
+vmap <Leader>1P "1P
+
+nmap <Leader>2p "2p
+nmap <Leader>2P "2P
+vmap <Leader>2p "2p
+vmap <Leader>2P "2P
 
 nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
 nnoremap <F5> :YcmForceCompileAndDiagnostics<CR>
@@ -216,10 +230,16 @@ nmap    w.  :vertical resize +20<CR>
 map <silent> <leader>hc :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<cr>
 """""""""""""""""""""""""""""<for cpp/c> end""""""""""""""""""""""""""""""""""""
 
+"edit tmp file
+map <silent> <leader>tmp :e ~/tmpfile<cr>
+map <silent> <leader>booknote :e /Users/Jialin/Dropbox/vimNote/book.md<cr>
+map <silent> <leader>jsnote :e /Users/Jialin/Dropbox/vimNote/jsnote.md<cr>
 """""""""""""""""""""""""""""<for nvim configuration> start""""""""""""""""""""""""""""""""""
 "Fast editing of edictor configuration
 map <silent> <leader>ee :e ~/.config/nvim/init.vim<cr>
 autocmd! bufwritepost init.vim source ~/.config/nvim/init.vim
+
+hi Directory ctermfg=lightBlue
 
 let g:python_host_prog='/usr/bin/python2.7'
 let g:python_host_skip_check = 1
