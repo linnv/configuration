@@ -1,5 +1,4 @@
 syntax on  			"must put ahead or enable syntax will conflict with ultisnips
-            "#Host":"127.0.0.1:27017",
 set ruler "display the current row and column on the right_bottom corner 
 set relativenumber
 set nu
@@ -64,6 +63,7 @@ let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger = "<c-l>"
 let g:UltiSnipsJumpBackwardTrigger="<c-h>"
 let g:UltiSnipsEditSplit="vertical"
+""let g:UltiSnipsSnippetsDir = '~/.config/nvim/UltiSnips'
 """""""""""""""""""""""""""""<code snippets> end""""""""""""""""""""""""""""""""""""
 
 " Markdown
@@ -72,7 +72,6 @@ Plugin 'godlygeek/tabular'
 Plugin 'plasticboy/vim-markdown'
 
 """""""""""""""""""""""""""""<syntax checker> start""""""""""""""""""""""""""""""""""
-"error checker
 Plugin 'scrooloose/syntastic'
 let g:syntastic_error_symbol = '✗'      "set error or warning signs
 let g:syntastic_warning_symbol = '⚠'
@@ -138,6 +137,11 @@ Plugin 'junegunn/goyo.vim'
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "also say powerline
 Plugin 'bling/vim-airline'
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"input stat switch between normal mode and insert mode automatically
+Plugin 'CodeFalling/fcitx-vim-osx'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " visual start search
