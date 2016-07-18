@@ -51,7 +51,6 @@ let g:ycm_key_list_previous_completion= ['<c-k>','<Up>']
 let g:ycm_key_invoke_completion = '<c-z>'
 
 let g:ycm_confirm_extra_conf = 0
-let g:syntastic_always_populate_loc_list = 1
 let g:ycm_collect_identifiers_from_tags_files = 1
 set tags+=./.tags
 """""""""""""""""""""""""""""<code completion> end""""""""""""""""""""""""""""""""""""
@@ -71,13 +70,21 @@ autocmd BufNewFile,BufRead *.{md,mkd,mkdn,mark*}  nested setlocal filetype=markd
 Plugin 'godlygeek/tabular'
 Plugin 'plasticboy/vim-markdown'
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"neomake
+Plugin 'neomake/neomake'
+autocmd! BufWritePost * Neomake
+" let g:neomake_go_enabled_makers = ['go', 'govet']
+
 """""""""""""""""""""""""""""<syntax checker> start""""""""""""""""""""""""""""""""""
-Plugin 'scrooloose/syntastic'
-let g:syntastic_error_symbol = '✗'      "set error or warning signs
-let g:syntastic_warning_symbol = '⚠'
-let g:syntastic_enable_signs=1
-"
-let g:syntastic_enable_highlighting = 0
+"use neomake instead
+" Plugin 'scrooloose/syntastic'
+" let g:syntastic_error_symbol = '✗'      "set error or warning signs
+" let g:syntastic_warning_symbol = '⚠'
+" let g:syntastic_enable_signs=1
+" let g:syntastic_always_populate_loc_list = 1
+" "
+" let g:syntastic_enable_highlighting = 0
 """""""""""""""""""""""""""""<syntax checker> end""""""""""""""""""""""""""""""""""""
 
 "tags lister method menu
@@ -238,6 +245,12 @@ map <silent> <leader>hc :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<cr>
 map <silent> <leader>tmp :e ~/tmpfile<cr>
 map <silent> <leader>booknote :e /Users/Jialin/Dropbox/vimNote/book.md<cr>
 map <silent> <leader>jsnote :e /Users/Jialin/Dropbox/vimNote/jsnote.md<cr>
+
+"hightlight and search
+vnoremap // y/<C-R>"<CR>
+
+"make
+map <silent> <leader>m :make <cr>
 """""""""""""""""""""""""""""<for nvim configuration> start""""""""""""""""""""""""""""""""""
 "Fast editing of edictor configuration
 map <silent> <leader>ee :e ~/.config/nvim/init.vim<cr>
