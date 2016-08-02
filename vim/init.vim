@@ -29,7 +29,7 @@ set undofile  "this allow you to undo change even when you reopen a file
 set laststatus=2   " Always show the statusline
 
 " set cursorline  
-set cursorcolumn
+" set cursorcolumn
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set t_Co=256
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -57,7 +57,7 @@ set tags+=./.tags
 
 """""""""""""""""""""""""""""<code snippets> start""""""""""""""""""""""""""""""""""
 Plugin 'SirVer/ultisnips'
-"Plugin 'honza/vim-snippets'
+Plugin 'honza/vim-snippets'
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger = "<c-l>"
 let g:UltiSnipsJumpBackwardTrigger="<c-h>"
@@ -74,10 +74,12 @@ Plugin 'plasticboy/vim-markdown'
 "neomake
 Plugin 'neomake/neomake'
 autocmd! BufWritePost * Neomake
+
+" let g:neomake_open_list=2
 " let g:neomake_go_enabled_makers = ['go', 'govet']
 
 """""""""""""""""""""""""""""<syntax checker> start""""""""""""""""""""""""""""""""""
-"use neomake instead
+" "use neomake instead
 " Plugin 'scrooloose/syntastic'
 " let g:syntastic_error_symbol = '✗'      "set error or warning signs
 " let g:syntastic_warning_symbol = '⚠'
@@ -89,8 +91,7 @@ autocmd! BufWritePost * Neomake
 
 "tags lister method menu
 Plugin 'majutsushi/tagbar'
-nmap <c-m> :TagbarToggle<CR>
-
+" nmap <c-m> :TagbarToggle<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "short comment,e.g. gcc
@@ -250,7 +251,9 @@ map <silent> <leader>jsnote :e /Users/Jialin/Dropbox/vimNote/jsnote.md<cr>
 vnoremap // y/<C-R>"<CR>
 
 "make
-map <silent> <leader>m :make <cr>
+map <silent> <leader>zm :make <cr>
+map <silent> <leader>zl :lopen<cr>
+map <silent> <leader>m :TagbarToggle<cr>
 """""""""""""""""""""""""""""<for nvim configuration> start""""""""""""""""""""""""""""""""""
 "Fast editing of edictor configuration
 map <silent> <leader>ee :e ~/.config/nvim/init.vim<cr>
