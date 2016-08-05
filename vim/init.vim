@@ -51,8 +51,10 @@ let g:ycm_key_list_previous_completion= ['<c-k>','<Up>']
 let g:ycm_key_invoke_completion = '<c-z>'
 
 let g:ycm_confirm_extra_conf = 0
-let g:ycm_collect_identifiers_from_tags_files = 1
-set tags+=./.tags
+let g:ycm_global_ycm_extra_conf ='/Users/Jialin/.config/nvim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py' 
+nmap <M-g> :YcmCompleter GoToDefinitionElseDeclaration <C-R>=expand("<cword>")<CR><CR>  
+" let g:ycm_collect_identifiers_from_tags_files = 1
+" set tags+=./.tags
 """""""""""""""""""""""""""""<code completion> end""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""<code snippets> start""""""""""""""""""""""""""""""""""
@@ -114,7 +116,7 @@ Plugin 'luochen1990/rainbow'
 let g:rainbow_active= 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-Plugin 'rdnetto/YCM-Generator'
+" Plugin 'rdnetto/YCM-Generator'
 
 """""""""""""""""""""""""""""<golang tool chain> start""""""""""""""""""""""""""""""""""
 Plugin 'fatih/vim-go'
