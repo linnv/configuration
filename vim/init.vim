@@ -46,13 +46,19 @@ Plugin 'scrooloose/nerdtree'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """""""""""""""""""""""""""""<code completion> start""""""""""""""""""""""""""""""""""
 Plugin 'Valloric/YouCompleteMe'
+
+let g:ycm_auto_trigger = 1
+let g:ycm_min_num_of_chars_for_completion = 2
 let g:ycm_key_list_select_completion = ['<c-j>','<Down>']
 let g:ycm_key_list_previous_completion= ['<c-k>','<Up>']
 let g:ycm_key_invoke_completion = '<c-z>'
 
 let g:ycm_confirm_extra_conf = 0
 let g:ycm_global_ycm_extra_conf ='/Users/Jialin/.config/nvim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py' 
-nmap <M-g> :YcmCompleter GoToDefinitionElseDeclaration <C-R>=expand("<cword>")<CR><CR>  
+" nmap <M-g> :YcmCompleter GoToDefinitionElseDeclaration <C-R>=expand("<cword>")<CR><CR>  
+nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
+nnoremap <F5> :YcmForceCompileAndDiagnostics<CR>
+
 " let g:ycm_collect_identifiers_from_tags_files = 1
 " set tags+=./.tags
 """""""""""""""""""""""""""""<code completion> end""""""""""""""""""""""""""""""""""""
@@ -80,17 +86,6 @@ autocmd! BufWritePost * Neomake
 " let g:neomake_open_list=2
 " let g:neomake_go_enabled_makers = ['go', 'govet']
 
-"""""""""""""""""""""""""""""<syntax checker> start""""""""""""""""""""""""""""""""""
-" "use neomake instead
-" Plugin 'scrooloose/syntastic'
-" let g:syntastic_error_symbol = '✗'      "set error or warning signs
-" let g:syntastic_warning_symbol = '⚠'
-" let g:syntastic_enable_signs=1
-" let g:syntastic_always_populate_loc_list = 1
-" "
-" let g:syntastic_enable_highlighting = 0
-"""""""""""""""""""""""""""""<syntax checker> end""""""""""""""""""""""""""""""""""""
-
 "tags lister method menu
 Plugin 'majutsushi/tagbar'
 " nmap <c-m> :TagbarToggle<CR>
@@ -114,9 +109,6 @@ let g:gitgutter_highlight_lines = 0
 "color symble that pairs
 Plugin 'luochen1990/rainbow'
 let g:rainbow_active= 1
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Plugin 'rdnetto/YCM-Generator'
 
 """""""""""""""""""""""""""""<golang tool chain> start""""""""""""""""""""""""""""""""""
 Plugin 'fatih/vim-go'
@@ -156,6 +148,9 @@ Plugin 'CodeFalling/fcitx-vim-osx'
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " visual start search
 Plugin 'bronson/vim-visual-star-search'
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Plugin 'raimondi/delimitmate'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:vimrc_author='Jialin Wu' 
@@ -217,8 +212,6 @@ nmap <Leader>2P "2P
 vmap <Leader>2p "2p
 vmap <Leader>2P "2P
 
-nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
-nnoremap <F5> :YcmForceCompileAndDiagnostics<CR>
 "write zone
 map <silent> <leader>wz :Goyo<cr>
 "exit write zone
@@ -263,7 +256,8 @@ autocmd! bufwritepost init.vim source ~/.config/nvim/init.vim
 
 hi Directory ctermfg=lightBlue
 
-let g:python_host_prog='/usr/bin/python2.7'
+" let g:python_host_prog='/usr/bin/python2.7'
+let g:python_host_prog='/usr/bin/python3'
 let g:python_host_skip_check = 1
     if !has('nvim')
         set ttymouse=xterm2
