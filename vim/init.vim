@@ -20,7 +20,7 @@ set gdefault
 
 set colorcolumn=85
 set wrap
- set mouse=a
+set mouse=a
 
 set timeoutlen=1000 ttimeoutlen=0
 
@@ -31,7 +31,7 @@ set laststatus=2   " Always show the statusline
 " set cursorline  
 " set cursorcolumn
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set t_Co=256
+" set t_Co=256
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "remember last edicting position
 au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
@@ -39,13 +39,15 @@ au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|
 
 filetype off                  " required: ultisnipes
 " ====================plugin manager=================
-set rtp+=~/.config/nvim/bundle/Vundle.vim
-call vundle#begin('~/.config/nvim/bundle')
-Plugin 'gmarik/Vundle.vim'
-Plugin 'scrooloose/nerdtree'
+" set rtp+=~/.config/nvim/bundle/Vundle.vim
+call plug#begin('~/.config/nvim/plugged')
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Plug 'scrooloose/nerdtree'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """""""""""""""""""""""""""""<code completion> start""""""""""""""""""""""""""""""""""
-Plugin 'Valloric/YouCompleteMe'
+Plug 'Valloric/YouCompleteMe'
 
 let g:ycm_auto_trigger = 1
 let g:ycm_min_num_of_chars_for_completion = 2
@@ -54,9 +56,9 @@ let g:ycm_key_list_previous_completion= ['<c-k>','<Up>']
 let g:ycm_key_invoke_completion = '<c-z>'
 
 let g:ycm_confirm_extra_conf = 0
-let g:ycm_global_ycm_extra_conf ='/Users/Jialin/.config/nvim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py' 
-" nmap <M-g> :YcmCompleter GoToDefinitionElseDeclaration <C-R>=expand("<cword>")<CR><CR>  
-nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
+let g:ycm_global_ycm_extra_conf ='~/.config/nvim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py' 
+nmap <M-g> :YcmCompleter GoToDefinitionElseDeclaration <C-R>=expand("<cword>")<CR><CR>  
+" nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
 nnoremap <F5> :YcmForceCompileAndDiagnostics<CR>
 
 " let g:ycm_collect_identifiers_from_tags_files = 1
@@ -64,8 +66,8 @@ nnoremap <F5> :YcmForceCompileAndDiagnostics<CR>
 """""""""""""""""""""""""""""<code completion> end""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""<code snippets> start""""""""""""""""""""""""""""""""""
-Plugin 'SirVer/ultisnips'
-Plugin 'honza/vim-snippets'
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger = "<c-l>"
 let g:UltiSnipsJumpBackwardTrigger="<c-h>"
@@ -75,43 +77,43 @@ let g:UltiSnipsEditSplit="vertical"
 
 " Markdown
 autocmd BufNewFile,BufRead *.{md,mkd,mkdn,mark*}  nested setlocal filetype=markdown
-Plugin 'godlygeek/tabular'
-Plugin 'plasticboy/vim-markdown'
+Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "neomake
-Plugin 'neomake/neomake'
+Plug 'neomake/neomake'
 autocmd! BufWritePost * Neomake
 
 " let g:neomake_open_list=2
 " let g:neomake_go_enabled_makers = ['go', 'govet']
 
 "tags lister method menu
-Plugin 'majutsushi/tagbar'
+Plug 'majutsushi/tagbar'
 " nmap <c-m> :TagbarToggle<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "short comment,e.g. gcc
-Plugin 'tomtom/tcomment_vim'
-Plugin 'tpope/vim-surround'
+Plug 'tomtom/tcomment_vim'
+Plug 'tpope/vim-surround'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "power search tool
-Plugin 'mileszs/ack.vim'
+Plug 'mileszs/ack.vim'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "show git diff when edicting
-Plugin 'airblade/vim-gitgutter'
+Plug 'airblade/vim-gitgutter'
 let g:gitgutter_signs = 1
 let g:gitgutter_highlight_lines = 0
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "color symble that pairs
-Plugin 'luochen1990/rainbow'
+Plug 'luochen1990/rainbow'
 let g:rainbow_active= 1
 
 """""""""""""""""""""""""""""<golang tool chain> start""""""""""""""""""""""""""""""""""
-Plugin 'fatih/vim-go'
+Plug 'fatih/vim-go'
 let g:go_fmt_command = 'goimports'    "auto insert package
 au FileType go nmap <Leader>s <Plug>(go-def-split)
 au FileType go nmap <Leader>v <Plug>(go-def-vertical)
@@ -126,38 +128,45 @@ let g:rehash256 = 1
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " select multiple words and update them
-Plugin 'terryma/vim-multiple-cursors'
+Plug 'terryma/vim-multiple-cursors'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "scoll smoothly when hit c-b c-f
-" Plugin 'yonchu/accelerated-smooth-scroll'
+" Plug 'yonchu/accelerated-smooth-scroll'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "write in simple background
-Plugin 'junegunn/goyo.vim'
+Plug 'junegunn/goyo.vim'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "also say powerline
-Plugin 'bling/vim-airline'
+Plug 'bling/vim-airline'
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "input stat switch between normal mode and insert mode automatically
-Plugin 'CodeFalling/fcitx-vim-osx'
+Plug 'CodeFalling/fcitx-vim-osx'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " visual start search
-Plugin 'bronson/vim-visual-star-search'
+Plug 'bronson/vim-visual-star-search'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-Plugin 'raimondi/delimitmate'
+Plug 'raimondi/delimitmate'
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Plug 'ctrlpvim/ctrlp.vim'
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Plug 'ryanoasis/vim-devicons'
+let g:airline_powerline_fonts = 1
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:vimrc_author='Jialin Wu' 
 let g:vimrc_email='win27v@gmail.com' 
-let g:vimrc_homepage='http://linnv.gitcafe.io' 
+let g:vimrc_homepage='https://jialinwu.com'
+call plug#end()
 
-call vundle#end()            " required
 filetype plugin indent on    " required
 
 " ====================leader key=================
@@ -166,8 +175,8 @@ filetype plugin indent on    " required
 let mapleader = "\<Space>"
 
 """""""""""""""""""""""""""""<show file edicted recently> start""""""""""""""""""""""""""""""""""
-" set runtimepath^=~/.vim/bundle/ctrlp.vim
-set runtimepath^=~/.config/nvim/bundle/ctrlp.vim
+" set runtimepath^=~/.config/nvim/bundle/ctrlp.vim
+set runtimepath^=~/.config/nvim/plugged/ctrlp.vim
 map <silent> <leader>r :CtrlPMRU<cr>
 " map <silent> <leader>t :CtrlPMixed<cr>
 " map <silent> <leader>t :CtrlP<cr>
@@ -239,8 +248,8 @@ map <silent> <leader>hc :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<cr>
 
 "edit tmp file
 map <silent> <leader>tmp :e ~/tmpfile<cr>
-map <silent> <leader>booknote :e /Users/Jialin/Dropbox/vimNote/book.md<cr>
-map <silent> <leader>jsnote :e /Users/Jialin/Dropbox/vimNote/jsnote.md<cr>
+" map <silent> <leader>booknote :e /Users/Jialin/Dropbox/vimNote/book.md<cr>
+" map <silent> <leader>jsnote :e /Users/Jialin/Dropbox/vimNote/jsnote.md<cr>
 
 "hightlight and search
 vnoremap // y/<C-R>"<CR>
@@ -256,8 +265,8 @@ autocmd! bufwritepost init.vim source ~/.config/nvim/init.vim
 
 hi Directory ctermfg=lightBlue
 
-" let g:python_host_prog='/usr/bin/python2.7'
-let g:python_host_prog='/usr/bin/python3'
+let g:python_host_prog='/usr/bin/python2'
+" let g:python_host_prog='/usr/bin/python3'
 let g:python_host_skip_check = 1
     if !has('nvim')
         set ttymouse=xterm2
