@@ -9,6 +9,7 @@ set nofoldenable        "dont fold by default
 set foldlevel=1         "this is just what i use
 
 set fillchars+=vert:│
+" set fillchars+=vert:\ 
 
 " ignorecase and smartcase together make Vim deal with case-sensitive search intelligently. If you search for an all-lowercase string your search will be case-insensitive, but if one or more characters is uppercase the search will be case-sensitive. Most of the time this does what you want.
 set ignorecase
@@ -81,7 +82,15 @@ autocmd! BufWritePost * Neomake
 
 "tags lister method menu
 Plug 'majutsushi/tagbar'
-
+" let g:tagbar_width = 30
+" let g:tagbar_left = 1
+let g:tagbar_type_markdown = {
+        \ 'ctagstype' : 'markdown',
+        \ 'kinds' : [
+                \ 'h:headings',
+        \ ],
+    \ 'sort' : 0
+\ }
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "shortcut for comment,e.g. gcc
 Plug 'tomtom/tcomment_vim'
@@ -282,12 +291,15 @@ nnoremap ; :
 "split window
 nnoremap <leader>2w <C-w>v<C-w>l
 
+"visul for html tab
+nnoremap <leader>zv Vat
+
 "use alt-w to save
 nnoremap <M-w> :w<cr>
 inoremap <M-w> <ESC>:w<cr>
 
 "use jj to exit back to normal mode
-inoremap jj <ESC>
+inoremap hh <ESC>
 
 "Save file edicting
 nnoremap <silent> <leader>w :w<cr>
