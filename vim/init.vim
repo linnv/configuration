@@ -3,7 +3,7 @@ set ruler "display the current row and column on the right_bottom corner
 set relativenumber
 set nu
 
-set foldmethod=syntax "fold based on indent
+" set foldmethod=syntax "fold based on indent
 set foldnestmax=10      "deepest fold is 10 levels
 set nofoldenable        "dont fold by default
 set foldlevel=1         "this is just what i use
@@ -287,6 +287,9 @@ vnoremap <tab> %
 
 "replace : with ; in normal mode
 nnoremap ; :
+"f{xx} forwrad`,` backward`<`
+nnoremap , ;
+nnoremap < ,
 
 "split window
 nnoremap <leader>2w <C-w>v<C-w>l
