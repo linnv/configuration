@@ -9,6 +9,7 @@ import (
 
 	"database/sql"
 
+	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -32,11 +33,67 @@ var (
 )
 
 func init() {
-	var err error
-	_db, err = sql.Open("mysql", GetDNS())
+	// var err error
+	// _db, err = sql.Open("mysql", GetDNS())
+	// if err != nil {
+	// 	log.Fatalf("Error connecting: %s", err.Error())
+	// }
+	dbHost := "cent.local"
+	dbPort := "3306"
+	dbUser := "root"
+	dbPass := "root"
+	dbName := "docker"
+	dbDSN := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8", dbUser, dbPass, dbHost, dbPort, dbName)
+	orm.RegisterDataBase("default", "mysql", dbDSN)
+	// orm.RegisterDataBase("docker", "mysql", "root:root@cent.local:3306/docker?charset=urtf8", 20)
+	orm.RegisterModel(new(Demo))
+	// orm.RegisterModel(new(Demo2))
+}
+
+type Demo struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
+	Age  int    `json:"age"`
+}
+
+// type Demo2 struct {
+// 	Id   int    `json:"id"`
+// 	Hoby string `json:"Hoby"`
+// 	Name string `json:"name"`
+// 	Age  int    `json:"age"`
+// }
+
+func ORMDemo() {
+	println("//<<-------------------------ORMDemo start-----------")
+	start := time.Now()
+	o := orm.NewOrm()
+
+	//create table first
+	// i, err := o.Insert(&Demo2{Id: 1, Name: "xx", Hoby: "xxeehoby", Age: 3333})
+	// if err != nil {
+	// 	panic(err.Error())
+	// }
+
+	// i, err := o.Insert(&Demo{Name: "xx", Age: 3333})
+	// if err != nil {
+	// 	panic(err.Error())
+	// }
+
+	j := Demo{Id: 2}
+	err := o.Read(&j)
 	if err != nil {
-		log.Fatalf("Error connecting: %s", err.Error())
+		panic(err.Error())
 	}
+	fmt.Printf("j: %+v\n", j)
+	j.Age = 19993
+	i, err := o.Update(&j)
+	if err != nil {
+		panic(err.Error())
+	}
+	fmt.Printf("i: %+v\n", i)
+
+	fmt.Printf("ORMDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------ORMDemo end----------->>")
 }
 
 func GetDB() *sql.DB {

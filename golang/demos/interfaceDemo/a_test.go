@@ -1,17 +1,15 @@
 // Package main provides ...
 package newDir
 
-import (
-	"fmt"
-	"testing"
-)
+import "testing"
 
 func TestJustDemo(t *testing.T) {
-	var m Moniter
-	m = Inheritan{}
-	r := m.GetConsumption()
+	JustDemo()
+	// var m Moniter
+	// m = Inheritan{}
+	// r := m.GetConsumption()
 	//@toDelete
-	fmt.Printf("r: %+v\n", r)
+	// fmt.Printf("r: %+v\n", r)
 
 	// var ters Timer
 	// ters = &TimeInstanceA{Count: 99}

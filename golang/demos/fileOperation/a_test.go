@@ -5,7 +5,8 @@ import "testing"
 
 func TestJustDemo(t *testing.T) {
 	// JustDemo()
-	DisplayError()
+	// DisplayError()
+	ReaddirsDemo()
 	// Link()
 	// FileTypeDemo()
 	// basic := "/Users/Jialin/web/demo/chart/samples/"

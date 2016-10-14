@@ -1,8 +1,12 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"os"
+	"os/signal"
+	"sync"
+	"syscall"
 	"time"
 )
 
@@ -21,22 +25,23 @@ type FileMonitor struct {
 	FilePath string
 	action   chan int
 	exit     chan bool
+	wg       sync.WaitGroup
 }
 
 func NewFileMonitor(filePath string) *FileMonitor {
 	return &FileMonitor{FilePath: filePath, action: make(chan int), exit: make(chan bool)}
 }
 
-func (fm *FileMonitor) Start() error {
-	go fm.ActionHandler()
+func (fm *FileMonitor) Start() {
 	var prevModTime time.Time
 	for {
 		select {
 		case <-time.After(POLL_DURATION):
 			finfo, err := os.Stat(fm.FilePath)
 			if err != nil {
-				return err
+				panic(err.Error())
 			}
+			log.Printf("fm.FilePath: %+v\n", fm.FilePath)
 			if finfo.IsDir() {
 				os.Stdout.Write(append([]byte("dir"), '\n'))
 			} else {
@@ -48,15 +53,17 @@ func (fm *FileMonitor) Start() error {
 			}
 		case <-fm.exit:
 			fm.action <- EXIT
-			return nil
+			return
 		}
 	}
 	panic("unreachable")
-	return nil
 }
 
 func (fm *FileMonitor) Stop() {
+	fm.wg.Add(1)
 	fm.exit <- true
+	println("waiting exit")
+	fm.wg.Wait()
 }
 
 func (fm *FileMonitor) Exit() {
@@ -72,6 +79,8 @@ func (fm *FileMonitor) ActionHandler() (err error) {
 				//@TODO  do something
 				log.Println("update: works\n")
 			case EXIT:
+				println("permit exiting")
+				fm.wg.Done()
 				return nil
 			default:
 			}
@@ -79,10 +88,26 @@ func (fm *FileMonitor) ActionHandler() (err error) {
 	}
 }
 
+func Wait(sig ...os.Signal) os.Signal {
+	c := make(chan os.Signal, 1)
+	if len(sig) == 0 {
+		log.Printf("[]int{}: %+v\n", []syscall.Signal{syscall.SIGHUP, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGKILL, syscall.SIGTERM, syscall.SIGCHLD, syscall.SIGSTOP})
+		signal.Notify(c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGKILL, syscall.SIGTERM, syscall.SIGCHLD, syscall.SIGSTOP)
+	} else {
+		signal.Notify(c, sig...)
+	}
+	// return <-c
+	a := <-c
+	log.Printf("issue signal: %+v\n", a)
+	return a
+}
+
 func main() {
-	fp := "/Users/Jialin/golang/src/demo/main/a.t"
-	fm := NewFileMonitor(fp)
+	fp := flag.String("file", "/Users/Jialin/golang/src/demos/main/a.go", "file to be monitored")
+	flag.Parse()
+	fm := NewFileMonitor(*fp)
 	go fm.Start()
-	time.Sleep(time.Second * 2)
+	go fm.ActionHandler()
+	Wait()
 	fm.Stop()
 }

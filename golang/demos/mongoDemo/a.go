@@ -1,7 +1,9 @@
 package mongoDemo
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 
 	"gopkg.in/mgo.v2"
@@ -19,7 +21,7 @@ const (
 	// ADDRESSPORT = "192.168.10.35:3000"
 	// DB          = "ssp_dev"
 	// COLLECTION  = "demo"
-	ADDRESSPORT = "127.0.0.1:27017"
+	ADDRESSPORT = "127.0.0.8:27017,127.0.0.1:27017"
 	DB          = "demo"
 	COLLECTION  = "acud"
 )
@@ -165,4 +167,58 @@ func AggregateQueryDemo() {
 	}
 	fmt.Printf(" %v microseconds\n", time.Since(start)/1000000)
 	println("//---------------------------AggregateQueryDemo end----------->>")
+}
+
+func BsonRawDemo() {
+	println("//<<-------------------------BsonRawDemo start-----------")
+	start := time.Now()
+
+	var s = &struct {
+		Name string `bson:"Name"`
+	}{Name: "xxxx"}
+
+	var js = &struct {
+		Name string `json:"xxname" bson:"Name"`
+	}{}
+	// bs, err := bson.Marshal(s)
+	// if err != nil {
+	// 	panic(err.Error())
+	// }
+	// var value interface{} = s
+	// var value interface{} = bson.M{"some": "value"}
+	data, err := bson.Marshal(s)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var doc bson.Raw
+	err = bson.Unmarshal(data, &doc)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("doc: %+v\n", doc)
+	bs, err := bson.Marshal(doc)
+	fmt.Printf("string(bs): %+v\n", string(bs))
+
+	err = doc.Unmarshal(&js)
+
+	bbs, err := json.Marshal(js)
+	fmt.Printf("string(bbs): %+v\n", string(bbs))
+
+	// a := make(map[string]string)
+	// doc.Unmarshal(&a)
+	// fmt.Printf("a: %+v\n", a)
+	//
+	// fmt.Printf("bs: %+v\n", bs)
+	// raw := bson.Raw{0x08, []byte{0x01}} // true
+	// // var a = make(map[string]interface{})
+	// // err := raw.Unmarshal(a)
+	// err := raw.Unmarshal(&struct{}{})
+	// if err != nil {
+	// 	panic(err.Error())
+	// }
+	// fmt.Printf("a: %+v\n", a)
+	fmt.Printf("BsonRawDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------BsonRawDemo end----------->>")
 }

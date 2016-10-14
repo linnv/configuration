@@ -3,8 +3,9 @@ package newDir
 import (
 	"encoding/json"
 	"fmt"
-	"os"
+	"runtime"
 	"strconv"
+	"time"
 )
 
 type A struct {
@@ -13,7 +14,7 @@ type A struct {
 }
 
 func (a *A) afunc() {
-	fmt.Println("a func")
+	fmt.Println(" struct a func")
 	// fmt.Printf("a.Name: %+v\n", a.Name)
 }
 
@@ -131,20 +132,26 @@ func (sl smapList) Update() {
 
 func JustDemo() {
 	println("<<<JustDemo start---------------------------")
-	mm := make(map[int]*A)
-	for i := 0; i < 10; i++ {
-		mm[i] = &A{Name: "xxxx"}
-	}
-	smapList(mm).Get()
-	os.Stdout.Write(append([]byte("line"), '\n'))
-	smapList(mm).Update()
-	smapList(mm).Get()
-	os.Stdout.Write(append([]byte("line2"), '\n'))
-	for k, v := range mm {
-		fmt.Printf("%+v: %+v\n", k, v)
-	}
-	// a := TT{AA: "jialin", Strs: []string{"xxxx", "nnn"}}
-	// a.A = &A{Name: "jjj"}
+	// mm := make(map[int]*A)
+	// for i := 0; i < 10; i++ {
+	// 	mm[i] = &A{Name: "xxxx"}
+	// }
+	// smapList(mm).Get()
+	// os.Stdout.Write(append([]byte("line"), '\n'))
+	// smapList(mm).Update()
+	// smapList(mm).Get()
+	// os.Stdout.Write(append([]byte("line2"), '\n'))
+	// for k, v := range mm {
+	// 	fmt.Printf("%+v: %+v\n", k, v)
+	// }
+
+	a := TT{AA: "jialin", Strs: []string{"xxxx", "nnn"}}
+	a.A = &A{Name: "jjj"}
+	a.afunc()
+	b := a.A
+	b.Name = "343er3"
+	fmt.Printf("a.Name: %+v\n", a.Name)
+	fmt.Printf("a.A: %+v\n", a.A)
 	// fmt.Printf("a: %+v\n", a)
 	// ar, err := json.Marshal(a)
 	// if err != nil {
@@ -168,11 +175,11 @@ func JustDemo() {
 	// pointerInstance.UpdatePointer()
 	// fmt.Printf("pointerInstance.Flatten: %+v\n", pointerInstance.Flatten)
 
-	pointerInstance := A{}
-	pointerInstance.Update()
-	fmt.Printf("pointerInstance.Flatten: %+v\n", pointerInstance.Flatten)
-	pointerInstance.UpdatePointer()
-	fmt.Printf("pointerInstance.Flatten: %+v\n", pointerInstance.Flatten)
+	// pointerInstance := A{}
+	// pointerInstance.Update()
+	// fmt.Printf("pointerInstance.Flatten: %+v\n", pointerInstance.Flatten)
+	// pointerInstance.UpdatePointer()
+	// fmt.Printf("pointerInstance.Flatten: %+v\n", pointerInstance.Flatten)
 
 	println("-----------------------------JustDemo end>>>")
 	return
@@ -182,3 +189,34 @@ func JustDemo() {
 // 	A ...bson.M
 // 	// B ...[]int
 // }
+
+type stack []uintptr
+
+func callers() *stack {
+	const depth = 32
+	var pcs [depth]uintptr
+	n := runtime.Callers(3, pcs[:])
+	var st stack = pcs[0:n]
+	return &st
+}
+
+type ErrerWrapper struct {
+	e   error
+	msg string
+	s   *stack
+}
+
+// func (e *ErrerWrapper) Cause() error  { return e.e }
+func (e *ErrerWrapper) Error() string { return e.msg }
+
+func EWDemo(err error, m string) error {
+	println("//<<-------------------------EWDemo start-----------")
+	start := time.Now()
+	fmt.Printf("EWDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------EWDemo end----------->>")
+	return &ErrerWrapper{
+		e:   err,
+		msg: m,
+		s:   callers(),
+	}
+}

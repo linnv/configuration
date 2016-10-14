@@ -10,6 +10,15 @@ type Person struct {
 	Age  int
 }
 
+type PersonType struct {
+	AN,
+	BN,
+	Name string
+	B,
+	C,
+	Age int
+}
+
 func (p Person) String() string {
 	return fmt.Sprintf("%s: %d", p.Name, p.Age)
 }
@@ -33,5 +42,6 @@ func main() {
 	fmt.Println(people)
 	sort.Sort(ByAge(people))
 	fmt.Println(people)
-
+	py := new(PersonType)
+	fmt.Printf("py: %+v\n", py)
 }

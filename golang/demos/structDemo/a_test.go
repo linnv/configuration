@@ -2,6 +2,7 @@ package newDir
 
 import (
 	"fmt"
+	"io"
 	"testing"
 )
 
@@ -51,6 +52,8 @@ func TestJustDemo(t *testing.T) {
 	// log.Println(u.Name)
 	// d := &Derive{Two: &Base{Count: 10}}
 	// v, ok := d.(*Derive)
-	fmt.Printf(": works\n")
-	JustDemo()
+	// fmt.Printf(": works\n")
+	// JustDemo()
+	a := EWDemo(io.EOF, "xxxoo")
+	fmt.Printf("a: %+v\n", a.Error())
 }

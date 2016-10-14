@@ -2,17 +2,27 @@
 package newDir
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path"
+	"path/filepath"
 	"strconv"
 	"time"
 )
 
 func JustDemo() {
 	println("<<<JustDemo start---------------------------")
+	type MyService struct {
+		LogOutput io.Writer
+	}
+	var buf bytes.Buffer
+	var s MyService
+	s.LogOutput = io.MultiWriter(&buf, os.Stderr)
+	// io.WriteString
 	println("-----------------------------JustDemo end>>>")
 	return
 }
@@ -276,4 +286,28 @@ func b2k(size int64) int64 {
 		return size / UnitKb
 	}
 	return 0
+}
+
+func ReaddirsDemo() {
+	println("//<<-------------------------ReaddirsDemo start-----------")
+	start := time.Now()
+
+	path := "/Users/Jialin/golang/src/demos/demos/fileOperation"
+	f, err := os.Open(path)
+	if err != nil {
+		panic(err.Error())
+		return
+	}
+	// 遍历当前文件夹
+	fs, err := f.Readdirnames(0)
+	if err != nil {
+		panic(err.Error())
+		return
+	}
+	fmt.Printf("  fs: %+v\n", fs)
+	fmt.Printf("fs[0]: %+v\n", fs[0])
+	s := filepath.Dir(fs[0])
+	fmt.Printf("  s: %+v\n", s)
+	fmt.Printf("ReaddirsDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------ReaddirsDemo end----------->>")
 }

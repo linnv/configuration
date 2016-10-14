@@ -43,6 +43,7 @@ func ReadLineByLine(filepath string) {
 		log.Fatal(scanner.Err())
 	}
 }
+
 func main() {
 	ReadLineByLine("./mongo.go")
 

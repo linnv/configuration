@@ -11,6 +11,10 @@ func TestMockTransportDemo(t *testing.T) {
 	t.Log("test http transport func :good")
 }
 
+func TestHttpTimeConsumptionDemo(t *testing.T) {
+	HttpTimeConsumptionDemo()
+}
+
 func TestJson2HttpForm(t *testing.T) {
 	var a = struct {
 		A      string   `json:"Aefjfejf"`
@@ -31,6 +35,7 @@ func TestJson2HttpForm(t *testing.T) {
 	req, _ := http.NewRequest("POST", "http://www.jilainwu.com", bytes.NewBuffer([]byte(data)))
 	//this header must be set when posting data in body
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	// http.DefaultClient.Do()
 
 	// or set Form directly
 	// req.Form = *form
@@ -56,5 +61,5 @@ func TestJson2HttpForm(t *testing.T) {
 
 	// b, _ := ioutil.ReadAll(bytes.NewBuffer([]byte(data)))
 	// vs, _ := url.ParseQuery(string(b))
-	// fmt.Printf("vs: %+v\n", vs)
+	// vs should be same  with form
 }

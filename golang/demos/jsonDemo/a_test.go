@@ -1,10 +1,11 @@
 package newDir
 
-import (
-	"fmt"
-	"testing"
-	"time"
-)
+import "testing"
+
+func TestJsonRaw(t *testing.T) {
+	// JsonRaw()
+	InterfaceDemo()
+}
 
 // . "github.com/smartystreets/goconvey/convey"
 
@@ -84,6 +85,11 @@ func TestJustDemo(t *testing.T) {
 	// TimeDemo()
 	// BsonDemo()
 	// WireUnMarshalDemoAP()
+	a := []int{}
+	b := []int{}
+
+	println("a&b", len(a)&len(b))
+
 	// td := &T{}
 	// td.Times = time.Now()
 	// td.C = 1111
@@ -112,9 +118,9 @@ func TestJustDemo(t *testing.T) {
 	// 	return
 	// }
 
-	tt := time.Unix(1362984425, 0)
-	nt := tt.Format("2006-01-02 15:04:05")
-	fmt.Println(nt)
+	// tt := time.Unix(1362984425, 0)
+	// nt := tt.Format("2006-01-02 15:04:05")
+	// fmt.Println(nt)
 }
 
 // func TestLoadJsonFile(t *testing.T) {

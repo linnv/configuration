@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sync"
 	"time"
 )
 
@@ -25,15 +26,6 @@ func Iplus() {
 
 }
 
-func loopDemo() {
-	println("<<<loopDemo---------------------------")
-	a := []string{"3", "4r3r", "nbn"}
-	for k, v := range a {
-		fmt.Printf("%+v: %+v\n", k, v)
-	}
-	println("-----------------------------loopDemo>>>")
-	return
-}
 func ArrayPinter_PointerArrarDemo() {
 	println("<<<-----------------ArrayPinter_PointerArrarDemo----------")
 	println("-------copy value------")
@@ -126,4 +118,27 @@ func PointerArrayDemo() {
 		fmt.Printf("%+v: %+v\n", k, v)
 	}
 	println("-----------------PointerArrayDemo------------>>>")
+}
+
+func loopDemo() {
+	println("<<<loopDemo---------------------------")
+	// the value of the iteration variable v changes at each step so the most probable output is first value of a same being greeted three times. You must capture the current value of v
+	//v的值在每一次Loop中是改变的，但是每个goroutine传入的都同一个变量v，在不同的goroutine中传入同一个变量(地址一样)，所获得的这个变量的值是不会发生更新的
+	var wg sync.WaitGroup
+	a := []string{"3", "4r3r", "nbn"}
+	for k, v := range a {
+		fmt.Printf("%+v: %+v addr %p\n", k, v, &v)
+		//method one: copy v to p,thus p is a new variable with new address and the updated value of v
+		p := a
+		fmt.Printf("p: %p\n", &p)
+		wg.Add(1)
+		//method two: invoke goroutine with one parameter, as the parameter has its address and value,each time v is put into goroutine as paramter,its value will be assgined to the parameter variable (s of func)
+		go func(s string) {
+			fmt.Printf("goroutine %+v: %+v addr %p\n", k, s, &s)
+			wg.Done()
+		}(v)
+	}
+	wg.Wait()
+	println("-----------------------------loopDemo>>>")
+	return
 }

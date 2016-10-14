@@ -3,6 +3,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 )
 
 type A func(text string) []byte
@@ -28,16 +29,37 @@ func SumDemo(in []int, xform func(int) int) (out []int) {
 	return
 }
 
-func main() {
-	// fmt.Println()
-	// r := Wrap(B)
-	// cr := r("mmmm")
-	// fmt.Printf("cr: %+v\n", cr)
-
-	data := []int{8, 6, 7, 5, 3, 0, 9}
-	total := 0
-	fmt.Printf("Result is %v\n", my_transform(data, func(v int) int {
-		total += v
-		return total
-	}))
+type field struct {
+	name string
 }
+
+func (p *field) print() {
+	fmt.Println(p.name)
+}
+
+func main() {
+	// data := []*field{{"one"}, {"two"}, {"three"}}
+	//vs
+	// data := []field{{"one"}, {"two"}, {"three"}}
+	//
+	// for _, v := range data {
+	// 	go v.print()
+	// }
+
+	//pri
+	time.Sleep(3 * time.Second)
+}
+
+// func main() {
+// 	// fmt.Println()
+// 	// r := Wrap(B)
+// 	// cr := r("mmmm")
+// 	// fmt.Printf("cr: %+v\n", cr)
+//
+// 	data := []int{8, 6, 7, 5, 3, 0, 9}
+// 	total := 0
+// 	fmt.Printf("Result is %v\n", my_transform(data, func(v int) int {
+// 		total += v
+// 		return total
+// 	}))
+// }

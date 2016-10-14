@@ -1,0 +1,14 @@
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func main() {
+	var s string
+	os.Stdout.Write(append([]byte("from running aap"), '\n'))
+	fmt.Scanf("%s", &s)
+	os.Stdout.Write(append([]byte(s), '\n'))
+	return
+}

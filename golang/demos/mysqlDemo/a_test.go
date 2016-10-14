@@ -4,9 +4,10 @@ package newDir
 import "testing"
 
 func TestJustDemo(t *testing.T) {
-	// JustDemo()
+	JustDemo()
 	// InsertDemo()
-	QueryDemo()
+	// QueryDemo()
+	// ORMDemo()
 	// InsertDemo()
 	// QueryDemo()
 	// InsertDemo()

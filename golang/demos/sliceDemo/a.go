@@ -13,11 +13,6 @@ import (
 )
 
 // const length string diff from  []
-var strList = [...]string{
-	"g",
-	"d",
-}
-
 func BitCalucate() {
 	fmt.Printf("A: %v B:%v C:%v \n", strconv.FormatInt(int64(A), 2), strconv.FormatInt(int64(B), 2), strconv.FormatInt(int64(C), 2))
 	fmt.Printf("AB: %v\n", strconv.FormatInt(int64(AB), 2))
@@ -61,16 +56,31 @@ func ReturnFalse() bool {
 	return false
 }
 
+type Astruct struct {
+	Name string `json:"Name"`
+	I    int    `json:"I"`
+}
+
 func JustDemo() {
 	println("//<<-------------------------JustDemo start-----------")
 	start := time.Now()
+	var a Astruct
+	var listOfA []Astruct
+	a.Name = "xx"
+	a.I = 1
+	listOfA = append(listOfA, a)
+	a.Name = "2xx"
+	a.I = 2
+	listOfA = append(listOfA, a)
+	//@todoDelelte
+	fmt.Printf("listOfA: %+v,cap(listOfA):%d,len(listOfA):%d arrd:%v \n", listOfA, cap(listOfA), len(listOfA), &listOfA[0])
 
-	rul := NewLRULink()
-	for i := 0; i < 201; i++ {
-		rul.Upsert(strconv.Itoa(i))
-	}
-	rul.Upsert("19")
-	rul.PrintAll()
+	// rul := NewLRULink()
+	// for i := 0; i < 201; i++ {
+	// 	rul.Upsert(strconv.Itoa(i))
+	// }
+	// rul.Upsert("19")
+	// rul.PrintAll()
 
 	// kpHashDemo()
 	// var s string = "jjj3"
@@ -152,8 +162,8 @@ func JustDemo() {
 	// if ReturnFalse() && ReturnTrue() {
 	// 	os.Stdout.Write(append([]byte("both true"), '\n'))
 	// }
-
-	// fmt.Printf("  strList[FIRST]: %+v\n", strList[FIRST])
+	// fmt.Printf("  strList[FIRST]: %+v\n", strList[])
+	fmt.Printf("strList[TEN]: %+v\n", strList[TEN])
 	//
 	// s := jj + "333"
 	// fmt.Printf("  s: %+v\n", s)
@@ -193,7 +203,8 @@ func JustDemo() {
 	// fmt.Printf("n: %+v\n", n)
 
 	// fmt.Println(strings.Join([]string{"j", "i", "a"}, "----"))
-
+	s := "abcdefg"
+	fmt.Printf("s[2:]: %+v\n", s[2:])
 	fmt.Printf("JustDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
 	println("//---------------------------JustDemo end----------->>")
 }
@@ -273,17 +284,41 @@ func SliceDemo() {
 	//
 	// fmt.Printf("  appAdslotIds[1]: %+v cap:%v\n", appAdslotIds[1], cap(appAdslotIds[0]))
 
-	a, b := make([]string, 0, 2), make([]string, 0, 2)
+	a := make([]int, 0, 19)
+	a = append(a, 444)
+	fmt.Printf("a: %+v,cap(a):%d,len(a):%d arrd:%v \n", a, cap(a), len(a), &a[0])
+	//let len(a) be zero, cap keep still
+	a = a[:0]
+	a = append(a, 3433)
+	a = append(a, 3444232)
+	// a = a[:cap(a)]
+	fmt.Printf("a: %+v,cap(a):%d,len(a):%d arrd:%v \n", a, cap(a), len(a), &a[0])
+	// b := a[3:14]
+	// b = append(b, 9999)
+	// b[0] = 9
+	// fmt.Printf("b: %+v,cap(b):%d,len(b):%d arrd:%v \n", b, cap(b), len(b), &b[0])
 
-	fmt.Printf("  len(a) %+v,cap(b): %+v\n", len(a), cap(a))
-	fmt.Printf("  len(a) %+v,cap(b): %+v\n", len(b), cap(b))
+	//error
+	// s := "abcdefg"
+	// sl := s[1:]
+	// //@todoDelelte
+	// sl = append(sl, 'x')
+	// fmt.Printf("s: %+v,cap(s):%d,len(s):%d arrd:%v \n", s, 1, len(s), &s)
+	// //@todoDelelte
+	//\' fej fe  \'
+	// fmt.Printf("sl: %+v,cap(sl):%d,len(sl):%d arrd:%v \n", sl, 1, len(sl), &sl)
 
-	c := "[\""
-	for i := 0; i < 10; i++ {
-		c += strconv.Itoa(i) + "\",\""
-	}
-	c += "]"
-	fmt.Printf("  c: %+v\n", c)
+	// a, b := make([]string, 0, 2), make([]string, 0, 2)
+	//
+	// fmt.Printf("  len(a) %+v,cap(b): %+v\n", len(a), cap(a))
+	// fmt.Printf("  len(a) %+v,cap(b): %+v\n", len(b), cap(b))
+	//
+	// c := "[\""
+	// for i := 0; i < 10; i++ {
+	// 	c += strconv.Itoa(i) + "\",\""
+	// }
+	// c += "]"
+	// fmt.Printf("  c: %+v\n", c)
 }
 
 func PointersSliceDemo(as []*AA) {
@@ -298,8 +333,13 @@ func instanceSliceDemo(as []AA) {
 }
 
 func Array(a []int) {
+	index := 0
+	v := a[3]
 	for i := 0; i < len(a); i++ {
-		a[i] = 1
+		if a[i] > v {
+			a[i], a[index] = a[index], a[i]
+		}
+		index++
 	}
 }
 
@@ -312,24 +352,24 @@ func ArrayInstance(a *[3]int) {
 func ReplaceStr() {
 
 	str := `"Bid_M.render({
-	"id": "323903",
-	"name": "{PRODUCT_NAME}",
-	"desc": "{PRODUCT_SUMMARY}",
-	"icon": "{PRODUCT_ICON_NAME}",
-	"banner": "{BANNER_NAME}",
-	"link": "{WEB_URL}",
-	"isLink": {IS_OPEN_URL},
-	"star": {PRODUCT_RATE},
-	"count": {PRODUCT_DOWNLOADS},
-	"ios": {
-		"download": "{ITUNES_URL}",
-		"dplink": "{IOS_DEEP_URL}"
-	},
-	"android": {
-		"download": "{APK_URL}",
-		"dplink": "{ANDROID_DEEP_URL}"
-	}
-});
+		"id": "323903",
+		"name": "{PRODUCT_NAME}",
+		"desc": "{PRODUCT_SUMMARY}",
+		"icon": "{PRODUCT_ICON_NAME}",
+		"banner": "{BANNER_NAME}",
+		"link": "{WEB_URL}",
+		"isLink": {IS_OPEN_URL},
+		"star": {PRODUCT_RATE},
+		"count": {PRODUCT_DOWNLOADS},
+		"ios": {
+			"download": "{ITUNES_URL}",
+			"dplink": "{IOS_DEEP_URL}"
+		},
+		"android": {
+			"download": "{APK_URL}",
+			"dplink": "{ANDROID_DEEP_URL}"
+		}
+	});
 	"`
 
 	// c := "[\""
@@ -869,4 +909,69 @@ func LRULinkListDemo() {
 
 	fmt.Printf("LRULinkListDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
 	println("//---------------------------LRULinkListDemo end----------->>")
+}
+
+//copyslice implements ...
+func copyslice(o []int) []int {
+	c := make([]int, len(o))
+	copy(c, o)
+	return c
+}
+
+func copySliceDemo() {
+	println("//<<-------------------------copySliceDemo start-----------")
+	start := time.Now()
+	a := make([]int, 3, 4)
+	a[0], a[1], a[2] = 0, 1, 2
+
+	b := append(a, 66)
+	b[0] = 6
+	c := copyslice(a)
+	c = append(c, 77)
+	c[0] = 7
+	d := append(a, 88, 99)
+	d[0] = 9
+
+	fmt.Println(a)
+	fmt.Println(b)
+	fmt.Println(c)
+	fmt.Println(d)
+	fmt.Printf("copySliceDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------copySliceDemo end----------->>")
+}
+
+type IS []int
+
+func (i IS) Append(a int) {
+	//it will append to a template slice by this way when the type of receiver is value
+	i = append(i, a)
+	//@todoDelelte
+	fmt.Printf("&i: %+v,cap(i):%d,len(i):%d arrd:%p \n", i, cap(i), len(i), &i)
+	fmt.Printf("i: %+v,cap(i):%d,len(i):%d arrd:%p \n", i, cap(i), len(i), i)
+}
+
+func (i *IS) AppendPointer(a int) {
+	//it will append to the original slice by this way when the type of receiver is pointer
+	*i = append(*i, a)
+	//@todoDelelte
+	fmt.Printf("&i: %+v,cap(i):%d,len(i):%d arrd:%p \n", i, cap(*i), len(*i), &i)
+	fmt.Printf("i: %+v,cap(i):%d,len(i):%d arrd:%p \n", i, cap(*i), len(*i), i)
+}
+
+func AppendDemo() {
+	println("//<<-------------------------AppendDemo start-----------")
+	start := time.Now()
+	// var is IS
+	is := new(IS)
+	is.Append(1)
+	is.Append(10)
+	println("pause")
+	//@todoDelelte
+	// fmt.Printf("is: %+v,cap(is):%d,len(is):%d arrd:%v \n", is, cap(is), len(is), &is)
+	fmt.Printf("is: %+v,cap(is):%d,len(is):%d arrd:%v \n", is, cap(*is), len(*is), is)
+
+	is.AppendPointer(2)
+	is.AppendPointer(3)
+	fmt.Printf("AppendDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------AppendDemo end----------->>")
 }

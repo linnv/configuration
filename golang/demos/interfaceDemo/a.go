@@ -46,12 +46,6 @@ func ReturnSlice() interface{} {
 	return []int{1, 23, 4}
 }
 
-func JustDemo() {
-	println("<<<JustDemo start---------------------------")
-	println("-----------------------------JustDemo end>>>")
-	return
-}
-
 type MyTime struct {
 	start int `json:"Start"`
 	end   int `json:"End"`
@@ -145,8 +139,24 @@ func (tia *TimeInstanceInheritanceA) UpdateCount() int64 {
 	return tia.Count
 }
 
+type I interface {
+	Ido()
+	IdoSecond()
+}
+type Ii struct {
+	Int int `json:"Int"`
+}
+
+func (i *Ii) Ido() {
+	println("work")
+}
+func (i *Ii) Ido3() {
+	println("3 work")
+}
+
 type Inheritan struct {
-	N string `json:"N"`
+	II *I
+	N  string `json:"N"`
 }
 
 func (i Inheritan) GetConsumption() int {
@@ -155,4 +165,15 @@ func (i Inheritan) GetConsumption() int {
 
 func (i Inheritan) AxGetConsumption() int {
 	return 1022
+}
+
+func JustDemo() {
+	println("<<<JustDemo start---------------------------")
+	// var i Inheritan
+	// i.II.Ido()
+	var i I
+	i = &Ii{}
+	i.Ido()
+	println("-----------------------------JustDemo end>>>")
+	return
 }

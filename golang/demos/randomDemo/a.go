@@ -13,6 +13,13 @@ import (
 
 func JustDemo() {
 	println("<<<JustDemo start---------------------------")
+	fmt.Printf("rand.Init(2999): %+v\n", rand.Intn(2999))
+	fmt.Printf("rand.Init(2999): %+v\n", rand.Intn(2999))
+	fmt.Printf("rand.Init(2999): %+v\n", rand.Intn(2999)+10)
+
+	//use global random of rand package
+	rand.Seed(333)
+	fmt.Printf(": %+v\n", rand.Intn(100))
 	println("-----------------------------JustDemo end>>>")
 	return
 }

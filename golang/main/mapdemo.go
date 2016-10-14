@@ -78,11 +78,21 @@ func copyMapDemo() {
 	return
 }
 
-func main() {
+type data struct {
+	name string
+}
 
-	aInt := make([]string, 1024*102)
+func main() {
+	m := map[string]*data{"x": {"one"}}
+	fmt.Printf("m: %+v\n", m)
+	m["z"] = new(data)
+	//vs no new() and get new key directly
+	m["z"].name = "what?" //???
+	fmt.Printf("m: %+v\n", m)
+
+	// aInt := make([]string, 1024*102)
 	// aInt := make([]string, 1024*1024*1024)
-	fmt.Printf("aInt: %+v\n", aInt)
+	// fmt.Printf("aInt: %+v\n", aInt)
 	// aMap = make(map[int]string, 1024*1024*1024)
 	// time.Sleep(time.Second * 10)
 	// for i := 0; i < 1024*1024*1024; i++ {

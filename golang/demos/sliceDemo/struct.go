@@ -3,7 +3,9 @@ package newDir
 import "fmt"
 
 const (
-	FIRST = iota
+	FIRST  = iota //0
+	SECOND = 2
+	TEN    = 10
 )
 
 const (
@@ -11,6 +13,12 @@ const (
 	B
 	C
 )
+
+var strList = [...]string{
+	FIRST:  "g",
+	SECOND: "d",
+	TEN:    "10000",
+}
 
 var (
 	AB  = A | B

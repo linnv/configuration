@@ -4,5 +4,8 @@ package newDir
 import "testing"
 
 func TestJustDemo(t *testing.T) {
-	JustDemo()
+	// InittfHandler()
+	// JustDemo()
+	// Field2fieldDemo(A{})
+	Field2fieldDemo(&A{})
 }

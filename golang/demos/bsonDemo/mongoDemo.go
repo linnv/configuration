@@ -62,6 +62,24 @@ func StructTagJsonDemo(b *JPerson) (str []byte, err error) {
 	println("-----------------------------structTagDemo>>>")
 	return ret, y
 }
+func RawDemo() {
+	println("//<<-------------------------RawDemo start-----------")
+	start := time.Now()
+	var a = struct {
+		A string `bson:"A "`
+		B int64  `bson:"B "`
+	}{}
+	bs, err := bson.Marshal(a)
+	if err != nil {
+		panic(err.Error())
+	}
+	raw := bson.Raw(bs)
+	s := bson.Unmarshal(raw)
+	fmt.Printf("s: %+v\n", s)
+	fmt.Printf("string(s): %+v\n", string(s))
+	fmt.Printf("RawDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------RawDemo end----------->>")
+}
 
 func JustDemo() {
 	println("//<<-------------------------JustDemo start-----------")

@@ -18,6 +18,7 @@ func JustDemo() {
 func AliyunDemo() {
 	println("//<<-------------------------AliyunDemo start-----------")
 	address := "182.92.76.126:8087"
+	// address := "182.92.76.126:8087"
 	// filePath := "/Users/Jialin/Desktop/1.png"
 	// filePath := "/Users/Jialin/Downloads/好想你-i-miss-u-JoyceChu.mp4"
 	filePath := "/Users/Jialin/Documents/materialUpload/webm/feelings_vp9-20130806-242.webm"
@@ -45,8 +46,9 @@ func AliyunDemo() {
 func LocalDemo() {
 	println("//<<-------------------------LocalDemo start-----------")
 	// address := "192.168.100.44:8087"
-	address := "192.168.10.35:8087"
-	filePath := "/Users/Jialin/Desktop/a.png"
+	address := "192.168.8.136:8087"
+	// address := "192.168.9.90:8017"
+	filePath := "/Users/Jialin/Desktop/time.png"
 	f, err := os.Open(filePath)
 	if err != nil {
 		panic(err.Error())
@@ -59,7 +61,8 @@ func LocalDemo() {
 		panic(err.Error())
 		return
 	}
-	err = SaveFile(address, "demo", "picd.png", thisb)
+	//192.168.8.136:8087/riak/demo/time.png
+	err = SaveFile(address, "demo", "time.png", thisb)
 	if err != nil {
 		panic(err.Error())
 		return
@@ -83,9 +86,9 @@ func SaveFile(address, bucketName, key string, p []byte) error {
 
 	obj := bucket.NewObject(key)
 	// obj.ContentType = "application/octet-stream"
-	// obj.ContentType = "image/png"
+	obj.ContentType = "image/png"
 	// obj.ContentType = "video/mp4"
-	obj.ContentType = "video/webm"
+	// obj.ContentType = "video/webm"
 	obj.Data = p
 	return obj.Store()
 }

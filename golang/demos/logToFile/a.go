@@ -39,6 +39,8 @@ func LogToFile() {
 	}
 	defer f.Close()
 
+	// os.Stderr.Write(append([]byte(""), "This is a test log entry"...))
+
 	log.SetOutput(f)
 	// log.SetFlags(log.Lshortfile | LstdFlags)
 	log.SetFlags(log.Llongfile | LstdFlags)

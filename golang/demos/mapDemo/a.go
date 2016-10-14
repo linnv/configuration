@@ -1,8 +1,6 @@
 // Package main provides ...
 package newDir
 
-import "fmt"
-
 type MS struct {
 	Exit    bool
 	Index   int
@@ -27,25 +25,32 @@ func JustDemo() {
 	// fmt.Printf("m: %+v\n", m)
 	// ms[0] = m
 	// fmt.Printf("ms[0]: %+v\n", ms[0])
-
-	len := 100
-	ms := make(map[int]MS, len)
-	mpSlice := make(map[int]MS, len)
-	for i := 0; i < len; i++ {
-		mpSlice[i] = MS{Index: i * 9}
+	a := make(map[string]bool, 2)
+	// println(a["aa"])
+	if a["aa"] {
+		println("true")
+	} else {
+		println("false")
 	}
 
-	// var m MS
-	m := mpSlice[0]
-	m.Index = 333
-	ms[0] = m
+	// len := 100
+	// ms := make(map[int]MS, len)
+	// mpSlice := make(map[int]MS, len)
+	// for i := 0; i < len; i++ {
+	// 	mpSlice[i] = MS{Index: i * 9}
+	// }
+	//
+	// // var m MS
+	// m := mpSlice[0]
+	// m.Index = 333
+	// ms[0] = m
 
 	// ms[0] = mpSlice[0]
 	// ms[0].Index = 333
 
-	fmt.Printf("ms[0]: %+v\n", ms[0])
-
-	fmt.Printf("mpSlice[0]: %+v\n", mpSlice[0])
+	// fmt.Printf("ms[0]: %+v\n", ms[0])
+	//
+	// fmt.Printf("mpSlice[0]: %+v\n", mpSlice[0])
 
 	// m := make(map[int][]int, 3)
 	// m[3] = []int{1, 34}

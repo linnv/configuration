@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bitly/go-nsq"
+	"github.com/nsqio/go-nsq"
 )
 
 type T struct {
@@ -58,13 +58,14 @@ func main() {
 	countFlag := flag.Int("count", 10, "count")
 	flag.Parse()
 	count = *countFlag
+	topic := "mbv_xxxxx3"
 
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
 	timesConsumption = make(Int64Slice, 0, count)
 	config := nsq.NewConfig()
-	q, _ := nsq.NewConsumer("test", "test", config)
+	q, _ := nsq.NewConsumer(topic, "test", config)
 	// q, _ := nsq.NewConsumer("ssp_notify", "ssp_rocket_bid-192.168.10.187-7088", config)
 	q.AddHandler(nsq.HandlerFunc(func(message *nsq.Message) error {
 		// log.Printf("Got a message: %v", message)
@@ -96,8 +97,8 @@ func main() {
 
 	}))
 	// err := q.ConnectToNSQD("127.0.0.1:4150")
-	// err := q.ConnectToNSQD("192.168.10.41:4150")
-	err := q.ConnectToNSQD("192.168.10.95:4150")
+	// err := q.ConnectToNSQD("192.168.10.95:4150")
+	err := q.ConnectToNSQD("192.168.9.94:4150")
 	// err := q.ConnectToNSQD("182.92.76.126:4150")
 	if err != nil {
 		log.Panic("Could not connect")

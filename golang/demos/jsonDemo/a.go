@@ -1,7 +1,7 @@
-// Package main provides ...
 package newDir
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -161,37 +161,38 @@ type NN struct {
 
 func JustDemo() {
 	println("<<<JustDemo start---------------------------")
+	WireUnMarshalDemoAP()
 	// n := NN{Name: "xxxx", Age: "jfeifefjej", Count: 333}
 	// bs, err := json.Marshal(n)
 	// if err != nil {
 	// 	return
 	// }
 	// fmt.Printf("  string(bs): %+v\n", string(bs))
-	nn := NN{}
+	// nn := NN{}
 	// bs := `{"Name":"a","Age":"bn","Count":"r333"}`  illegal, Count must be number like string, no other characters permitted
 	// bs := `{"Name":"a","Age":"bn","Count":"333"}`
-	bs := `{"Name":"a","Count":"333"}`
-	err := json.Unmarshal([]byte(bs), &nn)
-	if err != nil {
-		return
-	}
-	fmt.Printf("  nn: %+v\n", nn)
-
-	type ColorGroup struct {
-		ID     int
-		Name   string
-		Colors []string
-	}
-	group := ColorGroup{
-		ID:     1,
-		Name:   "Reds",
-		Colors: []string{"Crimson", "Red", "Ruby", "Maroon"},
-	}
-	b, err := json.Marshal(group)
-	if err != nil {
-		fmt.Println("error:", err)
-	}
-	os.Stdout.Write(b)
+	// bs := `{"Name":"a","Count":"333"}`
+	// err := json.Unmarshal([]byte(bs), &nn)
+	// if err != nil {
+	// 	return
+	// }
+	// fmt.Printf("  nn: %+v\n", nn)
+	//
+	// type ColorGroup struct {
+	// 	ID     int
+	// 	Name   string
+	// 	Colors []string
+	// }
+	// group := ColorGroup{
+	// 	ID:     1,
+	// 	Name:   "Reds",
+	// 	Colors: []string{"Crimson", "Red", "Ruby", "Maroon"},
+	// }
+	// b, err := json.Marshal(group)
+	// if err != nil {
+	// 	fmt.Println("error:", err)
+	// }
+	// os.Stdout.Write(b)
 
 	// a := A{}
 	// a.Afun()
@@ -252,6 +253,23 @@ type WH struct {
 	W float64 `json:"W"`
 	H float64 `json:"H"`
 }
+type AT struct {
+	A string `json:"A"`
+	// Iter interface{} `json:"Iter"`
+	Iter json.RawMessage `json:"Iter"`
+}
+
+func InterfaceDemo() {
+	println("//<<-------------------------InterfaceDemo start-----------")
+	start := time.Now()
+	a := &AT{}
+	a.A = "xxxx"
+	a.Iter = &WH{1, 2}
+	bs, _ := json.Marshal(a)
+	fmt.Printf("string(bs): %+v\n", string(bs))
+	fmt.Printf("InterfaceDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------InterfaceDemo end----------->>")
+}
 
 func LoadJsonFile(filePath string, v interface{}) error {
 	fi, err := os.Stat(filePath)
@@ -308,15 +326,69 @@ func GeneratTemplate(tpl interface{}) error {
 }
 
 type Wire struct {
-	A string `json:"A"`
-	// In int    `json:"In"`
+	A     string `json:"A"`
+	Noint int    `json:"Noint"`
+	In    int    `json:"In,omitempty"`
+	NN    NN     `json:"NN"`
+	MM    *NN    `json:"MM"`
+
+	// In int `json:"In"`
 }
 
 func WireUnMarshalDemoAP() {
-	bs := `{"A":"xxx","In":33}`
-	a := &Wire{}
-	json.Unmarshal([]byte(bs), &a)
-	fmt.Printf("unmarshal AP: %+v\n", a)
+	// bs := `{"A":"xxx","In":33}`
+	// a := &Wire{}
+	// json.Unmarshal([]byte(bs), &a)
+	// fmt.Printf("unmarshal AP: %v\n", a)
+	// fmt.Printf("unmarshal AP: %+v\n", a)
+	b := &Wire{}
+	b.A = "xx"
+	b.Noint = 3545
+	ss, _ := json.Marshal(b)
+	fmt.Printf("ss: %+v\n", string(ss))
+	var raw json.RawMessage
+	raw = ss
+	c := &Wire{}
+	json.Unmarshal(raw, c)
+	fmt.Printf("c: %+v\n", c)
+
 	// fmt.Printf("a.B: %+v\n", a.In)
 	return
+}
+
+func JsonRaw() {
+	i, j := 1, 2
+	fmt.Printf("i^j: %+v %b\n", i^j, i^j)
+	records := [][]byte{
+		[]byte(`{"status": 200, "tag":"one"}`),
+		[]byte(`{"status":"ok", "tag":"two"}`),
+	}
+
+	for idx, record := range records {
+		var result struct {
+			StatusCode uint64
+			StatusName string
+			Status     json.RawMessage `json:"status"`
+			Tag        string          `json:"tag"`
+		}
+
+		//key point
+		//using decoder get json struct from streamer,e.g Response.Body,Reader
+		if err := json.NewDecoder(bytes.NewReader(record)).Decode(&result); err != nil {
+			fmt.Println("error:", err)
+			return
+		}
+
+		var sstatus string
+		if err := json.Unmarshal(result.Status, &sstatus); err == nil {
+			result.StatusName = sstatus
+		}
+
+		var nstatus uint64
+		if err := json.Unmarshal(result.Status, &nstatus); err == nil {
+			result.StatusCode = nstatus
+		}
+
+		fmt.Printf("[%v] result => %+v\n", idx, result)
+	}
 }

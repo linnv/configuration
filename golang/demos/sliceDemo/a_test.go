@@ -7,8 +7,9 @@ import
 "testing"
 
 func TestJustDemo(t *testing.T) {
-	JustDemo()
-
+	// copySliceDemo()
+	// JustDemo()
+	AppendDemo()
 	// SortInt64Demo()
 	// s := "jjjj	xx|xxx yy\rrrr"
 	// CharactersDemo(s)
@@ -55,6 +56,7 @@ func TestJustDemo(t *testing.T) {
 	// fmt.Printf("ar[7]: %+v\n", ar[7])
 
 	// SliceDemo()
+
 	//<<-------------------------pointers slice and instance demo start-----------
 	// a := make([]int, 0, 3)
 	// for i := 0; i < 3; i++ {

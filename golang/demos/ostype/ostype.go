@@ -2,7 +2,10 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"runtime"
+	"syscall"
+	"time"
 )
 
 // import "unsafe"
@@ -27,6 +30,9 @@ func main() {
 		fmt.Printf("%s.", os)
 	}
 
+	fmt.Printf("os.Getpid(): %+v\n", os.Getpid())
+	fmt.Printf("syscall.Getppid(): %+v\n", syscall.Getppid())
+	fmt.Printf("syscall.Getpid(): %+v\n", syscall.Getpid())
 	// Declarations for runtime services implemented in C or assembly.
 
 	// Max stack size is 1 GB on 64-bit, 250 MB on 32-bit.
@@ -39,5 +45,6 @@ func main() {
 		println("32 bit system")
 		// maxstacksize = 250000000
 	}
+	time.Sleep(time.Second * 90)
 
 }

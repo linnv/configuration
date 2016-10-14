@@ -4,6 +4,7 @@ package newDir
 import (
 	"fmt"
 	"os"
+	"time"
 )
 
 func JustDemo() {
@@ -39,6 +40,7 @@ func StrFromEnv() string {
 	addr = env("MYSQL_TEST_ADDR", "localhost:3306")
 	dbname = env("MYSQL_TEST_DBNAME", "gotest")
 	netAddr = fmt.Sprintf("%s(%s)", prot, addr)
+	time.Now().Unix()
 	return fmt.Sprintf("%s:%s@%s/%s?timeout=30s&strict=true", user, pass, netAddr, dbname)
 	// c, err := net.Dial(prot, addr)
 	// if err == nil {

@@ -7,7 +7,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/bitly/go-nsq"
+	"github.com/nsqio/go-nsq"
 )
 
 type T struct {
@@ -17,11 +17,16 @@ type T struct {
 
 func main() {
 	config := nsq.NewConfig()
+	topic := "mbv_xxxxx3"
 
 	count := flag.Int("count", 10, "count")
 	flag.Parse()
 	// w, _ := nsq.NewProducer("192.168.10.41:4150", config)
-	w, _ := nsq.NewProducer("192.168.10.95:4150", config)
+	w, err := nsq.NewProducer("192.168.9.94:4150", config)
+	if err != nil {
+		panic(err.Error())
+	}
+
 	t := T{}
 	// for i := 0; i < 100; i++ {
 	for i := 0; i < *count; i++ {
@@ -30,16 +35,16 @@ func main() {
 		t.Th = i
 		bs, err := json.Marshal(t)
 		if err != nil {
-			return
+			panic(err.Error())
 		}
 		tn2 := time.Now()
 		//@toDelete
 		fmt.Printf("  Marshal consumes %+v Nanosecond()\n", tn2.Sub(tn).Nanoseconds())
-		err = w.Publish("test", bs)
+		err = w.Publish(topic, bs)
 		// err = w.Publish("ssp_notify", bs)
 		// err := w.Publish("test", []byte("msg from jialin's mbp"))
 		if err != nil {
-			log.Panic("Could not connect")
+			log.Panic("Could not connect %s", err.Error())
 
 		}
 		//@toDelete

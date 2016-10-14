@@ -18,7 +18,7 @@ type A struct {
 }
 
 func NewA() {
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 100000; i++ {
 		a := A{N: "jjj"}
 		fmt.Printf("  a: %+v\n", a)
 	}

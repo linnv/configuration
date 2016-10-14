@@ -4,7 +4,9 @@ package newDir
 import "testing"
 
 func TestJustDemo(t *testing.T) {
-	JustDemo()
+	// JustDemo()
+	// DNSResolvTimeDemo()
+	TCPConnectionTimeDemo()
 	// ExampleGet()
 	// fmt.Println("example full read sepration: works\n")
 	// ExampleGetFixLength()
