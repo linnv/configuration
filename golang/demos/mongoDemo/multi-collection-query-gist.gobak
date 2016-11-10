@@ -1,0 +1,159 @@
+package main
+
+import (
+	"fmt"
+	"time"
+
+	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
+)
+
+// ``` cmd in mongo shell
+// 	db.Slot.aggregate([
+// 	    {$lookup:
+// 		{
+// 		  from: "SlotOrder",
+// 		  localField: "_id",
+// 		  foreignField: "SlotId",
+// 		  as: "SO"
+// 		}
+// 	   },
+// 	   {$unwind:"$SO"},
+// 	   {$lookup:
+// 		{
+// 		  from: "Order",
+// 		  localField: "SO.OrderId",
+// 		  foreignField: "_id",
+// 		  as: "Order"
+// 		}
+// 	   },
+// 	   {$unwind:"$Order"},
+// 	   {$project:{_id:1,Order:1,OrderStat:{$cond:[{$lt:["$Order.Begin",now]},
+// 	   					scheduled,
+// 						$cond:[{$eq:["$Order.End",0]},
+// 							busy,
+// 							$cond:[{$lte:["$Order.End",now]},busy,idle]]}}},
+// 	   {$match:{"OrderStat":{$eq:statYouNeed}}},
+// 	   {$group:
+// 		   {
+// 		   "_id":"$_id",
+// 		   "Order":{"$AddToSet":"$Order"},
+// 		   "OrderStat":{"$AddToSet":"$OrderStat"},
+// 		   }
+// 	   },
+// 	])
+// ```
+func MergeBson(basic, addOn bson.M) bson.M {
+	if len(addOn) < 1 {
+		return basic
+	}
+
+	for k, v := range addOn {
+		basic[k] = v
+	}
+
+	return basic
+}
+
+func MultiCollectionQueryDemo() {
+	println("//<<-------------------------MultiCollectionQueryDemo start-----------")
+	start := time.Now()
+
+	const (
+		DB         = "ssp_mbv"
+		COLLECTION = "AdSlot"
+	)
+	// const (
+	// 	DB         = "youdb"
+	// 	COLLECTION = "you-collection"
+	// )
+	session, err := mgo.Dial(ADDRESSPORT)
+	if err != nil {
+		return
+	}
+	defer session.Close()
+	c := session.DB(DB).C(COLLECTION)
+
+	basicCollumns := bson.M{"Name": true}
+
+	const (
+		_id       = "_id"
+		middleSO  = "slotOrder"
+		SlotState = "SlotState"
+	)
+	const (
+		SlotStateFree = iota // order associated
+		SlotStateIdle
+		SlotStateBusy
+		SlotStateSchedule
+	)
+	var slotStatList = []int{SlotStateBusy, SlotStateIdle, SlotStateSchedule}
+
+	lookSO := bson.M{
+		"$lookup": bson.M{"from": "AdSlotOrder", "localField": "_id", "foreignField": "AdSlotId", "as": middleSO},
+	}
+	handlerSO := bson.M{
+		"$project": MergeBson(bson.M{
+			_id:       true,
+			SlotState: bson.M{"$cond": []interface{}{bson.M{"$eq": []interface{}{"$" + middleSO, "[]"}}, SlotStateIdle, SlotStateFree}},
+			middleSO:  bson.M{"$cond": []interface{}{bson.M{"$eq": []interface{}{"$" + middleSO, "[]"}}, 0, "$" + middleSO}},
+		}, basicCollumns),
+	}
+	splitSO := bson.M{
+		"$unwind": "$" + middleSO,
+	}
+
+	lookOrder := bson.M{
+		"$lookup": bson.M{"from": "Order", "localField": middleSO + ".OrderId", "foreignField": _id, "as": "Order"},
+	}
+	handlerOrder := bson.M{
+		"$project": MergeBson(bson.M{
+			_id:       true,
+			SlotState: true,
+			"Order":   bson.M{"$cond": []interface{}{bson.M{"$eq": []interface{}{"$Order", "[]"}}, 0, "$Order"}},
+		}, basicCollumns),
+	}
+	splitOrder := bson.M{
+		"$unwind": "$Order",
+	}
+
+	const currentTime = 1447948100
+	handlerSlotState := bson.M{
+		"$project": MergeBson(bson.M{
+			_id:     true,
+			"Order": true,
+			SlotState: bson.M{"$cond": []interface{}{bson.M{"$eq": []interface{}{"$" + SlotState, SlotStateIdle}}, SlotStateIdle,
+				bson.M{"$cond": []interface{}{bson.M{"$lt": []interface{}{"$Order.Begin", currentTime}}, SlotStateSchedule,
+					//0 means no dealine for order
+					bson.M{"$cond": []interface{}{bson.M{"$eq": []interface{}{"$Order.End", 0}}, SlotStateBusy,
+						bson.M{"$cond": []interface{}{bson.M{"$lte": []interface{}{"$Order.End", currentTime}}, SlotStateIdle, SlotStateBusy}}}}}}}},
+		}, basicCollumns),
+	}
+
+	filterState := bson.M{
+		"$match": bson.M{SlotState: bson.M{"$in": slotStatList}},
+	}
+
+	groupResult := bson.M{
+		"$group": bson.M{
+			_id:       "$" + _id,
+			"Name":    bson.M{"$first": "$Name"},
+			"Order":   bson.M{"$addToSet": ("$Order")},
+			SlotState: bson.M{"$addToSet": ("$" + SlotState)},
+		}}
+
+	operations := []bson.M{lookSO, handlerSO, splitSO, lookOrder, splitOrder, handlerOrder, handlerSlotState, filterState, groupResult}
+	ret := []interface{}{}
+	pipe := c.Pipe(operations)
+	err = pipe.All(&ret)
+	if err != nil {
+		panic(err.Error())
+		return
+	}
+	for k, v := range ret {
+		fmt.Printf("%+v: %+v\n", k, v)
+	}
+
+	fmt.Printf("MultiCollectionQueryDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------MultiCollectionQueryDemo end----------->>")
+}
