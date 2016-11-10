@@ -97,10 +97,6 @@ Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-surround'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"json
-" Plug 'elzr/vim-json'
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "power search tool
 Plug 'mileszs/ack.vim'
 
@@ -125,11 +121,6 @@ au FileType go nmap <Leader>t <Plug>(go-def-tab)
 """""""""""""""""""""""""""""<golang tool chain> end""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"theme
-" colorscheme Tomorrow-Night
-" colorscheme Tomorrow-Night-Eighties
-" colorscheme Tomorrow
-
 set background=light
 colorscheme solarized
 
@@ -231,12 +222,6 @@ noremap <Leader>1P "1P
 noremap <Leader>2p "2p
 noremap <Leader>2P "2P
 
-"write zone
-map <silent> <leader>wz :Goyo<cr>
-
-"exit write zone
-map <silent> <leader>ewz :Goyo!<cr>
-
 "shwo absolute filename
 nnoremap <silent> <leader>af :echo expand('%:p')<cr>
 
@@ -319,20 +304,8 @@ map <silent> <leader>ee :e ~/.config/nvim/init.vim<cr>
 autocmd! bufwritepost init.vim source ~/.config/nvim/init.vim
 
 hi Directory ctermfg=Blue
-" hi Directory ctermfg=lightBlue
-" hi Directory ctermfg=grey
 
 let g:python_host_prog='/usr/bin/python2.7'
 let g:python3_host_prog='/usr/local/bin/python3'
-" let g:python_host_prog='/usr/bin/python3'
 let g:python_host_skip_check = 1
-
-" fixed by run cmd in terminal `infocmp $TERM | sed 's/kbs=^[hH]/kbs=\\177/' > $TERM.ti 
-" tic $TERM.ti`
-    " if !has('nvim')
-    "     set ttymouse=xterm2
-    " endif
-    " if has('nvim')
-    "  	nmap <BS> <C-W>h
-    " endif
 """""""""""""""""""""""""""""<for nvim configuration> end""""""""""""""""""""""""""""""""""""
