@@ -177,6 +177,11 @@ Plug 'ryanoasis/vim-devicons'
 let g:airline_powerline_fonts = 1
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Plug 'editorconfig/editorconfig-vim'
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Plug 'buoto/gotests-vim'
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:vimrc_author='Jialin Wu' 
 let g:vimrc_email='win27v@gmail.com' 
 let g:vimrc_homepage='https://jialinwu.com'
@@ -210,6 +215,8 @@ map <silent> <leader>a ggvGV<cr>
 
 "exit without saving
 map <silent> <leader>q :q!<cr>
+
+map <silent> <leader>b :NERDTreeFromBookmark
 
 noremap <Leader>d "+d
 noremap <Leader>y "+y
@@ -302,7 +309,7 @@ nnoremap <M-w> :w<cr>
 inoremap <M-w> <ESC>:w<cr>
 
 "use jj to exit back to normal mode
-inoremap hh <ESC>
+inoremap kl <ESC>
 
 "Save file edicting
 nnoremap <silent> <leader>w :w<cr>
@@ -316,12 +323,16 @@ hi Directory ctermfg=Blue
 " hi Directory ctermfg=grey
 
 let g:python_host_prog='/usr/bin/python2.7'
+let g:python3_host_prog='/usr/local/bin/python3'
 " let g:python_host_prog='/usr/bin/python3'
 let g:python_host_skip_check = 1
-    if !has('nvim')
-        set ttymouse=xterm2
-    endif
-    if has('nvim')
-     	nmap <BS> <C-W>h
-    endif
+
+" fixed by run cmd in terminal `infocmp $TERM | sed 's/kbs=^[hH]/kbs=\\177/' > $TERM.ti 
+" tic $TERM.ti`
+    " if !has('nvim')
+    "     set ttymouse=xterm2
+    " endif
+    " if has('nvim')
+    "  	nmap <BS> <C-W>h
+    " endif
 """""""""""""""""""""""""""""<for nvim configuration> end""""""""""""""""""""""""""""""""""""
