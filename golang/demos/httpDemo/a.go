@@ -4,10 +4,13 @@ package newDir
 import (
 	"bytes"
 	"fmt"
+	"html/template"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"time"
 )
 
 func JustDemo() {
@@ -82,4 +85,21 @@ func ExampleGetFixLengthUsingBuffer() {
 	}
 	fmt.Printf("  len(body): %+v\n", len(body))
 	fmt.Printf("  cap(body): %+v\n", cap(body))
+}
+
+func TemplateDemo() {
+	println("//<<-------------------------TemplateDemo start-----------")
+	start := time.Now()
+
+	hc := `
+	hello {{.}}
+	`
+	var t = template.Must(template.New("name").Parse(hc))
+	err := t.Execute(os.Stdout, "jialin")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Printf("TemplateDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------TemplateDemo end----------->>")
 }

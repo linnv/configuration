@@ -61,143 +61,6 @@ func ReturnFalse() bool {
 	return false
 }
 
-func JustDemo() {
-	println("//<<-------------------------JustDemo start-----------")
-	start := time.Now()
-
-	rul := NewLRULink()
-	for i := 0; i < 201; i++ {
-		rul.Upsert(strconv.Itoa(i))
-	}
-	rul.Upsert("19")
-	rul.PrintAll()
-
-	// kpHashDemo()
-	// var s string = "jjj3"
-	// fmt.Printf("len(s): %+v\n", len(s))
-	// fmt.Printf("s[0]: %+v\n", s[0])
-	// fmt.Printf("s[0]: %+v\n", string(s[0]))
-	// if strings.Contains("aaeje j", "e j") {
-	// 	fmt.Println("contain e j")
-	// }
-
-	// Trap()
-	// FindCenterNodeLinkList()
-	// SimpleReverseLinkList()
-	// PinterDemo()
-	// ReverseLinkList()
-	// CountOneDemo()
-	// SwapMetrix()
-	// str := "-33fjefej"
-	// bs := []byte(str)
-	// const minuteChart = 45 //"-"
-	// for k, v := range bs {
-	// 	if v == minuteChart {
-	// 		fmt.Printf("string(v): %+v\n", string(v))
-	// 	}
-	// 	fmt.Printf("%+v: %+v\n", k, v)
-	// }
-	// i := 0
-	// for i < 100 {
-	// 	fmt.Printf("i: %+v\n", i)
-	// 	i += 90
-	// }
-
-	// fmt.Printf("1<<5: %+v\n", 1<<5)
-	// fmt.Printf("1<<7: %+v\n", 1<<7)
-	// fmt.Printf("1<<0: %+v\n", 1<<0)
-	// fmt.Printf("5e9: %f\n", 5e3)
-
-	// for i := 0; i < 10; i++ {
-	// 	for j := 0; j < 100; j++ {
-	// 		if j == 33 {
-	// 			os.Stdout.Write(append([]byte("break at 33"), '\n'))
-	// 			break
-	// 		}
-	// 	}
-	// }
-
-	// m := make(map[int]string, 10)
-	// fmt.Printf("  len(m): %+v\n", len(m))
-	// s := "[%d]:[%v]"
-	// a := fmt.Sprintf(s, 11, []int{1, 24})
-	// //@toDelete
-	// fmt.Printf("  a: %+v\n", a)
-	// str := []string{"a", "b", "c"}
-	// tmpStr := make([]string, len(str), len(str))
-	// // tmpStr := make([]string, 0, len(str))
-	// // var tmpStr []string
-	// copy(tmpStr, str)
-	// // copy(str, tmpStr)
-	// fmt.Printf("tmpStr: %+v\n", tmpStr)
-	// for i := 0; i < len(tmpStr); i++ {
-	// 	tmpStr[i] = strings.ToUpper(tmpStr[i])
-	// }
-	// fmt.Printf("tmpStr: %+v\n", tmpStr)
-
-	// name := "1jfje/2fejfej/8fejfe/a"
-	// arr := strings.Split(name, "/")
-	// //@toDelete
-	// fmt.Printf("arr: %+v\n", arr)
-	// rarr := strings.Join(arr[1:], "/")
-	// //@toDelete
-	// fmt.Printf("rarr: %+v\n", rarr)
-	//
-	// // host := "xxxx:eere"
-	// host := "xxxx"
-	// hp := strings.Split(host, ":")
-	// fmt.Printf("hp: %+v\n", hp)
-	//
-	// // a, b := true, false
-	// if ReturnFalse() && ReturnTrue() {
-	// 	os.Stdout.Write(append([]byte("both true"), '\n'))
-	// }
-
-	// fmt.Printf("  strList[FIRST]: %+v\n", strList[FIRST])
-	//
-	// s := jj + "333"
-	// fmt.Printf("  s: %+v\n", s)
-	// var appIds, normalIds, illegalIds []int
-	// appIds, normalIds, illegalIds = make([]int, 0, 33)
-	// a := []int{1, 24, 5}
-	// b := [][]int{a}
-	// fmt.Printf("b: %+v\n", b)
-	// fmt.Printf("b[0]: %+v\n", b[0])
-
-	// var b []int
-	// a := []int{1, 2, 3, 4, 5}
-	// fmt.Printf("len(a): %+v\n", len(a))
-	// fmt.Printf("a[1:] %+v\n", a[1:])
-	// for k, v := range a {
-	// 	//@toDelete
-	// 	fmt.Printf("%+v: %+v\n", k, v)
-	// }
-	// b = FunSlice(a)
-	// fmt.Printf("a: %+v\n", a)
-	// b[2] = 999 //under line array of b is a, this operation will affect slice a
-	// fmt.Printf("a: %+v\n", a)
-	// a[4] = 10000
-	// fmt.Printf("b: %+v\n", b)
-
-	// s := strings.FieldsFunc("jjfe fejf ejw s  jxoe fejw ", unicode.IsSpace)
-	// s := strings.Split("jjfe,fejf,ejw s  jxoe fejw ", ",")
-	// fmt.Printf("len(s): %+v\n", len(s))
-	// fmt.Printf("s: %+v\n", s)
-
-	// bs := make([]byte, 4)
-	// ss := "jia"
-	// n := copy(bs, ss)
-	// fmt.Printf("bs: %+v\n", string(bs))
-	// fmt.Printf("bs: %v\n", bs)
-	// fmt.Printf("bs: %T\n", bs)
-	// fmt.Printf("n: %+v\n", n)
-
-	// fmt.Println(strings.Join([]string{"j", "i", "a"}, "----"))
-
-	fmt.Printf("JustDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
-	println("//---------------------------JustDemo end----------->>")
-}
-
 func FunSlice(a []int) []int {
 	return a[1:]
 }
@@ -869,4 +732,212 @@ func LRULinkListDemo() {
 
 	fmt.Printf("LRULinkListDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
 	println("//---------------------------LRULinkListDemo end----------->>")
+}
+
+func BufReadDemoPointer(buf *[]int) {
+	println("//<<-------------------------BufReadDemo start-----------")
+	start := time.Now()
+	// io.ReadFull()
+	*buf = append(*buf, 222)
+	// buf = buf[0:]
+	// buf[0] = 112
+	fmt.Printf("BufReadDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------BufReadDemo end----------->>")
+}
+
+func BufReadDemo(buf []int) {
+	println("//<<-------------------------BufReadDemo start-----------")
+	start := time.Now()
+	// io.ReadFull()
+	fmt.Printf("go in2 buf: %+v,cap(buf):%d,len(buf):%d arrd:%p \n", buf, cap(buf), len(buf), buf)
+	// BufReadDemoPointer(&buf)
+	// buf = buf[len(buf):]
+	// buf = append(buf, 222)
+	// buf = append(buf, 222)
+	buf = buf[1:]
+	buf[0] = 112
+	fmt.Printf("in2 buf: %+v,cap(buf):%d,len(buf):%d arrd:%p \n", buf, cap(buf), len(buf), buf)
+	fmt.Printf("BufReadDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------BufReadDemo end----------->>")
+}
+
+func JustDemo() {
+	println("//<<-------------------------JustDemo start-----------")
+	start := time.Now()
+
+	// const good = "jfeifejfej fejfe efj"
+	// bs := make([]byte, len(good))
+	// pr, pw := io.Pipe()
+	// var wg sync.WaitGroup
+	// wg.Add(2)
+	// go func() {
+	// 	n, err := pw.Write([]byte(good))
+	// 	if err != nil {
+	// 		panic(err.Error())
+	// 	}
+	// 	if len("good") > n {
+	// 		panic("less")
+	// 		return
+	// 	}
+	// 	wg.Done()
+	// }()
+	//
+	// // pr.Read(bs)
+	// io.ReadFull(pr, bs)
+	// log.Printf("bs: %+v\n", bs)
+	// log.Printf("bs: %+v\n", string(bs))
+	// err := pr.Close()
+	// if err != nil {
+	// 	panic(err.Error())
+	// }
+	// err = pw.Close()
+	// if err != nil {
+	// 	panic(err.Error())
+	// }
+	// wg.Done()
+	// wg.Wait()
+	//
+	// for i := 0; i < 5; i++ {
+	// 	defer fmt.Printf("%d ", i)
+	// }
+	// buf := make([]int, 3, 10)
+	// buf[0] = 111
+	// fmt.Printf("1 buf: %+v,cap(buf):%d,len(buf):%d arrd:%v \n", buf, cap(buf), len(buf), &buf[0])
+	// BufReadDemo(buf)
+	// // BufReadDemoPointer(&buf)
+	// // buf = append(buf, 222)
+	// //@todoDelelte
+	// fmt.Printf("final buf: %+v,cap(buf):%d,len(buf):%d arrd:%v \n", buf, cap(buf), len(buf), &buf[0])
+
+	// rul := NewLRULink()
+	// for i := 0; i < 201; i++ {
+	// 	rul.Upsert(strconv.Itoa(i))
+	// }
+	// rul.Upsert("19")
+	// rul.PrintAll()
+
+	// kpHashDemo()
+	// var s string = "jjj3"
+	// fmt.Printf("len(s): %+v\n", len(s))
+	// fmt.Printf("s[0]: %+v\n", s[0])
+	// fmt.Printf("s[0]: %+v\n", string(s[0]))
+	// if strings.Contains("aaeje j", "e j") {
+	// 	fmt.Println("contain e j")
+	// }
+
+	// Trap()
+	// FindCenterNodeLinkList()
+	// SimpleReverseLinkList()
+	// PinterDemo()
+	// ReverseLinkList()
+	// CountOneDemo()
+	// SwapMetrix()
+	// str := "-33fjefej"
+	// bs := []byte(str)
+	// const minuteChart = 45 //"-"
+	// for k, v := range bs {
+	// 	if v == minuteChart {
+	// 		fmt.Printf("string(v): %+v\n", string(v))
+	// 	}
+	// 	fmt.Printf("%+v: %+v\n", k, v)
+	// }
+	// i := 0
+	// for i < 100 {
+	// 	fmt.Printf("i: %+v\n", i)
+	// 	i += 90
+	// }
+
+	// fmt.Printf("1<<5: %+v\n", 1<<5)
+	// fmt.Printf("1<<7: %+v\n", 1<<7)
+	// fmt.Printf("1<<0: %+v\n", 1<<0)
+	// fmt.Printf("5e9: %f\n", 5e3)
+
+	// for i := 0; i < 10; i++ {
+	// 	for j := 0; j < 100; j++ {
+	// 		if j == 33 {
+	// 			os.Stdout.Write(append([]byte("break at 33"), '\n'))
+	// 			break
+	// 		}
+	// 	}
+	// }
+
+	// m := make(map[int]string, 10)
+	// fmt.Printf("  len(m): %+v\n", len(m))
+	// s := "[%d]:[%v]"
+	// a := fmt.Sprintf(s, 11, []int{1, 24})
+	// //@toDelete
+	// fmt.Printf("  a: %+v\n", a)
+	// str := []string{"a", "b", "c"}
+	// tmpStr := make([]string, len(str), len(str))
+	// // tmpStr := make([]string, 0, len(str))
+	// // var tmpStr []string
+	// copy(tmpStr, str)
+	// // copy(str, tmpStr)
+	// fmt.Printf("tmpStr: %+v\n", tmpStr)
+	// for i := 0; i < len(tmpStr); i++ {
+	// 	tmpStr[i] = strings.ToUpper(tmpStr[i])
+	// }
+	// fmt.Printf("tmpStr: %+v\n", tmpStr)
+
+	// name := "1jfje/2fejfej/8fejfe/a"
+	// arr := strings.Split(name, "/")
+	// //@toDelete
+	// fmt.Printf("arr: %+v\n", arr)
+	// rarr := strings.Join(arr[1:], "/")
+	// //@toDelete
+	// fmt.Printf("rarr: %+v\n", rarr)
+	//
+	// // host := "xxxx:eere"
+	// host := "xxxx"
+	// hp := strings.Split(host, ":")
+	// fmt.Printf("hp: %+v\n", hp)
+	//
+	// // a, b := true, false
+	// if ReturnFalse() && ReturnTrue() {
+	// 	os.Stdout.Write(append([]byte("both true"), '\n'))
+	// }
+
+	// fmt.Printf("  strList[FIRST]: %+v\n", strList[FIRST])
+	//
+	// s := jj + "333"
+	// fmt.Printf("  s: %+v\n", s)
+	// var appIds, normalIds, illegalIds []int
+	// appIds, normalIds, illegalIds = make([]int, 0, 33)
+	// a := []int{1, 24, 5}
+	// b := [][]int{a}
+	// fmt.Printf("b: %+v\n", b)
+	// fmt.Printf("b[0]: %+v\n", b[0])
+
+	// var b []int
+	// a := []int{1, 2, 3, 4, 5}
+	// fmt.Printf("len(a): %+v\n", len(a))
+	// fmt.Printf("a[1:] %+v\n", a[1:])
+	// for k, v := range a {
+	// 	//@toDelete
+	// 	fmt.Printf("%+v: %+v\n", k, v)
+	// }
+	// b = FunSlice(a)
+	// fmt.Printf("a: %+v\n", a)
+	// b[2] = 999 //under line array of b is a, this operation will affect slice a
+	// fmt.Printf("a: %+v\n", a)
+	// a[4] = 10000
+	// fmt.Printf("b: %+v\n", b)
+
+	// s := strings.FieldsFunc("jjfe fejf ejw s  jxoe fejw ", unicode.IsSpace)
+	// s := strings.Split("jjfe,fejf,ejw s  jxoe fejw ", ",")
+	// fmt.Printf("len(s): %+v\n", len(s))
+	// fmt.Printf("s: %+v\n", s)
+
+	// bs := make([]byte, 4)
+	// ss := "jia"
+	// n := copy(bs, ss)
+	// fmt.Printf("bs: %+v\n", string(bs))
+	// fmt.Printf("bs: %v\n", bs)
+	// fmt.Printf("bs: %T\n", bs)
+	// fmt.Printf("n: %+v\n", n)
+
+	// fmt.Println(strings.Join([]string{"j", "i", "a"}, "----"))
+
+	fmt.Printf("JustDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------JustDemo end----------->>")
 }
