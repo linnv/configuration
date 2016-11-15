@@ -51,7 +51,7 @@ let g:ycm_key_invoke_completion = '<c-z>'
 let g:ycm_confirm_extra_conf = 0
 let g:ycm_global_ycm_extra_conf ='~/.config/nvim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py' 
 nmap <M-g> :YcmCompleter GoToDefinitionElseDeclaration <C-R>=expand("<cword>")<CR><CR>  
-Plug 'rdnetto/YCM-Generator'
+Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
 """""""""""""""""""""""""""""<code completion> end""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""<code snippets> start""""""""""""""""""""""""""""""""""
