@@ -51,7 +51,7 @@ let g:ycm_key_invoke_completion = '<c-z>'
 let g:ycm_confirm_extra_conf = 0
 let g:ycm_global_ycm_extra_conf ='~/.config/nvim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py' 
 nmap <M-g> :YcmCompleter GoToDefinitionElseDeclaration <C-R>=expand("<cword>")<CR><CR>  
-Plug 'rdnetto/YCM-Generator'
+Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
 """""""""""""""""""""""""""""<code completion> end""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""<code snippets> start""""""""""""""""""""""""""""""""""
@@ -97,10 +97,6 @@ Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-surround'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"json
-" Plug 'elzr/vim-json'
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "power search tool
 Plug 'mileszs/ack.vim'
 
@@ -125,11 +121,6 @@ au FileType go nmap <Leader>t <Plug>(go-def-tab)
 """""""""""""""""""""""""""""<golang tool chain> end""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"theme
-" colorscheme Tomorrow-Night
-" colorscheme Tomorrow-Night-Eighties
-" colorscheme Tomorrow
-
 set background=light
 colorscheme solarized
 
@@ -177,6 +168,11 @@ Plug 'ryanoasis/vim-devicons'
 let g:airline_powerline_fonts = 1
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Plug 'editorconfig/editorconfig-vim'
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Plug 'buoto/gotests-vim'
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:vimrc_author='Jialin Wu' 
 let g:vimrc_email='win27v@gmail.com' 
 let g:vimrc_homepage='https://jialinwu.com'
@@ -211,6 +207,8 @@ map <silent> <leader>a ggvGV<cr>
 "exit without saving
 map <silent> <leader>q :q!<cr>
 
+map <silent> <leader>b :NERDTreeFromBookmark
+
 noremap <Leader>d "+d
 noremap <Leader>y "+y
 noremap <Leader>1y "1y
@@ -223,12 +221,6 @@ noremap <Leader>1P "1P
 
 noremap <Leader>2p "2p
 noremap <Leader>2P "2P
-
-"write zone
-map <silent> <leader>wz :Goyo<cr>
-
-"exit write zone
-map <silent> <leader>ewz :Goyo!<cr>
 
 "shwo absolute filename
 nnoremap <silent> <leader>af :echo expand('%:p')<cr>
@@ -302,7 +294,7 @@ nnoremap <M-w> :w<cr>
 inoremap <M-w> <ESC>:w<cr>
 
 "use jj to exit back to normal mode
-inoremap hh <ESC>
+inoremap kl <ESC>
 
 "Save file edicting
 nnoremap <silent> <leader>w :w<cr>
@@ -312,16 +304,8 @@ map <silent> <leader>ee :e ~/.config/nvim/init.vim<cr>
 autocmd! bufwritepost init.vim source ~/.config/nvim/init.vim
 
 hi Directory ctermfg=Blue
-" hi Directory ctermfg=lightBlue
-" hi Directory ctermfg=grey
 
 let g:python_host_prog='/usr/bin/python2.7'
-" let g:python_host_prog='/usr/bin/python3'
+let g:python3_host_prog='/usr/local/bin/python3'
 let g:python_host_skip_check = 1
-    if !has('nvim')
-        set ttymouse=xterm2
-    endif
-    if has('nvim')
-     	nmap <BS> <C-W>h
-    endif
 """""""""""""""""""""""""""""<for nvim configuration> end""""""""""""""""""""""""""""""""""""

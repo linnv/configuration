@@ -1,9 +1,6 @@
 package newDir
 
-import (
-	"fmt"
-	"testing"
-)
+import "testing"
 
 // func TestJustDemo(t *testing.T) {
 // 	// JustDemo()
@@ -51,6 +48,10 @@ func TestJustDemo(t *testing.T) {
 	// log.Println(u.Name)
 	// d := &Derive{Two: &Base{Count: 10}}
 	// v, ok := d.(*Derive)
-	fmt.Printf(": works\n")
-	JustDemo()
+	// fmt.Printf(": works\n")
+	// JustDemo()
+}
+
+func TestAssigneStructDemo(t *testing.T) {
+	AssigneStructDemo()
 }

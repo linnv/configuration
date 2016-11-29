@@ -3,8 +3,9 @@ package newDir
 import (
 	"encoding/json"
 	"fmt"
-	"os"
+	"log"
 	"strconv"
+	"time"
 )
 
 type A struct {
@@ -30,8 +31,8 @@ func (a *A) UpdatePointer() {
 
 type Derive struct {
 	Name string `json:"Name"`
-	Base
-	Two *Base
+	B    Base
+	Two  *Base
 }
 
 func (this Derive) All() {
@@ -84,16 +85,16 @@ type User struct {
 }
 
 func (u User) Notify() error {
-	println("inner")
+	println("inner notify")
 	println(u.Name)
-	u.Name = "alimon"
+	u.Name = "alimon update from value receiver"
 	return nil
 }
 
 func (u *User) PointerNotify() error {
-	println("inner pointer")
+	println("inner pointer notify")
 	println(u.Name)
-	u.Name = "pointer alimon"
+	u.Name = "pointer alimon update from pointer receiver"
 	return nil
 }
 
@@ -129,20 +130,74 @@ func (sl smapList) Update() {
 	}
 }
 
+type S interface {
+	Notify() error
+	PointerNotify() error
+}
+
+type SV interface {
+	Notify() error
+}
+
+type SP interface {
+	PointerNotify() error
+}
+
+func InvokeInterfaceDemo(s S) {
+	println("//<<-------------------------InvokeInterfaceDemo start-----------")
+	start := time.Now()
+	// s.Notify()
+	s.PointerNotify()
+	log.Printf("s: %+v\n", s)
+	fmt.Printf("InvokeInterfaceDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------InvokeInterfaceDemo end----------->>")
+}
+
 func JustDemo() {
 	println("<<<JustDemo start---------------------------")
-	mm := make(map[int]*A)
-	for i := 0; i < 10; i++ {
-		mm[i] = &A{Name: "xxxx"}
+	// u := &User{}
+	// u.PointerNotify()
+	// u := &User{}
+	u := User{}
+	// u.Notify()
+	var i interface{}
+	i = u
+	rp, ok := i.(SP)
+	if ok {
+		log.Printf("rp: %+v\n", rp)
+		println("good pointer receiver")
+		return
 	}
-	smapList(mm).Get()
-	os.Stdout.Write(append([]byte("line"), '\n'))
-	smapList(mm).Update()
-	smapList(mm).Get()
-	os.Stdout.Write(append([]byte("line2"), '\n'))
-	for k, v := range mm {
-		fmt.Printf("%+v: %+v\n", k, v)
+
+	rv, ok := i.(SV)
+	if ok {
+		log.Printf("rv: %+v\n", rv)
+		println("good value receiver")
+		return
 	}
+
+	r, ok := i.(S)
+	if ok {
+		log.Printf("r: %+v\n", r)
+		println("good value or pointer receiver")
+		return
+	}
+	// u.PointerNotify()
+	// InvokeInterfaceDemo(u)
+
+	// mm := make(map[int]*A)
+	// for i := 0; i < 10; i++ {
+	// 	mm[i] = &A{Name: "xxxx"}
+	// }
+	// smapList(mm).Get()
+	// os.Stdout.Write(append([]byte("line"), '\n'))
+	// smapList(mm).Update()
+	// smapList(mm).Get()
+	// os.Stdout.Write(append([]byte("line2"), '\n'))
+	// for k, v := range mm {
+	// 	fmt.Printf("%+v: %+v\n", k, v)
+	// }
+
 	// a := TT{AA: "jialin", Strs: []string{"xxxx", "nnn"}}
 	// a.A = &A{Name: "jjj"}
 	// fmt.Printf("a: %+v\n", a)
@@ -168,11 +223,11 @@ func JustDemo() {
 	// pointerInstance.UpdatePointer()
 	// fmt.Printf("pointerInstance.Flatten: %+v\n", pointerInstance.Flatten)
 
-	pointerInstance := A{}
-	pointerInstance.Update()
-	fmt.Printf("pointerInstance.Flatten: %+v\n", pointerInstance.Flatten)
-	pointerInstance.UpdatePointer()
-	fmt.Printf("pointerInstance.Flatten: %+v\n", pointerInstance.Flatten)
+	// pointerInstance := A{}
+	// pointerInstance.Update()
+	// fmt.Printf("pointerInstance.Flatten: %+v\n", pointerInstance.Flatten)
+	// pointerInstance.UpdatePointer()
+	// fmt.Printf("pointerInstance.Flatten: %+v\n", pointerInstance.Flatten)
 
 	println("-----------------------------JustDemo end>>>")
 	return
@@ -182,3 +237,23 @@ func JustDemo() {
 // 	A ...bson.M
 // 	// B ...[]int
 // }
+
+type DeriveCopy struct {
+	Name string `json:"Name"`
+}
+
+func AssigneStructDemo() {
+	println("//<<-------------------------AssigneStructDemo start-----------")
+	start := time.Now()
+	// d := &Derive{Name: "xx", B: Base{Count: 0}, Two: &Base{Count: 1}}
+	d := &DeriveCopy{Name: "xx"}
+	// var dc *DeriveCopy
+	dc := &DeriveCopy{}
+	log.Printf("d: %p %v\n", d, d)
+	log.Printf("d: %p %v\n", dc, dc)
+	// *dc = *d
+	dc = d
+	log.Printf("2 d: %p %v\n", dc, dc)
+	fmt.Printf("AssigneStructDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------AssigneStructDemo end----------->>")
+}

@@ -45,7 +45,7 @@ func AliyunDemo() {
 func LocalDemo() {
 	println("//<<-------------------------LocalDemo start-----------")
 	// address := "192.168.100.44:8087"
-	address := "192.168.10.35:8087"
+	address := "192.168.8.3:8087"
 	filePath := "/Users/Jialin/Desktop/a.png"
 	f, err := os.Open(filePath)
 	if err != nil {
@@ -59,11 +59,14 @@ func LocalDemo() {
 		panic(err.Error())
 		return
 	}
-	err = SaveFile(address, "demo", "picd.png", thisb)
+	const bucket = "demo"
+	const fn = "picd.png"
+	err = SaveFile(address, bucket, fn, thisb)
 	if err != nil {
 		panic(err.Error())
 		return
 	}
+	println("save to ", bucket, "/", fn)
 
 	println("//---------------------------LocalDemo end----------->>")
 }

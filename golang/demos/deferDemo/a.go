@@ -33,9 +33,33 @@ func DeferDemo() {
 	fmt.Printf("DeferDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
 	println("//---------------------------DeferDemo end----------->>")
 }
+
+func trace(s string) string {
+	fmt.Println("entering:", s)
+	return s
+}
+
+func un(s string) {
+	fmt.Println("leaving:", s)
+}
+
+func a() {
+	defer un(trace("a"))
+	fmt.Println("in a")
+}
+
+func b() {
+	defer un(trace("b")) //parameter is calculated when invoke defer, e.g. when parameter is a function, this funciton will be invoking and the deferFunc will be invoke when this deferFunc returns
+	fmt.Println("in b")
+	a()
+}
+
 func JustDemo() {
+	for i := 0; i < 5; i++ {
+		defer fmt.Printf("%d ", i)
+	}
+	b()
 	println("<<<JustDemo start---------------------------")
-	DeferDemo()
 	println("-----------------------------JustDemo end>>>")
 	return
 }
