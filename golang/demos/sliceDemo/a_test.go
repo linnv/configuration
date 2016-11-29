@@ -1,13 +1,10 @@
-// Package main provides ...
 package newDir
 
-import
-// "fmt"
-
-"testing"
+import "testing"
 
 func TestJustDemo(t *testing.T) {
-	JustDemo()
+	// JustDemo()
+	DiffPosStrDemo()
 
 	// SortInt64Demo()
 	// s := "jjjj	xx|xxx yy\rrrr"

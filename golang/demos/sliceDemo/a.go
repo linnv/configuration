@@ -941,3 +941,24 @@ func JustDemo() {
 	fmt.Printf("JustDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
 	println("//---------------------------JustDemo end----------->>")
 }
+func DiffPosStrDemo() {
+	println("//<<-------------------------DiffPosStrDemo start-----------")
+	start := time.Now()
+	a := "abc"
+	b := "bac"
+	var chara, charb uint
+	if len(a) == len(b) {
+		for i := 0; i < len(a); i++ {
+			chara += uint(a[i])
+		}
+		for i := 0; i < len(b); i++ {
+			charb += uint(b[i])
+		}
+		if chara == charb {
+			println("good")
+		}
+	}
+
+	fmt.Printf("DiffPosStrDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------DiffPosStrDemo end----------->>")
+}

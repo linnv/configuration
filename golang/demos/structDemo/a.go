@@ -31,8 +31,8 @@ func (a *A) UpdatePointer() {
 
 type Derive struct {
 	Name string `json:"Name"`
-	Base
-	Two *Base
+	B    Base
+	Two  *Base
 }
 
 func (this Derive) All() {
@@ -237,3 +237,23 @@ func JustDemo() {
 // 	A ...bson.M
 // 	// B ...[]int
 // }
+
+type DeriveCopy struct {
+	Name string `json:"Name"`
+}
+
+func AssigneStructDemo() {
+	println("//<<-------------------------AssigneStructDemo start-----------")
+	start := time.Now()
+	// d := &Derive{Name: "xx", B: Base{Count: 0}, Two: &Base{Count: 1}}
+	d := &DeriveCopy{Name: "xx"}
+	// var dc *DeriveCopy
+	dc := &DeriveCopy{}
+	log.Printf("d: %p %v\n", d, d)
+	log.Printf("d: %p %v\n", dc, dc)
+	// *dc = *d
+	dc = d
+	log.Printf("2 d: %p %v\n", dc, dc)
+	fmt.Printf("AssigneStructDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------AssigneStructDemo end----------->>")
+}

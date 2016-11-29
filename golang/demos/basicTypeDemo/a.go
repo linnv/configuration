@@ -4,14 +4,16 @@ package newDir
 import (
 	"fmt"
 	"log"
+	"os"
 	"time"
 )
 
 func JustDemo() {
 	println("<<<JustDemo start---------------------------")
 
-	log.Printf("uint(0): %b\n", uint(0))
-	log.Printf("u)nt(0): %v\n", (^uint(0))>>1)
+	UnescapeByteDemo()
+	// log.Printf("uint(0): %b\n", uint(0))
+	// log.Printf("u)nt(0): %v\n", (^uint(0))>>1)
 	// a := 1e8
 	// b := 1e3 //float64
 	// fmt.Printf("  a: %f\n", a)
@@ -26,9 +28,20 @@ func JustDemo() {
 	// fmt.Printf("  c: %+v\n", c)
 	//
 	// fmt.Printf("getClicksRatio(300,10): %v\n", getClicksRatio(100, 33))
-	simpleUnitDemo()
+	// simpleUnitDemo()
 	println("-----------------------------JustDemo end>>>")
 	return
+}
+func UnescapeByteDemo() {
+	println("//<<-------------------------UnescapeByteDemo start-----------")
+	start := time.Now()
+	s := ".snug \u0026 raw was I ere I saw war \u0026 gunS"
+	// bs:=[]byte(s)
+	fmt.Fprint(os.Stdout, "%s", s)
+	// byteS = bytes.Replace(byteS, []byte("\\u0026"), []byte("&"), -1)
+
+	fmt.Printf("UnescapeByteDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------UnescapeByteDemo end----------->>")
 }
 
 func simpleUnitDemo() {

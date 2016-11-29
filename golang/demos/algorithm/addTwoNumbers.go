@@ -1,17 +1,14 @@
 package demo
 
-type ListNode struct {
-	Val  int
-	Next *ListNode
-}
-
-func echoList(node *ListNode) {
+func echoList(str string, node *ListNode) {
+	print(str, "`")
 	var tmp *ListNode
 	tmp = node
 	for tmp != nil {
-		println(tmp.Val)
+		print(tmp.Val, " ")
 		tmp = tmp.Next
 	}
+	println("`")
 }
 
 func GenerateList(numbers []int) *ListNode {
@@ -26,18 +23,6 @@ func GenerateList(numbers []int) *ListNode {
 		tmp = tmp.Next
 	}
 	return ret
-}
-
-func (a *ListNode) ReverseList() *ListNode {
-	var pre, cur, backup *ListNode
-	cur = a
-	for cur != nil {
-		backup = cur.Next
-		cur.Next = pre
-		pre = cur
-		cur = backup
-	}
-	return pre
 }
 
 func addTwoNumbers(one, two *ListNode) *ListNode {
