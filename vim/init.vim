@@ -1,7 +1,17 @@
 syntax on  			"must put ahead or enable syntax will conflict with ultisnips
+set ff=unix
 set ruler "display the current row and column on the right_bottom corner 
 set relativenumber
 set nu
+
+
+" 空格代替Tab 
+" set expandtab
+" 缩进宽度
+" set tabstop=4 
+" set shiftwidth=4
+" 禁在Makefile 中将Tab转换成空格
+" autocmd FileType make set noexpandtab
 
 " set foldmethod=syntax "fold based on indent
 set foldnestmax=10      "deepest fold is 10 levels
@@ -37,6 +47,10 @@ filetype off                  " required: ultisnipes
 call plug#begin('~/.config/nvim/plugged')
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 Plug 'scrooloose/nerdtree'
+" enable line numbers
+let NERDTreeShowLineNumbers=1
+" make sure relative line numbers are used
+autocmd FileType nerdtree setlocal relativenumber
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""<code completion> start""""""""""""""""""""""""""""""""""
@@ -97,6 +111,10 @@ Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-surround'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"json
+" Plug 'elzr/vim-json'
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "power search tool
 Plug 'mileszs/ack.vim'
 
@@ -110,6 +128,10 @@ let g:gitgutter_highlight_lines = 0
 "color symble that pairs each other
 Plug 'luochen1990/rainbow'
 let g:rainbow_active= 1
+let g:rainbow_conf = {
+\	'guifgs': ['royalblue3', 'lightred', 'seagreen3', 'firebrick'],
+\	'ctermfgs': ['lightblue', 'lightgreen', 'lightcyan', 'lightmagenta'],
+\}
 
 """""""""""""""""""""""""""""<golang tool chain> start""""""""""""""""""""""""""""""""""
 Plug 'fatih/vim-go'
@@ -121,6 +143,11 @@ au FileType go nmap <Leader>t <Plug>(go-def-tab)
 """""""""""""""""""""""""""""<golang tool chain> end""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"theme
+" colorscheme Tomorrow-Night
+" colorscheme Tomorrow-Night-Eighties
+" colorscheme Tomorrow
+
 set background=light
 colorscheme solarized
 
@@ -193,6 +220,7 @@ nnoremap <silent> <leader>r :CtrlPMRU<cr>
 
 "list file in current directory
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+" set rtp+=/usr/local/opt/fzf
 set rtp+=/usr/local/opt/fzf
 nnoremap <silent> <leader>f :FZF<cr>
 
@@ -221,6 +249,12 @@ noremap <Leader>1P "1P
 
 noremap <Leader>2p "2p
 noremap <Leader>2P "2P
+
+"write zone
+map <silent> <leader>wz :Goyo<cr>
+
+"exit write zone
+map <silent> <leader>ewz :Goyo!<cr>
 
 "shwo absolute filename
 nnoremap <silent> <leader>af :echo expand('%:p')<cr>
@@ -294,7 +328,7 @@ nnoremap <M-w> :w<cr>
 inoremap <M-w> <ESC>:w<cr>
 
 "use jj to exit back to normal mode
-inoremap kl <ESC>
+inoremap lk <ESC>
 
 "Save file edicting
 nnoremap <silent> <leader>w :w<cr>
@@ -304,8 +338,20 @@ map <silent> <leader>ee :e ~/.config/nvim/init.vim<cr>
 autocmd! bufwritepost init.vim source ~/.config/nvim/init.vim
 
 hi Directory ctermfg=Blue
+" hi Directory ctermfg=lightBlue
+" hi Directory ctermfg=grey
 
 let g:python_host_prog='/usr/bin/python2.7'
 let g:python3_host_prog='/usr/local/bin/python3'
+" let g:python_host_prog='/usr/bin/python3'
 let g:python_host_skip_check = 1
+
+" fixed by run cmd in terminal `infocmp $TERM | sed 's/kbs=^[hH]/kbs=\\177/' > $TERM.ti 
+" tic $TERM.ti`
+    " if !has('nvim')
+    "     set ttymouse=xterm2
+    " endif
+    " if has('nvim')
+    "  	nmap <BS> <C-W>h
+    " endif
 """""""""""""""""""""""""""""<for nvim configuration> end""""""""""""""""""""""""""""""""""""
