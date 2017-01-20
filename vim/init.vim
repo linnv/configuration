@@ -1,4 +1,4 @@
-syntax on  			"must put ahead or enable syntax will conflict with ultisnips
+syntax on  			"must put ahead, enable syntax will conflict with ultisnips
 set ff=unix
 set ruler "display the current row and column on the right_bottom corner 
 set relativenumber
@@ -84,6 +84,10 @@ let g:UltiSnipsSnippetsDir = '~/.config/nvim/UltiSnips'
 
 " Markdown
 autocmd BufNewFile,BufRead *.{md,mkd,mkdn,mark*}  nested setlocal filetype=markdown
+
+"for django
+au BufNewFile,BufRead *.hj set filetype=htmldjango
+
 Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
 
