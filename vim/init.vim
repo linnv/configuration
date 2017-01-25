@@ -61,7 +61,7 @@ let g:ycm_min_num_of_chars_for_completion = 2
 let g:ycm_key_list_select_completion = ['<c-j>','<Down>']
 let g:ycm_key_list_previous_completion= ['<c-k>','<Up>']
 let g:ycm_key_invoke_completion = '<c-z>'
-
+let g:ycm_python_binary_path = 'python2.7'
 let g:ycm_confirm_extra_conf = 0
 let g:ycm_global_ycm_extra_conf ='~/.config/nvim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py' 
 nmap <M-g> :YcmCompleter GoToDefinitionElseDeclaration <C-R>=expand("<cword>")<CR><CR>  
@@ -137,6 +137,16 @@ let g:rainbow_conf = {
 \	'ctermfgs': ['lightblue', 'lightgreen', 'lightcyan', 'lightmagenta'],
 \}
 
+    "
+    " black
+    " blue
+    " green
+    " yellow
+    " cyan
+    " white
+    " magenta
+    " red
+" \	'ctermfgs': ['lightblue', 'green', 'cyan', 'magenta'],
 """""""""""""""""""""""""""""<golang tool chain> start""""""""""""""""""""""""""""""""""
 Plug 'fatih/vim-go'
 let g:go_fmt_command = 'goimports'    "auto insert package
@@ -204,6 +214,9 @@ Plug 'editorconfig/editorconfig-vim'
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 Plug 'buoto/gotests-vim'
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Plug 'hotoo/pangu.vim'
+autocmd BufWritePre *.markdown,*.md,*.text,*.txt,*.wiki,*.cnx call PanGuSpacing()
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:vimrc_author='Jialin Wu' 
 let g:vimrc_email='win27v@gmail.com' 
 let g:vimrc_homepage='https://jialinwu.com'
@@ -224,8 +237,7 @@ nnoremap <silent> <leader>r :CtrlPMRU<cr>
 
 "list file in current directory
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-" set rtp+=/usr/local/opt/fzf
-set rtp+=/usr/local/opt/fzf
+set rtp+=/Users/Jialin/.fzf
 nnoremap <silent> <leader>f :FZF<cr>
 
 "Fast opening nerdtree 
@@ -286,7 +298,6 @@ nnoremap <silent> <leader>tn :tabnew<cr>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 nnoremap ; : 
-vnoremap // y/<C-R>"<CR>
 nmap    w=  :resize +20<CR>
 nmap    w-  :resize -20<CR>
 nmap    w,  :vertical resize -20<CR>
@@ -314,12 +325,33 @@ map <silent> <leader>m :TagbarToggle<cr>
 "tab to %
 nnoremap <tab> %
 vnoremap <tab> %
+"keep hightlighting while doing indent 
+vnoremap < <gv
+vnoremap > >gv
+
+"selec text from current cursor to the end of line
+nnoremap Y v$
+
+"delete text from current cursor to the end or begining of line in insert mode
+map! <M-l>  <ESC>v$c
+map! <M-h>  <ESC>v^c
+
+"Keep search pattern at the center of the screen
+nnoremap <silent> n nzz
+nnoremap <silent> N Nzz
+nnoremap <silent> * *zz
+nnoremap <silent> # #zz
+nnoremap <silent> g* g*zz
+
+"Better comand-line editing
+cnoremap <C-a> <Home>
+cnoremap <C-e> <End>
 
 "replace : with ; in normal mode
 nnoremap ; :
 "f{xx} forwrad`,` backward`<`
-nnoremap , ;
-nnoremap < ,
+nnoremap ' ;
+nnoremap " ,
 
 "split window
 nnoremap <leader>2w <C-w>v<C-w>l
