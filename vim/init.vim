@@ -84,6 +84,7 @@ let g:UltiSnipsSnippetsDir = '~/.config/nvim/UltiSnips'
 
 " Markdown
 autocmd BufNewFile,BufRead *.{md,mkd,mkdn,mark*}  nested setlocal filetype=markdown
+let g:ycm_filetype_blacklist = {}
 
 "for django
 au BufNewFile,BufRead *.hj set filetype=htmldjango
