@@ -83,6 +83,9 @@ let g:UltiSnipsSnippetsDir = '~/.config/nvim/UltiSnips'
 "for js
  Plug 'ternjs/tern_for_vim'
  Plug 'pangloss/vim-javascript'
+"auto format js html
+" autocmd BufWritePre *.{js,html,htm} :normal migg=G`i
+autocmd BufWritePre *.{js,html,htm} :normal ggVG=
 
 " Markdown
 autocmd BufNewFile,BufRead *.{md,mkd,mkdn,mark*}  nested setlocal filetype=markdown
