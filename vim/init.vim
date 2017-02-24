@@ -1,9 +1,7 @@
-syntax on  			"must put ahead, enable syntax will conflict with ultisnips
 set ff=unix
 set ruler "display the current row and column on the right_bottom corner 
 set relativenumber
 set nu
-
 
 " 空格代替Tab 
 " set expandtab
@@ -11,7 +9,8 @@ set nu
 " set tabstop=4 
 " set shiftwidth=4
 " 禁在Makefile 中将Tab转换成空格
-" autocmd FileType make set noexpandtab
+autocmd FileType makefile set noexpandtab
+autocmd FileType md set noexpandtab
 
 " set foldmethod=syntax "fold based on indent
 set foldnestmax=10      "deepest fold is 10 levels
@@ -42,7 +41,6 @@ set laststatus=2   " Always show the statusline
 "remember last edicting position
 au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
 
-filetype off                  " required: ultisnipes
 " ====================plugin manager=================
 call plug#begin('~/.config/nvim/plugged')
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -129,25 +127,6 @@ Plug 'airblade/vim-gitgutter'
 let g:gitgutter_signs = 1
 let g:gitgutter_highlight_lines = 0
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"color symble that pairs each other
-Plug 'luochen1990/rainbow'
-let g:rainbow_active= 1
-let g:rainbow_conf = {
-\	'guifgs': ['royalblue3', 'lightred', 'seagreen3', 'firebrick'],
-\	'ctermfgs': ['lightblue', 'lightgreen', 'lightcyan', 'lightmagenta'],
-\}
-
-    "
-    " black
-    " blue
-    " green
-    " yellow
-    " cyan
-    " white
-    " magenta
-    " red
-" \	'ctermfgs': ['lightblue', 'green', 'cyan', 'magenta'],
 """""""""""""""""""""""""""""<golang tool chain> start""""""""""""""""""""""""""""""""""
 Plug 'fatih/vim-go'
 let g:go_fmt_command = 'goimports'    "auto insert package
@@ -156,19 +135,6 @@ au FileType go nmap <Leader>h <Plug>(go-def-split)
 au FileType go nmap <Leader>v <Plug>(go-def-vertical)
 au FileType go nmap <Leader>t <Plug>(go-def-tab)
 """""""""""""""""""""""""""""<golang tool chain> end""""""""""""""""""""""""""""""""""""
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"theme
-" colorscheme Tomorrow-Night
-" colorscheme Tomorrow-Night-Eighties
-" colorscheme Tomorrow
-
-set background=light
-colorscheme solarized
-
-" colorscheme molokai
-" let g:molokai_original = 1
-" let g:rehash256 = 1
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " select multiple words and update them
@@ -218,13 +184,18 @@ Plug 'buoto/gotests-vim'
 Plug 'hotoo/pangu.vim'
 autocmd BufWritePre *.markdown,*.md,*.text,*.txt,*.wiki,*.cnx call PanGuSpacing()
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Plug 'altercation/vim-colors-solarized'
+set background=light
+
+" colorscheme molokai
+" let g:molokai_original = 1
+" let g:rehash256 = 1
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:vimrc_author='Jialin Wu' 
 let g:vimrc_email='win27v@gmail.com' 
 let g:vimrc_homepage='https://jialinwu.com'
 
 call plug#end()
-" call vundle#end()            " required
-filetype plugin indent on    " required
 
 " ====================leader key=================
  "Set mapleader
