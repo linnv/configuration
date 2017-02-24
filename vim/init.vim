@@ -19,6 +19,10 @@ set foldlevel=1         "this is just what i use
 
 set fillchars+=vert:│
 " set fillchars+=vert:\ 
+set foldcolumn=0
+hi LineNr ctermbg=white ctermfg=black
+" hi LineNr ctermbg=white ctermfg=red
+hi VertSplit ctermbg=black ctermfg=white
 
 " ignorecase and smartcase together make Vim deal with case-sensitive search intelligently. If you search for an all-lowercase string your search will be case-insensitive, but if one or more characters is uppercase the search will be case-sensitive. Most of the time this does what you want.
 set ignorecase
@@ -186,6 +190,9 @@ autocmd BufWritePre *.markdown,*.md,*.text,*.txt,*.wiki,*.cnx call PanGuSpacing(
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 Plug 'altercation/vim-colors-solarized'
 set background=light
+" let g:solarized_visibility = "high"
+" let g:solarized_contrast = "high"
+" let g:solarized_termcolors=256
 
 " colorscheme molokai
 " let g:molokai_original = 1
