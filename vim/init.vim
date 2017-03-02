@@ -81,11 +81,13 @@ let g:UltiSnipsSnippetsDir = '~/.config/nvim/UltiSnips'
 """""""""""""""""""""""""""""<code snippets> end""""""""""""""""""""""""""""""""""""
 
 "for js
- Plug 'ternjs/tern_for_vim'
- Plug 'pangloss/vim-javascript'
+Plug 'ternjs/tern_for_vim'
+Plug 'pangloss/vim-javascript'
+Plug 'posva/vim-vue'
 "auto format js html
-" autocmd BufWritePre *.{js,html,htm} :normal migg=G`i
-autocmd BufWritePre *.{js,html,htm} :normal ggVG=
+autocmd BufWritePre *.{js,html,htm} :normal migg=G`izz
+au BufNewFile,BufRead *.vue set filetype=html
+" autocmd BufWritePre *.{js,html,htm} :normal ggVG=
 
 " Markdown
 autocmd BufNewFile,BufRead *.{md,mkd,mkdn,mark*}  nested setlocal filetype=markdown
@@ -103,6 +105,9 @@ Plug 'neomake/neomake'
 autocmd! BufWritePost * Neomake
 " let g:neomake_open_list=2
 " let g:neomake_go_enabled_makers = ['go', 'govet']
+" vue is treated as html file but tidy does'nt reconize vue syntax, so
+" disabled tidy for vue safty
+let g:neomake_html_enabled_makers = []
 
 "tags lister method menu
 Plug 'majutsushi/tagbar'
