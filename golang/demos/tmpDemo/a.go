@@ -30,7 +30,8 @@ func genereateEtcdConfig(subnet string) []EtcdConfig {
 
 func generateETCDCluster() {
 	const (
-		templateEtcdStartupConfig = `etcd --name {nodename} -advertise-client-urls http://{hostIP}:{clientPort} -listen-client-urls http://{hostIP}:{clientPort} -initial-advertise-peer-urls http://{hostIP}:{peerPort} -listen-peer-urls http://{hostIP}:{peerPort} -initial-cluster-token {clusterToken} -initial-cluster {nodelist} -initial-cluster-state new`
+		// templateEtcdStartupConfig = `etcd --name {nodename} -advertise-client-urls http://{hostIP}:{clientPort} -listen-client-urls http://{hostIP}:{clientPort} -initial-advertise-peer-urls http://{hostIP}:{peerPort} -listen-peer-urls http://{hostIP}:{peerPort} -initial-cluster-token {clusterToken} -initial-cluster {nodelist} -initial-cluster-state new`
+		templateEtcdStartupConfig = `etcd --name {nodename} -advertise-client-urls http://0.0.0.0:{clientPort} -listen-client-urls http://0.0.0.0:{clientPort} -initial-advertise-peer-urls http://{hostIP}:{peerPort} -listen-peer-urls http://{hostIP}:{peerPort} -initial-cluster-token {clusterToken} -initial-cluster {nodelist} -initial-cluster-state new`
 		templateDockerNetwork     = `docker network create --subnet={subnet}/24 {subnetWorkName}`
 		templateDockerRunning     = `docker run -d --net {subnetWorkName} --ip {containerIP} -p {hostPublicPort}:{guestPort} -it -h {hostName} --name {hostName} {imageName}`
 	)
@@ -62,7 +63,6 @@ func generateETCDCluster() {
 	fmt.Printf("%s\n", cmdNetwork)
 
 	for _, v := range list {
-		// fmt.Printf("{\n")
 		ret := strings.NewReplacer([]string{
 			"{hostIP}", v.AddrIP,
 			"{nodelist}", nodelist,
@@ -71,8 +71,6 @@ func generateETCDCluster() {
 			"{nodename}", v.AddrHostName,
 			"{clusterToken}", clusterToken,
 		}...).Replace(templateEtcdStartupConfig)
-		// fmt.Printf("%+v\n", ret)
-		// fmt.Printf("}\n")
 
 		cmdContainer := strings.NewReplacer([]string{
 			"{hostName}", v.AddrHostName,
@@ -85,7 +83,7 @@ func generateETCDCluster() {
 		fmt.Printf("%s %s\n", cmdContainer, ret)
 	}
 
-	fmt.Printf("etcdctl -C %+v member list\n", hostList)
+	fmt.Printf("etcdctl --endpoint= %+v member list\n", hostList)
 }
 
 func JustDemo() {
