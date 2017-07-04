@@ -1,11 +1,12 @@
 // Package main provides ...
-package newDir
+package demo
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"time"
 
@@ -279,26 +280,51 @@ type T struct {
 	Times time.Time
 }
 
+type TEX struct {
+	N string      `json:"N"`
+	C interface{} `json:"C",bson:"C"`
+
+	Times time.Time
+}
+
 func TimeDemo() {
 	println("//<<-------------------------TimeDemo start-----------")
-	t := T{}
+	t := T{C: 2222}
 	t.Times = time.Now()
-	tbs, err := bson.Marshal(t)
+	// tbs, err := bson.Marshal(t)
+	tbs, err := json.Marshal(t)
 	if err != nil {
 		return
 	}
 	fmt.Printf("  string(tbs): %+v\n", string(tbs))
-	tt := T{}
-	err = bson.Unmarshal(tbs, &tt)
+	// tt := T{}
+	var in int64
+	tt := TEX{
+		C: &in,
+	}
+	err = json.Unmarshal(tbs, &tt)
 	if err != nil {
 		return
 	}
 	fmt.Printf("  t: %+v\n", t)
 	fmt.Printf("  tt: %+v\n", tt)
+	//@toDelete
+	fmt.Printf("in: %+v\n", in)
+	// json in:2222
+	// diff to json ,bson can't store data to variable address locate at interface,so here for bson, int will be zero
 	println("//---------------------------TimeDemo end----------->>")
 }
 
-func GeneratTemplate(tpl interface{}) error {
+func GeneratTemplateJson(tpl interface{}) error {
+	tbs, err := json.Marshal(tpl)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("  string(tbs): %s\n", string(tbs))
+	return nil
+}
+
+func GeneratTemplateBson(tpl interface{}) error {
 	tbs, err := bson.Marshal(tpl)
 	if err != nil {
 		return err
@@ -308,15 +334,48 @@ func GeneratTemplate(tpl interface{}) error {
 }
 
 type Wire struct {
-	A string `json:"A"`
+	A      string  `json:"A"`
+	Ainner *Winner `json:"inner"`
+	// Ainner Winner `json:"inner"`
 	// In int    `json:"In"`
 }
 
+type Winner struct {
+	B string `json:"B"`
+}
+
 func WireUnMarshalDemoAP() {
-	bs := `{"A":"xxx","In":33}`
-	a := &Wire{}
+	bs := `{"A":"xxx","In":33,"inner":{"B":"xxxb"}}`
+	// a := &Wire{}
+	a := new(Wire)
 	json.Unmarshal([]byte(bs), &a)
 	fmt.Printf("unmarshal AP: %+v\n", a)
+	log.Printf("a.Ainner: %+v\n", a.Ainner)
 	// fmt.Printf("a.B: %+v\n", a.In)
 	return
+}
+
+func IssurDemo() {
+	println("//<<-------------------------IssurDemo start-----------")
+	start := time.Now()
+
+	type Property struct {
+		Key [][2]string `json:"key"`
+	}
+
+	// ONE PROPERTY
+	oneProp := []byte(`{"key": [["one","two"]]}`)
+	var prop Property
+	er := json.Unmarshal(oneProp, &prop)
+	if er != nil {
+		panic(er)
+	} else {
+		fmt.Println(prop)
+	}
+
+	//multipleProps := []byte(`[{"key": "blabla","secret": false,"type": "string","value": "hereisthevalue"},{"key": "yepyepakey","secret": true,"type": "string","value": "dummy"}]`)
+	// how to unmarshal this?
+
+	fmt.Printf("IssurDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------IssurDemo end----------->>")
 }

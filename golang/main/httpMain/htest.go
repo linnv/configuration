@@ -1,4 +1,3 @@
-// Package main provides ...
 package main
 
 import (
@@ -6,8 +5,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
-
-	"github.com/linnv/logx"
 )
 
 type Handler struct{}
@@ -15,7 +12,7 @@ type Handler struct{}
 var handlerFunc map[string]http.HandlerFunc
 
 func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	logx.Debug("r: %+v\n", r.RequestURI)
+	fmt.Printf("r.RequestURI: %+v\n", r.RequestURI)
 	if hf, ok := handlerFunc[r.RequestURI]; ok {
 		hf(w, r)
 		return
@@ -33,18 +30,16 @@ func init() {
 	}
 }
 
-func getCheck(url string) (want string) {
+func getCheck(url string) (ouput string) {
 	res, err := http.Get(url)
 	if err != nil {
-		logx.Fatalf(err.Error())
+		panic(err.Error())
 	}
 	greeting, err := ioutil.ReadAll(res.Body)
 	res.Body.Close()
 	if err != nil {
-		logx.Fatalf(err.Error())
+		panic(err.Error())
 	}
-
-	fmt.Printf("%s", greeting)
 	return string(greeting)
 }
 
@@ -56,7 +51,7 @@ func main() {
 		"/color/city",
 	}
 	for _, v := range listOfURI {
-		want := getCheck(ts.URL + v)
-		logx.Debug("want: %+v\n", want)
+		output := getCheck(ts.URL + v)
+		fmt.Printf("output: %+v\n", output)
 	}
 }

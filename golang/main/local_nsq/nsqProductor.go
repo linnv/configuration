@@ -21,7 +21,7 @@ func main() {
 	count := flag.Int("count", 10, "count")
 	flag.Parse()
 	// w, _ := nsq.NewProducer("192.168.10.41:4150", config)
-	w, _ := nsq.NewProducer("192.168.10.95:4150", config)
+	w, _ := nsq.NewProducer("192.168.9.46:4150", config)
 	t := T{}
 	// for i := 0; i < 100; i++ {
 	for i := 0; i < *count; i++ {

@@ -58,6 +58,7 @@ autocmd FileType nerdtree setlocal relativenumber
 """""""""""""""""""""""""""""<code completion> start""""""""""""""""""""""""""""""""""
 Plug 'Valloric/YouCompleteMe',{'do': './install.py --tern-completer  --clang-completer'}
 
+let g:ycm_filetype_blacklist = {}
 let g:ycm_auto_trigger = 1
 let g:ycm_min_num_of_chars_for_completion = 2
 let g:ycm_key_list_select_completion = ['<c-j>','<Down>']
@@ -91,7 +92,6 @@ au BufNewFile,BufRead *.vue set filetype=html
 
 " Markdown
 autocmd BufNewFile,BufRead *.{md,mkd,mkdn,mark*}  nested setlocal filetype=markdown
-let g:ycm_filetype_blacklist = {}
 
 "for django
 au BufNewFile,BufRead *.hj set filetype=htmldjango
@@ -113,6 +113,7 @@ let g:neomake_html_enabled_makers = []
 Plug 'majutsushi/tagbar'
 " let g:tagbar_width = 30
 " let g:tagbar_left = 1
+let g:tagbar_show_linenumbers = 2
 let g:tagbar_type_markdown = {
         \ 'ctagstype' : 'markdown',
         \ 'kinds' : [
@@ -191,6 +192,22 @@ let g:airline_powerline_fonts = 1
 Plug 'editorconfig/editorconfig-vim'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Plug 'justinmk/vim-sneak'
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Plug 'easymotion/vim-easymotion'
+" Move to word
+" map  w <Plug>(easymotion-bd-w)
+" nmap w <Plug>(easymotion-overwin-w)
+" s{char}{char} to move to {char}{char}
+" nmap s <Plug>(easymotion-overwin-f2)
+" Move to line
+" map l <Plug>(easymotion-bd-jk)
+" nmap l <Plug>(easymotion-overwin-line)
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 Plug 'buoto/gotests-vim'
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 Plug 'hotoo/pangu.vim'
@@ -238,7 +255,7 @@ map <silent> <leader>a ggvGV<cr>
 "exit without saving
 map <silent> <leader>q :q!<cr>
 
-map <silent> <leader>b :NERDTreeFromBookmark
+map <silent> <leader>b :NERDTreeFromBookmark 
 
 noremap <Leader>d "+d
 noremap <Leader>y "+y
@@ -267,6 +284,8 @@ nnoremap <silent> <leader>k :Ack
 
 "new tab 
 nnoremap <silent> <leader>tn :tabnew<cr>
+"close one tab 
+nnoremap <silent> <leader>tc :tabclose<cr>
 
 "switch window area
 "for terminal of nvim

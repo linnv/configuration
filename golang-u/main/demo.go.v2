@@ -1,0 +1,181 @@
+// Package main provides ...
+package main
+
+import (
+	"os/exec"
+	"runtime"
+	"strings"
+	// "unicode"
+	// "ssp_web/lib/mdb"
+
+	// "color"
+	"os"
+
+	// "strings"
+	// "syscall"
+	// "encoding/json"
+
+	"fmt"
+	// "os"
+	// "flag"
+	"path/filepath"
+	// "reflect"
+)
+
+type I interface {
+	fly()
+}
+type B struct {
+	Name string
+	Life int
+}
+
+func (t B) fly() {
+
+	println("b fly")
+}
+
+type D struct {
+	Age int
+}
+
+func (this D) fly() {
+	println("D fly")
+}
+
+type C struct {
+	B
+	// *B
+	Life int
+}
+
+func GetCurrentPath() string {
+	_, filename, _, _ := runtime.Caller(1)
+	fmt.Printf("%+v\n", filename)
+	return filename
+
+}
+
+func checkErr(err error) {
+	if err != nil {
+		panic(err.Error())
+	}
+}
+
+func test(i I) {
+	i.fly()
+}
+
+type User struct {
+	Id   int
+	Name string
+}
+
+func (self *User) TestPointer() {
+	fmt.Printf("TestPointer: %p, %v\n", self, self)
+}
+func (self User) TestValue() {
+	fmt.Printf("TestValue: %p, %v\n", &self, self)
+}
+
+type UserWrap struct {
+	User
+	count int
+}
+
+// func main() {
+// 	u := User{1, "Tom"}
+// 	fmt.Printf("User: %p, %v\n", &u, u)
+// 	mv := User.TestValue
+// 	mv(u)
+// 	mp := (*User).TestPointer
+// 	mp(&u)
+// 	mp2 := (*User).TestValue
+// 	mp2(&u)
+// }
+
+func StrToStringArray(str, spileType string) []string {
+	fmt.Printf("before %+v len:%d\n", str, len(str))
+	tmpArray := strings.Split(strings.Trim(str, " "), spileType)
+	var result = make([]string, 0, len(tmpArray))
+	for _, v := range tmpArray {
+		// if len(v) != 0 { //skip empty string
+		if len(strings.Trim(v, " ")) != 0 { //skip empty string
+			v = strings.Trim(v, " ")
+			result = append(result, v)
+		}
+	}
+	fmt.Printf("after%+v len:%d\n", result, len(result))
+	return result
+}
+
+func main() {
+	// darwin, freebsd, linux,
+	if runtime.GOOS == "windows" {
+		fmt.Println("Hello from Windows")
+
+	}
+	os.File()
+	u := User{1, "Tom"}
+	fmt.Printf("User: %p, %v\n", &u, u)
+	u.TestValue()
+	u.TestPointer()
+	// uw := UserWrap{&u, 1}
+	uw := UserWrap{u, 1}
+	fmt.Printf("User wrapper: %p, %v\n", &uw, uw)
+	uw.TestPointer()
+	uw.TestValue()
+	fmt.Printf("u id: %+v\n", u.Id)
+	u.Id = 1000
+	fmt.Printf("u id:  changed %+v\n", u.Id)
+	fmt.Printf("uw id: %+v\n", uw.Id)
+	xxstr := ""
+	println("empty length", len(xxstr))
+	// mv := User.TestValue
+	// mv(u)
+	// mp := (*User).TestPointer
+	// mp(&u)
+	// mp2 := (*User).TestValue
+	// mp2(&u)
+}
+func Trash() {
+
+	s := "xxx.mp4"
+	rs := strings.TrimLeft(s, "xxx") //return .mp4
+	// rs := strings.TrimLeft("mp4", s)
+	println(rs)
+	println(strings.HasSuffix(s, "x.mp4"))
+	// str := " a,   b,  , c, d, e, , xx  "
+	// StrToStringArray(str, ",")
+	str := " a   b c d e , xx  "
+	StrToStringArray(str, ",")
+	// StrToStringArray(str, " ")
+	// tmpArray := strings.Split(",a,b,c,d,e,", ",")
+	a := 0
+	a |= 1 << 2
+	// // println(a)
+	// // println(1 << 3) //2^3
+	// // b := &B{"a", 1}
+	// // b := B{"a", 1}
+	// // c := C{b, 10}
+	// // fmt.Printf("%+v\n", c)
+	tmppath, _ := exec.LookPath(os.Args[0])
+	path, _ := filepath.Abs(tmppath)
+	println(path)
+	astr := "bb"
+	fmt.Printf("len(astr): %+v\n", len(astr))
+	// c.B.fly()
+	// c.fly()
+	// d := D{10}
+	// test(c)
+	// test(d)
+
+	// var i I = &D{99}
+	// i.fly()
+
+	// fmt.Printf("================: \n")
+	//
+	// // tmps := make([]int, 10)
+	// // tmps := make([]int, 0, 10)
+	// fmt.Printf("len(tmps)%d cap:%d\n", len(tmps), cap(tmps))
+}

@@ -96,9 +96,7 @@ func main() {
 
 	}))
 	// err := q.ConnectToNSQD("127.0.0.1:4150")
-	// err := q.ConnectToNSQD("192.168.10.41:4150")
-	err := q.ConnectToNSQD("192.168.10.95:4150")
-	// err := q.ConnectToNSQD("182.92.76.126:4150")
+	err := q.ConnectToNSQD("192.168.9.46:4150")
 	if err != nil {
 		log.Panic("Could not connect")
 

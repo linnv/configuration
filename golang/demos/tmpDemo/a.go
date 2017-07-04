@@ -30,10 +30,11 @@ func genereateEtcdConfig(subnet string) []EtcdConfig {
 
 func generateETCDCluster() {
 	const (
-		// templateEtcdStartupConfig = `etcd --name {nodename} -advertise-client-urls http://{hostIP}:{clientPort} -listen-client-urls http://{hostIP}:{clientPort} -initial-advertise-peer-urls http://{hostIP}:{peerPort} -listen-peer-urls http://{hostIP}:{peerPort} -initial-cluster-token {clusterToken} -initial-cluster {nodelist} -initial-cluster-state new`
-		templateEtcdStartupConfig = `etcd --name {nodename} -advertise-client-urls http://0.0.0.0:{clientPort} -listen-client-urls http://0.0.0.0:{clientPort} -initial-advertise-peer-urls http://{hostIP}:{peerPort} -listen-peer-urls http://{hostIP}:{peerPort} -initial-cluster-token {clusterToken} -initial-cluster {nodelist} -initial-cluster-state new`
-		templateDockerNetwork     = `docker network create --subnet={subnet}/24 {subnetWorkName}`
-		templateDockerRunning     = `docker run -d --net {subnetWorkName} --ip {containerIP} -p {hostPublicPort}:{guestPort} -it -h {hostName} --name {hostName} {imageName}`
+		templateEtcdStartupConfig = `etcd --name {nodename} -advertise-client-urls http://{hostIP}:{clientPort} -listen-client-urls http://{hostIP}:{clientPort} -initial-advertise-peer-urls http://{hostIP}:{peerPort} -listen-peer-urls http://{hostIP}:{peerPort} -initial-cluster-token {clusterToken} -initial-cluster {nodelist} -initial-cluster-state new`
+		// templateEtcdStartupConfig = `etcd --name {nodename} -advertise-client-urls http://0.0.0.0:{clientPort} -listen-client-urls http://0.0.0.0:{clientPort} -initial-advertise-peer-urls http://{hostIP}:{peerPort} -listen-peer-urls http://{hostIP}:{peerPort} -initial-cluster-token {clusterToken} -initial-cluster {nodelist} -initial-cluster-state new`
+		templateDockerNetwork = `docker network create --subnet={subnet}/24 {subnetWorkName}`
+		// templateDockerRunning     = `docker run -d --net {subnetWorkName} --ip {containerIP} -p {hostPublicPort}:{guestPort} -it -h {hostName} --name {hostName} {imageName}`
+		templateDockerRunning = `docker run --net {subnetWorkName} --ip {containerIP} -p {hostPublicPort}:{guestPort} -it -h {hostName} --name {hostName} {imageName}`
 	)
 	const (
 		peerPort     = "2480"

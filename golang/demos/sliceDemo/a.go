@@ -1,21 +1,26 @@
-package newDir
+package demo
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
+	"math/rand"
 	"os"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
 	"unsafe"
+
+	"github.com/linnv/logx"
 )
 
 // const length string diff from  []
 var strList = [...]string{
 	"g",
 	"d",
+	4: "e",
 }
 
 func BitCalucate() {
@@ -764,6 +769,27 @@ func BufReadDemo(buf []int) {
 func JustDemo() {
 	println("//<<-------------------------JustDemo start-----------")
 	start := time.Now()
+	var a []*BASTRUCT
+	jj := []*BASTRUCT{
+		&BASTRUCT{},
+	}
+	a = jj
+	logx.Debugf("jj: %+v\n", jj)
+	logx.Debugf("a: %+v\n", a)
+	// ID := 9
+	// ID := 10
+	// s := []byte(strconv.Itoa(ID))
+	// logx.Debugf("s: %+v\n", s)
+	// fmt.Printf("s: %+v,cap(s):%d,len(s):%d arrd:%v \n", s, cap(s), len(s), &s[0])
+	// newPtrOfs := s[:]
+	// fmt.Printf("newPtrOfs: %+v\n", newPtrOfs)
+	// fmt.Printf("newPtrOfs: %+v,cap(newPtrOfs):%d,len(newPtrOfs):%d arrd:%v \n", newPtrOfs, cap(newPtrOfs), len(newPtrOfs), &newPtrOfs[0])
+	// newPtrOfs = newPtrOfs[len(newPtrOfs):]
+
+	// a := make([][2]int, 0, 1)
+	// a = append(a, [2]int{1, 2})
+	// a = append(a, [2]int{1, 2})
+	// logx.Debug("a: %+v\n", a)
 
 	// const good = "jfeifejfej fejfe efj"
 	// bs := make([]byte, len(good))
@@ -897,8 +923,9 @@ func JustDemo() {
 	// 	os.Stdout.Write(append([]byte("both true"), '\n'))
 	// }
 
-	// fmt.Printf("  strList[FIRST]: %+v\n", strList[FIRST])
-	//
+	fmt.Printf("  strList[FIRST]: %+v\n", strList[FIRST])
+	fmt.Printf("  strList[4]: %+v\n", strList[4])
+
 	// s := jj + "333"
 	// fmt.Printf("  s: %+v\n", s)
 	// var appIds, normalIds, illegalIds []int
@@ -928,7 +955,12 @@ func JustDemo() {
 	// fmt.Printf("len(s): %+v\n", len(s))
 	// fmt.Printf("s: %+v\n", s)
 
-	// bs := make([]byte, 4)
+	// bs := make([]byte, 1)
+	// bs[len(bs)-1] = 1
+	// fmt.Printf("bs: %+v,cap(bs):%d,len(bs):%d arrd:%v \n", bs, cap(bs), len(bs), &bs[0])
+	// bs = bs[:len(bs)-1]
+	// log.Printf("len(bs): %+v\n", len(bs))
+	// fmt.Printf("o bs: %+v,cap(bs):%d,len(bs):%d arrd:%v \n", bs, cap(bs), len(bs), &bs[0])
 	// ss := "jia"
 	// n := copy(bs, ss)
 	// fmt.Printf("bs: %+v\n", string(bs))
@@ -961,4 +993,291 @@ func DiffPosStrDemo() {
 
 	fmt.Printf("DiffPosStrDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
 	println("//---------------------------DiffPosStrDemo end----------->>")
+}
+
+type BASTRUCT struct {
+	BN string `json:"BN"`
+}
+
+type ASTRUCT struct {
+	BASTRUCT *BASTRUCT `json:"BASTRUCT"`
+	N        string    `json:"N"`
+}
+
+func IssueDemo() {
+	println("//<<-------------------------IssueDemo start-----------")
+	start := time.Now()
+	// a := []int{1, 2}
+	a := []*ASTRUCT{&ASTRUCT{&BASTRUCT{"bOne"}, "one"}, &ASTRUCT{&BASTRUCT{"bTwo"}, "two"}}
+	b := []*ASTRUCT{&ASTRUCT{&BASTRUCT{"bOne"}, "one"}, &ASTRUCT{&BASTRUCT{"bTwo"}, "two"}}
+	fmt.Printf("a: %+v,cap(a):%d,len(a):%d arrd:%v \n", a, cap(a), len(a), &a[0])
+	fmt.Printf("b: %+v,cap(b):%d,len(b):%d arrd:%v \n", b, cap(b), len(b), &b[0])
+	a, b = a[0:], b[0:]
+	fmt.Printf("a: %+v,cap(a):%d,len(a):%d arrd:%v \n", a, cap(a), len(a), &a[0])
+	fmt.Printf("b: %+v,cap(b):%d,len(b):%d arrd:%v \n", b, cap(b), len(b), &b[0])
+	fmt.Printf("IssueDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------IssueDemo end----------->>")
+}
+
+func MultiSliceDemo() {
+	println("//<<-------------------------MultiSliceDemo start-----------")
+	start := time.Now()
+	as := make([][]int, 0, 3)
+	a := []int{1, 1, 1, 1}
+	b := []int{2, 2, 2}
+	c := []int{3, 3, 3}
+	as = append(as, a)
+	as = append(as, b)
+	as = append(as, c)
+	log.Printf("len(as): %+v\n", len(as))
+	log.Printf("as[0]: %+v\n", as[0])
+	log.Printf("as[1]: %+v\n", as[1])
+	fmt.Printf("MultiSliceDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------MultiSliceDemo end----------->>")
+}
+
+func SearchIssueDemo() {
+	// var htmlNospaceReplacementTable = []string{
+	// 	0:    "&#xfffd;",
+	// 	'\t': "&#9;",
+	// 	'\n': "&#10;",
+	// 	'\v': "&#11;",
+	// 	'\f': "&#12;",
+	// 	'\r': "&#13;",
+	// 	' ':  "&#32;",
+	// 	'"':  "&#34;",
+	// 	'&':  "&amp;",
+	// 	'\'': "&#39;",
+	// 	'+':  "&#43;",
+	// 	'<':  "&lt;",
+	// 	'=':  "&#61;",
+	// 	'>':  "&gt;",
+	// 	// A parse error in the attribute value (unquoted) and
+	// 	// before attribute value states.
+	// 	// Treated as a quoting character by IE.
+	// 	'`': "&#96;",
+	// }
+	// 	'\'': "&#39;",
+	println("//<<-------------------------SearchIssueDemo start-----------")
+	start := time.Now()
+	const sentence = `<a href="javascript:void(0)" onclick="queryXian(&#39;1100&#39;)">北京市</a>`
+	singleQuoteConvert := []string{"&#39;", "'"}
+	r := strings.NewReplacer(singleQuoteConvert...).Replace(sentence)
+	log.Printf("r: %+v\n", r)
+	// decodeStr := url.QueryEscape(sentence)
+	// decodeStr, err := url.QueryUnescape(sentence)
+	// if err != nil {
+	// 	panic(err.Error())
+	// }
+	// log.Printf("sentence: %+v\n", sentence)
+	// log.Printf("decodeStr: %+v\n", decodeStr)
+	return
+	// sentence := string(`onClick="queryXian('4502')">`)
+	for i := 0; i < len(sentence); i++ {
+		log.Printf("i%d: %s\n", i, string(sentence[i]))
+	}
+	index := strings.Index(sentence, `'`) + 1
+	// sufIndex := index + strings.Index(sentence[index+1:], `'`)
+	sufIndex := index + strings.Index(sentence[index:], `'`)
+	log.Printf("index: %+v\n", index)
+	log.Printf("sufIndex: %+v\n", sufIndex)
+	log.Printf("sentence[index:sufIndex]: %+v\n", sentence[index:sufIndex])
+
+	fmt.Printf("SearchIssueDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------SearchIssueDemo end----------->>")
+}
+
+func pageDemo() {
+	println("//<<-------------------------pageDemo start-----------")
+	start := time.Now()
+	ss := `查询结果共：16条   当前为：1页  共2页`
+	const (
+		current = `前为：`
+		total   = `共`
+		end     = `页`
+	)
+	a := strings.Index(ss, current) + len(current)
+	b := strings.Index(ss[a:], end) + a
+	log.Printf("ss[a:b]: %+v\n", ss[a:b])
+
+	a = b + strings.Index(ss[b:], total) + len(total)
+	b = strings.Index(ss[a:], end) + a
+	log.Printf("total ss[a:b]: %+v\n", ss[a:b])
+	fmt.Printf("pageDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------pageDemo end----------->>")
+}
+
+func ConvertDemo() {
+	println("//<<-------------------------ConvertDemo start-----------")
+	start := time.Now()
+	a := "f333efjXjfej"
+	r := strings.ToUpper(a)
+	log.Printf("r: %+v\n", r)
+	fmt.Printf("ConvertDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------ConvertDemo end----------->>")
+}
+
+func IndexDemo() {
+	println("//<<-------------------------IndexDemo start-----------")
+	start := time.Now()
+	// line := strings.TrimSpace("one line")
+	// log.Printf("line: %+v\n", line)
+	// return
+	a := "play_duration"
+
+	if (strings.Index(a, "cost") >= 0) || (strings.Index(a, "ratio") >= 0) || (strings.Index(a, "cpm") >= 0) {
+		println("waht?")
+	}
+	r := strings.Index(a, "d")
+	// rNil := strings.Index(a, "d")
+	log.Printf(": %+v\n", r)
+
+	ns := "曹渡;林颖;董越;梁丽丽;劳咏姗;罗颂雅;陈驹峥;李伟明;莫冬倩;林子良;谭荣棉;何建波;陈璐;刘日荣;唐比昌;林恒;徐彬;郑健豪;刘舒婷;钟思远;李华煜;刘伟;梁杰;苏创绩;周开伟;黄佳豪;韦万;何世坛;吴甲林;周凯帆;谢天;程辉;刘东方;许忠洲;李文莎;柏石先;林碧洪;张月丽;姚梓洋;廖梦思;郑园柳;张三三;姚欢;黄晓冬;何嘉静;文伟英;谢淑卿;罗梦飞;陈耿涛;陈伟平;黄腾飞;苏特;张婧;黄智杰;"
+	ss := strings.Split(ns, ";")
+	log.Printf("len(ss): %+v\n", len(ss))
+	log.Printf("s[0]: %+v\n", ss[0])
+	log.Printf("ss[len(ss)-1]: %+v\n", ss[len(ss)-1])
+	log.Printf("ss[len(ss)-2]: %+v\n", ss[len(ss)-2])
+	// log.Printf("rNil: %+v\n", rNil)
+	// a := "/1/3/2_8.png"
+	// log.Printf(": %+v\n", a[strings.LastIndex(a, "/"):])
+	fmt.Printf("IndexDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------IndexDemo end----------->>")
+}
+
+func GotoDemo() {
+	println("//<<-------------------------GotoDemo start-----------")
+	start := time.Now()
+	c := 0
+retry:
+	c++
+	if c < 4 {
+		log.Println("retry: works")
+		goto retry
+	}
+	log.Printf("c: %+v\n", c)
+	log.Println("good: works")
+	fmt.Printf("GotoDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------GotoDemo end----------->>")
+}
+
+func MaxElementDemo(s []int) int {
+	println("//<<-------------------------MaxElementDemo start-----------")
+	start := time.Now()
+	sLen := len(s)
+	i := 0
+	last := s[sLen-1]
+	for i < sLen-1 {
+		// max := s[i]
+		// s[sLen-1] = max
+		// i++
+		// for s[i] < max { //tips: max will never be greater than itself,so i won't be greater thatn max(s[sLen-1])
+		s[sLen-1] = s[i]
+		i++
+		for s[i] < s[sLen-1] { //tips: max will never be greater than itself,so i won't be greater thatn max(s[sLen-1])
+			i++
+		}
+	}
+	fmt.Printf("MaxElementDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------MaxElementDemo end----------->>")
+	if last > s[sLen-1] {
+		return last
+	}
+	return s[sLen-1]
+}
+
+func HashDemo() {
+	println("//<<-------------------------HashDemo start-----------")
+	start := time.Now()
+	const (
+		base     = 6
+		maxIndex = 101
+	)
+	//you might use linkList as under data storage as well
+	underArray := make([]*string, maxIndex)
+
+	getIndex := func(str string) int {
+		hash := 0
+		for i := 0; i < len(str); i++ {
+			hash = hash*base + i*int(str[i])
+		}
+		r := hash % maxIndex
+		log.Printf("index for %v r: %+v\n", str, r)
+		return r
+	}
+
+	sethash := func(key string, value string) {
+		underArray[getIndex(key)] = &value
+	}
+
+	gethash := func(key string) string {
+		return *underArray[getIndex(key)]
+	}
+
+	sethash("first", "JialinWu")
+	r := gethash("first")
+	log.Printf("r: %+v\n", r)
+
+	sethash("frist", "AGui")
+	r = gethash("frist")
+	log.Printf("r: %+v\n", r)
+
+	sethash("frits", "sAGui")
+	r = gethash("frits")
+	log.Printf("r: %+v\n", r)
+
+	fmt.Printf("HashDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------HashDemo end----------->>")
+}
+
+func TrimDemo() {
+	println("//<<-------------------------TrimDemo start-----------")
+	start := time.Now()
+	o := "a 3j 45 "
+	ro := strings.TrimSpace(o)
+	logx.Debugf("ro: %+v\n", ro)
+	fmt.Printf("TrimDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------TrimDemo end----------->>")
+}
+
+func StrConvertDemo(i int) string {
+	return strconv.Itoa(i) + strconv.Itoa(i*10)
+}
+
+func StrConvertFmtDemo(i int) string {
+	return fmt.Sprintf("%d%d", i, i*10)
+}
+
+var benStr []string
+
+func init() {
+	benStr = make([]string, 0, 100)
+	for i := 10; i < 110; i++ {
+		b := make([]byte, i)
+		rand.Read(b)
+		benStr = append(benStr, string(b))
+	}
+}
+
+func ByCombine(str []string) string {
+	var r string
+	strLen := len(str)
+	for i := 0; i < strLen; i++ {
+		r += str[i] //allocate memory when need, inefficiency
+	}
+	return r
+}
+
+func Byappend(str []string) string {
+	totalLen := 0
+	strLen := len(str)
+	for i := 0; i < strLen; i++ {
+		totalLen += len(str[i])
+	}
+	bs := make([]byte, 0, totalLen) //allocate all memory at one time
+	for i := 0; i < strLen; i++ {
+		bs = append(bs, str[i]...)
+	}
+
+	return string(bs)
 }

@@ -1,7 +1,7 @@
 // Package main provides ...
-package newDir
+package demo
 
-import "fmt"
+import "github.com/linnv/logx"
 
 type MS struct {
 	Exit    bool
@@ -9,8 +9,27 @@ type MS struct {
 	Content interface{}
 }
 
+func update(m map[int]string) {
+	m[1] = "updated"
+}
+
 func JustDemo() {
 	println("<<<JustDemo start---------------------------")
+	mb := make(map[int]byte, 2)
+	logx.Debugf("len(mb): %+v\n", len(mb))
+
+	m := make(map[int]string)
+	m[1] = "init"
+	logx.Debugf("m: %+v\n", m)
+	update(m)
+	logx.Debugf("end m: %+v\n", m)
+	if _, ok := m[2]; ok {
+		logx.Debugln("2 good")
+	}
+	if _, ok := m[3]; ok {
+		logx.Debugln("3 good")
+	}
+
 	// if ms[111].Exit {
 	// 	os.Stdout.Write(append([]byte("good"), '\n'))
 	// }
@@ -28,24 +47,32 @@ func JustDemo() {
 	// ms[0] = m
 	// fmt.Printf("ms[0]: %+v\n", ms[0])
 
-	len := 100
-	ms := make(map[int]MS, len)
-	mpSlice := make(map[int]MS, len)
-	for i := 0; i < len; i++ {
-		mpSlice[i] = MS{Index: i * 9}
-	}
-
-	// var m MS
-	m := mpSlice[0]
-	m.Index = 333
-	ms[0] = m
-
+	// m := make(map[int]MS, 1)
+	// v := MS{Index: 9}
+	// log.Printf("v: %p\n", &v)
+	// m[0] = v
+	// a := m[0]
+	// // ap := &m[0]
+	// log.Printf("a: %p\n", &a)
+	// log.Printf("ap: %p\n", ap)
+	// len := 100
+	// ms := make(map[int]MS, len)
+	// mpSlice := make(map[int]MS, len)
+	// for i := 0; i < len; i++ {
+	// 	mpSlice[i] = MS{Index: i * 9}
+	// }
+	//
+	// // var m MS
+	// m := mpSlice[0]
+	// m.Index = 333
+	// ms[0] = m
+	//
 	// ms[0] = mpSlice[0]
 	// ms[0].Index = 333
 
-	fmt.Printf("ms[0]: %+v\n", ms[0])
-
-	fmt.Printf("mpSlice[0]: %+v\n", mpSlice[0])
+	// fmt.Printf("ms[0]: %+v\n", ms[0])
+	//
+	// fmt.Printf("mpSlice[0]: %+v\n", mpSlice[0])
 
 	// m := make(map[int][]int, 3)
 	// m[3] = []int{1, 34}

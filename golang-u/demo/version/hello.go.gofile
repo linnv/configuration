@@ -1,0 +1,88 @@
+// Package main provides ...
+
+package main
+
+import (
+	"diy_package/tmp"
+	"fmt"
+)
+
+func useReturnParameter() (r int) {
+	r = 100
+	defer func() {
+		r = 199
+	}()
+
+	return r
+
+}
+
+func useAssign() (r int) {
+	n := 10
+	defer func() {
+		n = 111
+	}()
+
+	return n
+
+}
+
+//
+// func useAssignAddress() int {
+// 	n := 10
+// 	defer func(m *int) {
+// 		*m = 111
+// 	}(&n)
+// 	return n
+// }
+
+func reverse(s string) string {
+	strByte := []rune(s)
+	// end := len(strByte)
+	for i := 0; i < len(strByte)/2; i++ {
+		j := len(strByte) - i - 1
+		strByte[i], strByte[j] = strByte[j], strByte[i]
+		// strByte[i], strByte[end-i-1] = strByte[end-i-1], strByte[i]
+	}
+	return string(strByte)
+}
+
+type Person struct {
+	name string
+	age  int
+}
+
+func main() {
+	// a := 1
+	// b := a
+	//
+	// fmt.Println(b)
+	// defer func() {
+	// 	b = 100
+	// }()
+	// fmt.Printean(b)
+	//
+	p2 := new(Person)
+	var p1 Person
+	fmt.Printf("var: %v", p1)
+	fmt.Printf("\n new : %v\n", p2)
+	p3 := &Person{name: "jialin", age: 90}
+	fmt.Println(p3.age, p3.name)
+	fmt.Printf("\n :=&: %v\n", p3)
+	tmp.Tmp()
+	// tmps := &tmp.tmpstmpStruct{name: 1, Number: 20}
+	// fmt.Println(tmps.name)
+	// fmt.Println(tmps.Number)
+	// str := "dmeooeeeooo"
+	// fmt.Println(str)
+	// fmt.Println(reverse(str))
+	// ret := useAssign()
+	// ret2 := useReturnParameter()
+	// //
+	// fmt.Println(ret)
+	// fmt.Println(ret2)
+	//
+	// fmt.Println(useAssignAddress())
+	// fmt.Println(useReturnParameter())
+	fmt.Println("done")
+}

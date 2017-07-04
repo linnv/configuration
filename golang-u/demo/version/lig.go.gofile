@@ -1,0 +1,27 @@
+// Package main provides ...
+package main
+
+import (
+	// "diy_package/buf"
+	"diy_package/tmp"
+	_ "diy_package/tmp2"
+	_ "diy_package/tmp3"
+	_ "diy_package/tmpa"
+	"fmt"
+)
+type d interface {
+	num int64,
+}
+func init() {
+	println("a")
+}
+func init() {
+	println("b")
+}
+
+func main() {
+	// buf.Tmp()
+	tmp.Tmp()
+	fmt.Println()
+
+}

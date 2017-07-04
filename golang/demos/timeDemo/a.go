@@ -1,11 +1,14 @@
 // Package main provides ...
-package newDir
+package demo
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"strconv"
 	"time"
+
+	"github.com/linnv/logx"
 )
 
 func TickDemo() {
@@ -53,3 +56,47 @@ func JustDemo() {
 	println("-----------------------------JustDemo end>>>")
 	return
 }
+
+var days = [...]string{
+	"7Sunday",
+	"1Monday",
+	"2Tuesday",
+	"3Wednesday",
+	"4Thursday",
+	"5Friday",
+	"6Saturday",
+}
+
+func FormatDemo() {
+	println("//<<-------------------------FormatDemo start-----------")
+	start := time.Now()
+
+	time_ := "20161227073000"
+	// const format = "20061102"
+
+	const le = len("20160102")
+	const format = "20060102"
+	d, err := time.ParseInLocation(format, time_[:le], time.Local)
+	if err != nil {
+		panic(err.Error())
+	}
+	log.Printf("d: %s\n", d.Format("2006-01-02"))
+	// log.Printf("d: %+v\n", d.Format("yyyy-MM-dd"))
+	// s := d.Local().Format("2006-01-02")
+	// log.Printf("s: %+v\n", s)
+
+	n := time.Now()
+	nn := n.Weekday()
+	logx.Debugf("n.we: %+v\n", nn)
+	logx.Debugf("days[nn]: %+v\n", days[nn])
+	fmt.Printf("FormatDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------FormatDemo end----------->>")
+}
+
+// func AliyunProcessDemo(params)type {
+// println("//<<-------------------------AliyunProcessDemo start-----------")
+// 	start := time.Now()
+//
+// 	fmt.Printf("AliyunProcessDemo costs  %d millisecons actually %v\n",time.Since(start).Nanoseconds()/1000000,time.Since(start))
+// println("//---------------------------AliyunProcessDemo end----------->>")
+// }

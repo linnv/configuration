@@ -130,6 +130,9 @@ Plugin 'nathanaelkane/vim-indent-guides'
 let g:indent_guides_guide_size=1
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Plugin 'hotoo/pangu.vim'
+autocmd BufWritePre *.mkd *.markdown,*.md,*.text,*.txt,*.wiki,*.cnx call PanGuSpacing()
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 Plugin 'bling/vim-airline'
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:vimrc_author='Jialin Wu' 

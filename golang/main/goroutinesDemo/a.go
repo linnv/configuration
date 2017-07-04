@@ -2,8 +2,8 @@
 package main
 
 import (
-	"fmt"
-	"sync"
+	"os"
+	"os/signal"
 )
 
 //RInt implements ...
@@ -29,27 +29,45 @@ func NewA() *A {
 }
 
 func main() {
-	len := 100
-	a := make([]*A, 0, 100)
-	for i := 0; i < len; i++ {
-		a = append(a, &A{i})
+	a := make(chan bool)
+	sig := make(chan os.Signal, 2)
+
+	signal.Notify(sig, os.Interrupt, os.Kill)
+
+	for {
+		select {
+		case <-a:
+			println("goof")
+		case <-sig:
+			println("exit")
+			return
+		}
 	}
-	var wg sync.WaitGroup
-	wg.Add(3)
-	go func() {
-		defer wg.Done()
-		RInt(a[:30], NewA())
-	}()
-	go func() {
-		defer wg.Done()
-		RInt(a[30:60], NewA())
-	}()
-	go func() {
-		defer wg.Done()
-		RInt(a[60:], NewA())
-	}()
-	wg.Wait()
-	//@toDelete
-	fmt.Printf("good: works\n")
 	return
 }
+
+// func main() {
+// 	len := 100
+// 	a := make([]*A, 0, 100)
+// 	for i := 0; i < len; i++ {
+// 		a = append(a, &A{i})
+// 	}
+// 	var wg sync.WaitGroup
+// 	wg.Add(3)
+// 	go func() {
+// 		defer wg.Done()
+// 		RInt(a[:30], NewA())
+// 	}()
+// 	go func() {
+// 		defer wg.Done()
+// 		RInt(a[30:60], NewA())
+// 	}()
+// 	go func() {
+// 		defer wg.Done()
+// 		RInt(a[60:], NewA())
+// 	}()
+// 	wg.Wait()
+// 	//@toDelete
+// 	fmt.Printf("good: works\n")
+// 	return
+// }

@@ -1,11 +1,12 @@
 // Package main provides ...
-package newDir
+package demo
 
 import "testing"
 
 func TestJustDemo(t *testing.T) {
+	IoerDemo()
 	// JustDemo()
-	DisplayError()
+	// DisplayError()
 	// Link()
 	// FileTypeDemo()
 	// basic := "/Users/Jialin/web/demo/chart/samples/"

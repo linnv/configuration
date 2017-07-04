@@ -1,14 +1,18 @@
 // Package main provides ...
-package newDir
+package demo
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path"
 	"strconv"
 	"time"
+
+	"github.com/linnv/logx"
 )
 
 func JustDemo() {
@@ -146,6 +150,57 @@ func FileTypeDemo() {
 	}
 
 	println("//---------------------------FileTypeDemo end----------->>")
+}
+
+type bufFile struct {
+	fd   *os.File
+	bufw *bufio.Writer
+}
+
+func (bf *bufFile) Flush() error {
+	//@TODO
+	bf.bufw.Flush()
+	return bf.fd.Sync()
+}
+
+func (bf *bufFile) Close() error {
+	bf.Flush()
+	return bf.fd.Close()
+}
+
+func (bf *bufFile) converTestWriter() {
+	simpleWriter := func(w io.Writer) {
+		if bw, ok := w.(*bufio.Writer); ok {
+			bw.WriteString("good: io.Writer converted bufio.Writer ")
+			logx.Debugln("good: io.Writer converted bufio.Writer ")
+			return
+		}
+		switch w.(type) {
+		case *bufio.Writer: //only poiter type interface work
+			logx.Debugln("good: found bufio writer ")
+		}
+	}
+	simpleWriter(bf.bufw)
+}
+
+func newBufFile() *bufFile {
+	fd, err := os.OpenFile("./a.file", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	logx.CheckErr(err)
+	bw := bufio.NewWriter(fd)
+	return &bufFile{
+		fd,
+		bw,
+	}
+}
+
+func IoerDemo() {
+	println("//<<-------------------------IoerDemo start-----------")
+	start := time.Now()
+	bf := newBufFile()
+	bf.converTestWriter()
+	defer bf.Close()
+	fmt.Printf("IoerDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------IoerDemo end----------->>")
 }
 
 func SaveIntSliceToFile(iSlice []int64, filePath string) error {

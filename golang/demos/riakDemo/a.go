@@ -1,6 +1,7 @@
-package newDir
+package demo
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 
@@ -45,8 +46,10 @@ func AliyunDemo() {
 func LocalDemo() {
 	println("//<<-------------------------LocalDemo start-----------")
 	// address := "192.168.100.44:8087"
-	address := "192.168.8.3:8087"
-	filePath := "/Users/Jialin/Desktop/a.png"
+	// address := "192.168.8.3:8087"
+	address := "docker.dev:8087"
+	// filePath := "/Users/Jialin/Documents/sunteng/materialUpload/jpg/Qn28x6B0Dg.jpg"
+	filePath := "/Users/Jialin/Documents/sunteng/materialUpload/file.mp4"
 	f, err := os.Open(filePath)
 	if err != nil {
 		panic(err.Error())
@@ -67,6 +70,9 @@ func LocalDemo() {
 		return
 	}
 	println("save to ", bucket, "/", fn)
+	fmt.Printf("you may visit /buckets/{xxBucketName}/keys/{xxKeyName} from http endpoint\n")
+	fmt.Printf("you may visit [/buckets/%s/keys/%s] from http endpoint\n", bucket, fn)
+	// fmt.Printf("you may visit %s from http endpoint\n",/buckets/demo/keys/picd.png)
 
 	println("//---------------------------LocalDemo end----------->>")
 }

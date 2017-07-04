@@ -1,17 +1,14 @@
-// Package main provides ...
-package newDir
+package demo
 
-import (
-	"fmt"
-	"testing"
-)
+import "testing"
 
 func TestJustDemo(t *testing.T) {
-	var m Moniter
-	m = Inheritan{}
-	r := m.GetConsumption()
-	//@toDelete
-	fmt.Printf("r: %+v\n", r)
+	JustDemo()
+	// var m Moniter
+	// m = Inheritan{}
+	// r := m.GetConsumption()
+	// //@toDelete
+	// fmt.Printf("r: %+v\n", r)
 
 	// var ters Timer
 	// ters = &TimeInstanceA{Count: 99}
@@ -48,3 +45,23 @@ func TestJustDemo(t *testing.T) {
 // 		fmt.Printf("type interface %v\n", t)
 // 	}
 // }
+
+func Test_updateInInterfaceDemo(t *testing.T) {
+	type args struct {
+		i int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{"normal", args{1}, 22},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := updateInInterfaceDemo(tt.args.i); got != tt.want {
+				t.Errorf("updateInInterfaceDemo() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

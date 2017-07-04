@@ -3,6 +3,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 )
 
 func DeferNoParametersDemo() {
@@ -46,6 +47,7 @@ func noRzturnDemo() {
 
 func main() {
 	noReturnDemo()
+	log.Println(": works")
 	// DeferNoParametersDemo()
 	// DeferWithParametersDemo()
 }

@@ -1,9 +1,11 @@
 // Package main provides ...
-package newDir
+package demo
 
 import "testing"
 
 func TestJustDemo(t *testing.T) {
-	JustDemo()
+	FormatDemo()
+	//@toDelete
+	// JustDemo()
 	// TickDemo()
 }

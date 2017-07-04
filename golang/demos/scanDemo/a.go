@@ -1,5 +1,5 @@
 // Package main provides ...
-package newDir
+package demo
 
 func JustDemo() {
 	println("<<<JustDemo start---------------------------")

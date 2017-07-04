@@ -1,8 +1,12 @@
 // Package main provides ...
-package newDir
+package demo
 
 import "testing"
 
 func TestJustDemo(t *testing.T) {
-	JustDemo()
+	// r := RetDeferDemo(3)
+	// log.Printf("r: %+v\n", r)
+	// JustDemo()
+	// PanicDeferRecoverDemo()
+	PanicDeferRecoverDemo()
 }

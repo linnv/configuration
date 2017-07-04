@@ -1,10 +1,6 @@
-package newDir
+package demo
 
-import (
-	"fmt"
-	"testing"
-	"time"
-)
+import "testing"
 
 // . "github.com/smartystreets/goconvey/convey"
 
@@ -80,8 +76,34 @@ import (
 // }
 
 func TestJustDemo(t *testing.T) {
+	// IssurDemo()
+	// s := secure.New(
+	// 	secure.Options{
+	// 		AllowedHosts:            []string{},
+	// 		SSLRedirect:             false,
+	// 		SSLTemporaryRedirect:    false,
+	// 		SSLHost:                 "",
+	// 		SSLProxyHeaders:         map[string]string{},
+	// 		STSSeconds:              0,
+	// 		STSIncludeSubdomains:    false,
+	// 		STSPreload:              false,
+	// 		ForceSTSHeader:          false,
+	// 		FrameDeny:               false,
+	// 		CustomFrameOptionsValue: "",
+	// 		ContentTypeNosniff:      false,
+	// 		BrowserXssFilter:        false,
+	// 		ContentSecurityPolicy:   "",
+	// 		PublicKey:               "",
+	// 		IsDevelopment:           false,
+	// 	})
+	//
+	// err := GeneratTemplateJson(&s)
+	// if err != nil {
+	// 	panic(err.Error())
+	// }
+	// DoIt()
 	// JustDemo()
-	// TimeDemo()
+	TimeDemo()
 	// BsonDemo()
 	// WireUnMarshalDemoAP()
 	// td := &T{}
@@ -106,15 +128,17 @@ func TestJustDemo(t *testing.T) {
 	// fmt.Println(string(res1B))
 	// fmt.Printf("  string(tbs): %s\n", string(tbs))
 	// postData := adslot.PostBuyRule{}
-	// err := GeneratTemplate(postData)
+
+	// postData := &apiSlot{ViewType: &apiViewType{}, Site: &Site{}}
+	// err := GeneratTemplateJson(postData)
 	// if err != nil {
 	// 	panic(err.Error())
 	// 	return
 	// }
 
-	tt := time.Unix(1362984425, 0)
-	nt := tt.Format("2006-01-02 15:04:05")
-	fmt.Println(nt)
+	// tt := time.Unix(1362984425, 0)
+	// nt := tt.Format("2006-01-02 15:04:05")
+	// fmt.Println(nt)
 }
 
 // func TestLoadJsonFile(t *testing.T) {

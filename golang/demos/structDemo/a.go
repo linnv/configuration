@@ -1,4 +1,4 @@
-package newDir
+package demo
 
 import (
 	"encoding/json"
@@ -242,6 +242,20 @@ type DeriveCopy struct {
 	Name string `json:"Name"`
 }
 
+func StrAssignDemo() {
+	println("//<<-------------------------StrAssignDemo start-----------")
+	start := time.Now()
+	CAS := func(d *string, s string) {
+		*d = s
+	}
+	a, b := "", "xxxxb"
+	CAS(&a, b)
+	log.Printf("a: %+v\n", a)
+
+	fmt.Printf("StrAssignDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------StrAssignDemo end----------->>")
+}
+
 func AssigneStructDemo() {
 	println("//<<-------------------------AssigneStructDemo start-----------")
 	start := time.Now()
@@ -251,8 +265,8 @@ func AssigneStructDemo() {
 	dc := &DeriveCopy{}
 	log.Printf("d: %p %v\n", d, d)
 	log.Printf("d: %p %v\n", dc, dc)
-	// *dc = *d
-	dc = d
+	*dc = *d
+	// dc = d
 	log.Printf("2 d: %p %v\n", dc, dc)
 	fmt.Printf("AssigneStructDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
 	println("//---------------------------AssigneStructDemo end----------->>")

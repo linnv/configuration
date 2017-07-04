@@ -1,5 +1,5 @@
 // Package main provides ...
-package newDir
+package demo
 
 import (
 	"fmt"
@@ -48,6 +48,11 @@ func ReturnSlice() interface{} {
 
 func JustDemo() {
 	println("<<<JustDemo start---------------------------")
+	var a interface{}
+	a = 1.0006
+	r := fmt.Sprintf("%.3f", a)
+	//@toDelete
+	fmt.Printf("r: %+v\n", r)
 	println("-----------------------------JustDemo end>>>")
 	return
 }
@@ -155,4 +160,41 @@ func (i Inheritan) GetConsumption() int {
 
 func (i Inheritan) AxGetConsumption() int {
 	return 1022
+}
+
+type II interface {
+	Update()
+	Get()
+}
+
+type IE struct {
+	count int    `json:"count"`
+	data  string `json:"data"`
+}
+
+func (ie *IE) Update() {
+	ie.count++
+	ie.data = fmt.Sprintf("%d", ie.count*10)
+}
+
+func (ie *IE) Get() {
+	println(ie.count)
+	println(ie.data)
+}
+
+func tInterface(i II) {
+	i.Update()
+}
+
+func updateInInterfaceDemo(i int) int {
+	println("//<<-------------------------updateInInterfaceDemo start-----------")
+	start := time.Now()
+	ie := &IE{}
+	tInterface(ie)
+	ie.Get()
+	tInterface(ie)
+	ie.Get()
+	fmt.Printf("updateInInterfaceDemo costs  %d millisecons actually %v\n", time.Since(start).Nanoseconds()/1000000, time.Since(start))
+	println("//---------------------------updateInInterfaceDemo end----------->>")
+	return 9
 }
