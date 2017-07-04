@@ -1,3 +1,0 @@
-2016/02/26 11:53:15 a.go:43: This is a test log entry
-2016/02/26 11:54:13 /Users/Jialin/golang/src/demo/demos/logToFile/a.go:44: This is a test log entry
-[go-log]2016/02/26 11:54:59 /Users/Jialin/golang/src/demo/demos/logToFile/a.go:44: This is a test log entry

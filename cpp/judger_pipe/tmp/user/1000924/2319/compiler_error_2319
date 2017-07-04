@@ -1,4 +1,0 @@
-./tmp/user/1000924/2319/2319.c: In function ‘main’:
-./tmp/user/1000924/2319/2319.c:6:7: warning: ignoring return value of ‘scanf’, declared with attribute warn_unused_result [-Wunused-result]
-  scanf("%d%d", &a, &b);
-       ^
