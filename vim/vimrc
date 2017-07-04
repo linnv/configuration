@@ -1,0 +1,233 @@
+set nocompatible              " be iMproved, required
+syntax on  			"must put ahead or enable syntax will conflict with ultisnips
+set ruler "display the current row and column on the right_bottom corner 
+set relativenumber
+set nu
+"folding settings
+set foldmethod=syntax "fold based on indent
+set foldnestmax=10      "deepest fold is 10 levels
+set nofoldenable        "dont fold by default
+" set foldenable        "dont fold by default
+set foldlevel=1         "this is just what i use
+
+" ignorecase and smartcase together make Vim deal with case-sensitive search intelligently. If you search for an all-lowercase string your search will be case-insensitive, but if one or more characters is uppercase the search will be case-sensitive. Most of the time this does what you want.
+set ignorecase
+set smartcase
+set hlsearch
+set incsearch "parsing result without hit endter"
+set showmatch
+set showmode
+set showcmd
+set gdefault
+
+set colorcolumn=85
+set wrap
+
+set mouse=a
+
+set backspace=indent,eol,start
+set timeoutlen=1000 ttimeoutlen=0
+
+set modelines=0   "don't execute command that comment in a file"
+set undofile  "this allow you to undo change even when you reopen a file
+set laststatus=2   " Always show the statusline
+set encoding=utf-8 " Necessary to show Unicode glyphs
+
+set cursorline  
+set cursorcolumn
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set t_Co=256
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"remember last edicting position
+au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+filetype off                  " required: ultisnipes
+" ====================plugin manager=================
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+
+" let Vundle manage Vundle, required
+Plugin 'gmarik/Vundle.vim'
+Plugin 'scrooloose/nerdtree'
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"
+Plugin 'Valloric/YouCompleteMe'
+let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/cpp/ycm/.ycm_extra_conf.py'
+let g:ycm_key_list_select_completion = ['<c-j>','<Down>']
+let g:ycm_key_list_previous_completion= ['<c-k>','<Up>']
+let g:ycm_key_invoke_completion = '<c-z>'
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Plugin 'SirVer/ultisnips'
+Plugin 'honza/vim-snippets'
+let g:UltiSnipsJumpForwardTrigger = "<c-l>"
+let g:UltiSnipsJumpBackwardTrigger="<c-h>"
+let g:UltiSnipsEditSplit="vertical"
+let g:UltiSnipsExpandTrigger="<tab>"
+
+" Markdown
+Plugin 'godlygeek/tabular'
+Plugin 'plasticboy/vim-markdown'
+" autocmd BufNewFile,BufRead *.{md,mkd,mkdn,mark*} set filetype=markdown
+autocmd BufNewFile,BufRead *.{md,mkd,mkdn,mark*}  nested setlocal filetype=markdown
+
+"error checker
+Plugin 'scrooloose/syntastic'
+let g:syntastic_error_symbol = '✗'      "set error or warning signs
+let g:syntastic_warning_symbol = '⚠'
+" let g:syntastic_check_on_open=1
+let g:syntastic_enable_signs=1
+"
+let g:syntastic_enable_highlighting = 0
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"tags lister method menu
+Plugin 'majutsushi/tagbar'
+nmap <c-m> :TagbarToggle<CR>
+
+
+Plugin 'tomtom/tcomment_vim'
+Plugin 'tpope/vim-surround'
+
+Plugin 'mileszs/ack.vim'
+
+Plugin 'airblade/vim-gitgutter'
+let g:gitgutter_signs = 1
+let g:gitgutter_highlight_lines = 0
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Plugin 'luochen1990/rainbow'
+let g:rainbow_active= 1
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Plugin 'rdnetto/YCM-Generator'
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Plugin 'fatih/vim-go'
+let g:go_fmt_command = 'goimports'    "auto insert package
+
+Plugin 'dgryski/vim-godef'   "go to definition in vertical window
+let g:godef_split=2  "slite window veriab
+let g:godef_same_file_in_same_window=1
+
+colorscheme molokai
+let g:molokai_original = 1
+let g:rehash256 = 1
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Plugin 'terryma/vim-multiple-cursors'
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"scoll smoothly when hit c-b c-f
+" Plugin 'yonchu/accelerated-smooth-scroll'
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Plugin 'junegunn/goyo.vim'
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Plugin 'nathanaelkane/vim-indent-guides'
+let g:indent_guides_guide_size=1
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Plugin 'hotoo/pangu.vim'
+autocmd BufWritePre *.mkd *.markdown,*.md,*.text,*.txt,*.wiki,*.cnx call PanGuSpacing()
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Plugin 'bling/vim-airline'
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:vimrc_author='Jialin Wu' 
+let g:vimrc_email='win27v@gmail.com' 
+let g:vimrc_homepage='http://linnv.gitcafe.io' 
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Plugin 'rust-lang/rust.vim'
+
+call vundle#end()            " required
+filetype plugin indent on    " required
+
+" ====================leader key=================
+ "Set mapleader
+"let mapleader = ","
+let mapleader = "\<Space>"
+
+"ctrlp
+set runtimepath^=~/.vim/bundle/ctrlp.vim
+map <silent> <leader>t :CtrlPMRU<cr>
+" map <silent> <leader>t :CtrlPMixed<cr>
+" map <silent> <leader>t :CtrlP<cr>
+
+"find 
+set rtp+=/usr/local/opt/fzf
+map <silent> <leader>f :FZF<cr>
+
+"Fast opening nerdtree 
+map <silent> <leader>nt :NERDTree<cr>
+
+"Save file edicting
+map <silent> <leader>w :w<cr>
+
+"Save and exit
+map <silent> <leader>x :x<cr>
+"select all
+map <silent> <leader>a ggvGV<cr>
+
+"exit without saving
+map <silent> <leader>q :q!<cr>
+vmap <Leader>y "+y
+vmap <Leader>1y "1y
+vmap <Leader>2y "2y
+
+vmap <Leader>d "+d
+nmap <Leader>p "+p
+nmap <Leader>P "+P
+vmap <Leader>p "+p
+vmap <Leader>P "+P
+
+nmap <Leader>1p "1p
+nmap <Leader>1P "1P
+vmap <Leader>1p "1p
+vmap <Leader>1P "1P
+
+nmap <Leader>2p "2p
+nmap <Leader>2P "2P
+vmap <Leader>2p "2p
+vmap <Leader>2P "2P
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+vmap <Leader>1t 1gt
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"switch window area
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Go to tab by number
+" noremap <leader>1 1gt
+" noremap <leader>2 2gt
+" noremap <leader>3 3gt
+" noremap <leader>4 4gt
+" noremap <leader>5 5gt
+" noremap <leader>6 6gt
+" noremap <leader>7 7gt
+" noremap <leader>8 8gt
+" noremap <leader>9 9gt
+" noremap <leader>0 :tablast<cr>
+
+nnoremap ; : 
+vnoremap // y/<C-R>"<CR>
+nmap    w=  :resize +20<CR>
+nmap    w-  :resize -20<CR>
+nmap    w,  :vertical resize -20<CR>
+nmap    w.  :vertical resize +20<CR>
+"When .vimrc is edited, reload it
+"
+hi Directory ctermfg=lightBlue
+" hi Directory ctermfg=black
+
+" switch between header/source with  hc for cpp
+map <silent> <leader>hc :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<cr>
+
+"Fast editing of .vimrc
+" map <silent> <leader>zz dawwP<cr>
+map <silent> <leader>ee :e ~/.vimrc<cr> autocmd! bufwritepost .vimrc source ~/.vimrc 
