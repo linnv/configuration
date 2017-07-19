@@ -85,9 +85,10 @@ let g:UltiSnipsSnippetsDir = '~/.config/nvim/UltiSnips'
 Plug 'ternjs/tern_for_vim'
 Plug 'pangloss/vim-javascript'
 Plug 'posva/vim-vue'
+Plug 'othree/html5.vim'
 "auto format js html
-autocmd BufWritePre *.{js,html,htm} :normal migg=G`izz
 au BufNewFile,BufRead *.vue set filetype=html
+autocmd BufWritePre *.{js,html,htm,vue} :normal migg=G`izz
 " autocmd BufWritePre *.{js,html,htm} :normal ggVG=
 
 " Markdown
@@ -103,8 +104,35 @@ Plug 'plasticboy/vim-markdown'
 "neomake
 Plug 'neomake/neomake'
 autocmd! BufWritePost * Neomake
-" let g:neomake_open_list=2
-" let g:neomake_go_enabled_makers = ['go', 'govet']
+" autocmd BufWritePost * Neomake
+let g:neomake_open_list=2
+let g:neomake_go_enabled_makers = [ 'go', 'gometalinter' ]
+let g:neomake_go_gometalinter_maker = {
+  \ 'args': [
+  \   '--tests',
+  \   '--enable-gc',
+  \   '--concurrency=3',
+  \   '--fast',
+  \   '-D', 'gocyclo',
+  \   '-D', 'gotype',
+  \   '-D', 'dupl',
+  \   '-D', 'golint',
+  \   '-E', 'interfacer',
+  \   '-E', 'goconst',
+  \   '-E', 'aligncheck',
+  \   '-E', 'unconvert',
+  \   '-E', 'errcheck',
+  \   '-E', 'misspell',
+  \   '-E', 'unused',
+  \   '%:p:h',
+  \ ],
+  \ 'append_file': 0,
+  \ 'errorformat':
+  \   '%E%f:%l:%c:%trror: %m,' .
+  \   '%W%f:%l:%c:%tarning: %m,' .
+  \   '%E%f:%l::%trror: %m,' .
+  \   '%W%f:%l::%tarning: %m'
+  \ }
 " vue is treated as html file but tidy does'nt reconize vue syntax, so
 " disabled tidy for vue safty
 let g:neomake_html_enabled_makers = []
