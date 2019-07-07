@@ -1,0 +1,89 @@
+{
+	dbName := c.Request.FormValue("dbName")
+	flowID := c.Request.FormValue("flowId")
+	if flowID == "all" {
+		newFlowIDs := GetFlowIDs()
+		for _, id := range newFlowIDs {
+			handleFlowID(id)
+		}
+		c.JSON(200, "good")
+		return
+	}
+	if len(dbName) < 1 {
+		c.Writer.WriteString("unlivad dbName")
+		return
+	}
+
+	if len(flowID) < 1 {
+		c.Writer.WriteString("unlivad flowId")
+		return
+	}
+
+	if err, bs := handleFlowID(flowID); err != nil {
+		c.Writer.WriteString(err.Error())
+		return
+	} else {
+		c.Writer.Write(bs)
+		return
+	}
+
+}
+http://localhost:8002/OutCall/recognition?nodeId=9&query=手续费&flowId=331
+
+            binLog[BL_Index_EnterpriseID] = c.Sess.CallList.EnterpriseID
+
+~ ᐅ 
+https_proxy=http://192.168.1.69:7777
+sudo apt-get update && apt-get install -y apt-transport-https
+sudo apt install docker.io
+sudo systemctl start docker
+sudo systemctl enable docker
+
+https_proxy=http://192.168.1.69:7777  curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add
+https_proxy=http://192.168.1.69:7777 apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-bionic main"
+https_proxy=http://192.168.1.69:7777  apt-get update
+https_proxy=http://192.168.1.69:7777 apt-get install -y kubelet kubeadm kubectl kubernetes-cni
+swapoff -a
+[
+docker pull  mirrorgooglecontainers/kube-apiserver:v1.13.0
+docker pull  mirrorgooglecontainers/kube-controller-manager:v1.13.0
+docker pull  mirrorgooglecontainers/kube-scheduler:v1.13.0
+docker pull  mirrorgooglecontainers/kube-proxy:v1.13.0
+docker pull  mirrorgooglecontainers/pause:3.1
+docker pull  mirrorgooglecontainers/etcd:3.2.24
+docker pull  mirrorgooglecontainers/kubernetes-dashboard-amd64:v1.10.0
+docker pull  gcrxio/coredns:1.2.6
+]
+gcrxio
+docker pull  mirrorgooglecontainers/coredns:1.2.6
+
+docker tag mirrorgooglecontainers/kube-apiserver:v1.13.0                  k8s.gcr.io/kube-apiserver:v1.13.0
+docker tag mirrorgooglecontainers/kube-controller-manager:v1.13.0         k8s.gcr.io/kube-controller-manager:v1.13.0
+docker tag mirrorgooglecontainers/kube-scheduler:v1.13.0                  k8s.gcr.io/kube-scheduler:v1.13.0
+docker tag mirrorgooglecontainers/kube-proxy:v1.13.0                      k8s.gcr.io/kube-proxy:v1.13.0
+docker tag mirrorgooglecontainers/pause:3.1                               k8s.gcr.io/pause:3.1
+docker tag mirrorgooglecontainers/etcd:3.2.24                             k8s.gcr.io/etcd:3.2.24
+docker tag gcrxio/coredns:1.2.6 k8s.gcr.io/coredns:1.2.6
+docker tag mirrorgooglecontainers/kubernetes-dashboard-amd64:v1.10.0 k8s.gcr.io/kubernetes-dashboard-amd64:v1.10.0
+
+kubeadm init --pod-network-cidr=10.17.0.0/16 --service-cidr=10.18.0.0/24 
+curl -O https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+kubectl apply -f kube-flannel.yml
+
+http_proxy=http://192.168.1.69:7777 https_proxy=http://192.168.1.69:7777 docker pull k8s.gcr.io/coredns:1.2.6
+
+sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/k8s-manifests/kube-flannel-rbac.yml
+
+
+systemctl stop kubelet;
+docker rm -f -v $(docker ps -q);
+find /var/lib/kubelet | xargs -n 1 findmnt -n -t tmpfs -o TARGET -T | uniq | xargs -r umount -v;
+rm -r -f /etc/kubernetes /var/lib/kubelet /var/lib/etcd;
+
+rm -rf  $HOME/.kube
+
+
+            errLog := ctx.GetCurLogCtx() + fmt.Sprintf("invalid mergeFlowID %s or mergeFlowID can't be empty; "+trainBeforeChatting, cu.FlowID)
+            err = fmt.Errorf(errLog)
+
