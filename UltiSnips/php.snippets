@@ -1,0 +1,968 @@
+## Snippets from SnipMate, taken from
+## https://github.com/scrooloose/snipmate-snippets.git
+
+snippet array "array"
+$${1:arrayName} = array('${2}' => ${3});${4}
+endsnippet
+
+snippet def "def"
+define('${1}'${2});${3}
+endsnippet
+
+snippet do "do"
+do {
+	${2:// code... }
+} while (${1:/* condition */});"
+endsnippet
+
+snippet doc_f "doc_f"
+/**
+ * $2
+ * @return ${4:void}
+ * @author ${5:`!v g:snips_author`}
+ **/
+${1:public }function ${2:someFunc}(${3})
+{${6}
+}
+endsnippet
+
+snippet doc_i "doc_i"
+/**
+ * $1
+ * @package ${2:default}
+ * @author ${3:`!v g:snips_author`}
+ **/
+interface ${1:someClass}
+{${4}
+} // END interface $1"
+endsnippet
+
+snippet else "else"
+else {
+	${1:// code...}
+}
+endsnippet
+
+snippet for "for"
+for ($${2:i} = 0; $$2 < ${1:count}; $$2${3:++}) {
+	${4:// code...}
+}
+endsnippet
+
+snippet foreachk "foreachk"
+foreach ($${1:variable} as $${2:key} => $${3:value}){
+	${4:// code...}
+}
+endsnippet
+
+snippet get "get"
+$_GET['${1}']${2}
+endsnippet
+
+snippet if "if"
+if (${1:/* condition */}) {
+	${2:// code...}
+}
+endsnippet
+
+snippet inc "inc"
+include '${1:file}';${2}
+endsnippet
+
+snippet log "log"
+error_log(var_export(${1}, true));${2}
+endsnippet
+
+snippet post "post"
+$_POST['${1}']${2}
+endsnippet
+
+snippet req1 "req1"
+require_once '${1:file}';${2}
+endsnippet
+
+snippet session "session"
+$_SESSION['${1}']${2}
+endsnippet
+
+snippet t "t"
+$${1:retVal} = (${2:condition}) ? ${3:a} : ${4:b};${5}
+endsnippet
+
+snippet var "var"
+var_export(${1});${2}
+endsnippet
+
+snippet getter "PHP Class Getter" !b
+/*
+ * Getter for $1
+ */
+public function get${1/\w+\s*/\u$0/}()
+{
+	return $this->$1;$2
+}
+$4
+endsnippet
+
+snippet setter "PHP Class Setter" !b
+/*
+ * Setter for $1
+ */
+public function set${1/\w+\s*/\u$0/}($$1)
+{
+	$this->$1 = $$1;$3
+	${4:return $this;}
+}
+$0
+endsnippet
+
+snippet gs "PHP Class Getter Setter" !b
+/*
+ * Getter for ${1/(\w+)\s*;/$1/}
+ */
+public function get${1/(\w+)\s*;/\u$1/}()
+{
+	return $this->${1/(\w+)\s*;/$1/};$2
+}
+
+/*
+ * Setter for ${1/(\w+)\s*;/$1/}
+ */
+public function set${1/(\w+)\s*;/\u$1/}($${1/(\w+)\s*;/$1/})
+{
+	$this->${1/(\w+)\s*;/$1/} = $${1/(\w+)\s*;/$1/};$3
+	${4:return $this;}
+}
+$0
+endsnippet
+
+snippet pub "Public function" !b
+public function ${1:name}(${2:$param})
+{
+	${VISUAL}${3:return null;}
+}
+$0
+endsnippet
+
+snippet pro "Protected function" !b
+protected function ${1:name}(${2:$param})
+{
+	${VISUAL}${3:return null;}
+}
+$0
+endsnippet
+
+snippet pri "Private function" !b
+private function ${1:name}(${2:$param})
+{
+	${VISUAL}${3:return null;}
+}
+$0
+endsnippet
+
+snippet pubs "Public static function" !b
+public static function ${1:name}(${2:$param})
+{
+	${VISUAL}${3:return null;}
+}
+$0
+endsnippet
+
+snippet pros "Protected static function" !b
+protected static function ${1:name}(${2:$param})
+{
+	${VISUAL}${3:return null;}
+}
+$0
+endsnippet
+
+snippet pris "Private static function" !b
+private static function ${1:name}(${2:$param})
+{
+	${VISUAL}${3:return null;}
+}
+$0
+endsnippet
+
+snippet fu "Function snip" !b
+function ${1:name}(${2:$param})
+{
+	${VISUAL}${3:return null;}
+}
+$0
+endsnippet
+
+snippet forec "Foreach loop"
+echo '-----$2 start-----</br>';
+foreach ($${1:variable} as $v){
+	echo  $v,"</br>";
+}
+echo '-----$2 end-----</br>';
+$4
+endsnippet
+
+
+snippet varDumpLine "var_dump reminder"
+echo '-----$2 start-----</br>';
+var_dump($3);
+echo '-----$2 end-----</br>';
+endsnippet
+
+snippet fore "Foreach loop"
+foreach ($${1:variable} as $${3:value}){
+	${VISUAL}${4}
+}
+$0
+endsnippet
+
+snippet new "New class instance" !b
+$$1 = new $1($2);
+$0
+endsnippet
+
+snippet ife "if else"
+if (${1:/* condition */}) {
+	${2:// code...}
+} else {
+	${3:// code...}
+}
+$0
+endsnippet
+
+snippet class "Class declaration template" !b
+/**
+ * Class ${1:`!p snip.rv=snip.fn.split('.')[0]`}
+ * @author  Jialin Wu
+ */
+class $1
+{
+	public function ${3:__construct}(${4:$options})
+	{
+		${4:// code}
+	}
+}
+$0
+endsnippet
+
+snippet construct "__construct()" b
+/**
+ * @param $2mixed ${1/, /\n     * \@param mixed /g}
+ */
+public function __construct(${1:$dependencies})
+{${1/\$(\w+)(, )*/\n        $this->$1 = $$1;/g}
+}
+$0
+endsnippet
+
+snippet pr "Dumb debug helper in HTML"
+echo '<pre>' . var_export($1, 1) . '</pre>';$0
+endsnippet
+
+snippet pc "Dumb debug helper in cli"
+var_export($1);$0
+endsnippet
+
+# Symfony 2 based snippets
+snippet sfa "Symfony 2 Controller action"
+/**
+* @Route("/${1:route_name}", name="$1")
+* @Template()
+*/
+public function $1Action($2)
+{
+	$3
+	return ${4:array();}$0
+}
+endsnippet
+snippet php "wrapper" !b
+<?php $2
+	$1
+?>
+endsnippet
+snippet phpline "wrapper" !b
+<?php $1;?>$2
+endsnippet
+
+snippet pubmember "create a public member" !b
+public \$$1;
+$2
+endsnippet
+snippet meta "conten type utf-8" !b
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+endsnippet
+snippet div "div tag" !b
+<div>
+	$1	
+</div>
+endsnippet
+snippet phpForm "new a widget tag" !b
+<?php $form=$this->beginWidget('CActiveForm');?>
+	$1
+	<?php echo CHtml::submitButton('submit');?>	
+<?php $this->endWidget();?>
+endsnippet
+# :vim:ft=snippets:
+#Yii session offset
+snippet yse
+	Yii::app()->session['${0}'];
+endsnippet
+#Yii renderDynamic
+snippet yrd
+	$this->renderDynamic('${0:callback}');
+endsnippet
+
+#Yii set cache
+snippet ycas
+	Yii::app()->cache->set('${1:key}', ${2:value}, ${3:expire}, new C${4:}CacheDependency(${0}));
+
+endsnippet
+
+#Yii Add cache
+snippet ycad
+	Yii::app()->cache->add('${1:key}', ${2:value}, ${3:expire}, new C${4}CacheDependency(${0}));
+endsnippet
+
+#Yii register CSS file
+snippet yregcf
+	Yii::app()->clientScript->registerCssFile('${0:file}');
+endsnippet
+
+#Yii requestType
+snippet yreqtype
+	Yii::app()->request->requestType
+endsnippet
+
+#Yii isAjaxRequest
+snippet yisajax
+	Yii::app()->request->isAjaxRequest
+endsnippet
+
+#Yii translate
+snippet yt
+	Yii::t('${1:category}', '${2:message}',array(${0}));
+endsnippet
+
+#Yii register CSS
+snippet yregc
+	Yii::app()->clientScript->registerCss('${1:id}', '${0}');
+endsnippet
+
+#Yii log
+snippet ylog
+	Yii::log('${1:msg}', '${0:info}');
+
+endsnippet
+#Yii userHostAddress
+snippet yuserip
+	YYii::app()->request->userHostAddress
+
+endsnippet
+#Yii register script file
+snippet yregsf
+	Yii::app()->clientScript->registerScriptFile('${1:scriptUrl}', CClientScript::POS_${0:END});
+endsnippet
+
+#Yii CLinkPager
+snippet ylinkpager
+	$this->widget('CLinkPager', array('pages'=>$pages,'header'=>'${0}'}))
+
+endsnippet
+#Yii CJSON::encode
+snippet yjec
+	CJSON::encode(${0:text});
+endsnippet
+
+#CActiveDataProvider
+snippet yadp
+	$dataProvider = new CActiveDataProvider('${1}', array(
+	  'criteria' => array(
+			'condition' => '${2}',
+			'order' => '${3}',
+			'with' => array('${4}')
+		),
+	//'pagination' => false,
+		'pagination' => array(
+			'pageSize'=>${5},
+		),
+	));
+	${0}
+	// $dataProvider->getData() will return a list of Post objects
+
+endsnippet
+#Yii renderDynamic internal
+snippet yrdi
+	$this->renderDynamic('${1:callback}', array('${2:key}'=>${0:value}));
+
+endsnippet
+#Yii register script
+snippet yregs
+	Yii::app()->clientScript->registerScript('${1:id}', '${2}', CClientScript::POS_${0:READY});
+endsnippet
+
+#Yii Flush cache
+snippet ycaf
+	Yii::app()->cache->flush();
+endsnippet
+
+#Yii Yii::app()->request->cookies
+snippet yco
+	Yii::app()->request->cookies['${0}']
+
+endsnippet
+#Yii user->
+snippet yuser
+	Yii::app()->user->
+endsnippet
+
+#Yii refresh
+snippet yrf
+	$this->refresh();
+
+endsnippet
+#Yii import
+snippet yimp
+	Yii::import('${0}');
+
+endsnippet
+#Yii trace
+snippet ytrace
+	Yii::trace('${0:msg}');
+
+endsnippet
+#Yii params
+snippet ypar
+	Yii::app()->params['${0}']
+
+endsnippet
+#Yii isPostRequest
+snippet yispost
+	Yii::app()->request->isPostRequest
+endsnippet
+
+#Yii IF isAjaxRequest
+snippet yifisajax
+	if(Yii::app()->request->isAjaxRequest == TRUE)
+	{
+		${0}
+	}
+
+endsnippet
+#Yii Yii::app()->cache->delete
+snippet ydelcache
+	Yii::app()->cache->delete('${0:key}');
+
+endsnippet
+#Yii render view
+snippet yr
+	$this->render('${1:view}',array('${2:key}'=>${0:value}));
+
+#Yii redirect
+snippet yre
+	$this->redirect(array('${1:controller}/${0:action}'));
+
+endsnippet
+#Yii Get cache
+snippet ycag
+	Yii::app()->cache->get('${0:key}');
+
+endsnippet
+#Yii render text
+snippet yrt
+	$this->renderText('${0}');
+endsnippet
+
+#Yii render partial
+snippet yrp
+	$this->renderPartial('${1:view}',array('${2:key}'=>${0:value}));
+endsnippet
+
+#----------------Yii Model-----------------------------
+#Yii Model count
+snippet ycountm
+	${1:ModelName}::model()->count(${2:condition}, array('${3:key}'=>${0:value}));
+endsnippet
+
+#Yii Model countBySql
+snippet ycountbs
+	${1:ModelName}::model()->countBySql(${2:sql},array('${3:key}'=>${0:value}));
+endsnippet
+
+#Yii Model updateAll
+snippet yupdatea
+	${1:ModelName}::model()->updateAll(${2:array('attributes')}, ${3:condition},array('${4:key}'=>${0:value}));
+endsnippet
+
+#Yii Model updateByPk
+snippet yupdatebp
+	${1:ModelName}::model()->updateByPk(${2:pk}, ${3:array('attributes')}, ${4:condition},array('${5:key}'=>${0:value}));
+endsnippet
+
+#Yii Model deleteAll
+snippet ydela
+	${1:ModelName}::model()->deleteAll(${2:condition},array('${3:key}'=>${0:value}));
+endsnippet
+
+#Yii Model deleteByPk
+snippet ydelbp
+	${1:ModelName}::model()->deleteByPk(${2:pk}, ${3:condition}, array('${4:key}'=>${0:value}));
+endsnippet
+
+#Yii Model find
+snippet yfind
+	${1:ModelName}::model()->find(${2:condition},array('${3:key}'=>${0:value}));
+
+endsnippet
+#Yii Model findAll
+snippet yfinda
+	${1:ModelName}::model()->findAll(${2:condition},array('${3:key}'=>${0:value}));
+endsnippet
+
+#Yii Model findByPk
+snippet yfindbp
+	${1:ModelName}::model()->findByPk(${2:pk}, ${3:condition}, array('${4:key}'=>${0:value}));
+endsnippet
+
+#Yii Model findAllByPk
+snippet yfindabp
+	${1:ModelName}::model()->findAllByPk(${2:pk}, ${3:condition},array('${4:key}'=>${0:value}));
+endsnippet
+
+#Yii Model findBySql
+snippet yfindbs
+	${1:ModelName}::model()->findBySql(${2:sql}, array('${3:key}'=>${0:value}));
+endsnippet
+
+#Yii Model findAllByAttributes
+snippet yfindaba
+	${1:ModelName}::model()->findAllByAttributes(array('${2:attributeName}'=>${3:attributeValue}), ${4:condition}, array('${5:key}'=>${0:value}));
+endsnippet
+
+#Yii Model exists
+snippet yexists
+	${1:ModelName}::model()->exists(${2:condition}, array('${3:key}'=>${0:value}));
+endsnippet
+
+#Yii Create model class
+snippet ymodel
+	<?php
+
+	class ${1:ModelName} extends ${2:CActiveRecord}
+	{
+		/**
+		 * Returns the static model of the specified AR class.
+		 * @return CActiveRecord the static model class
+		 */
+		public static function model($className=__CLASS__)
+		{
+			return parent::model($className);
+		}
+
+		/**
+		 * @return string the associated database table name
+		 */
+		public function tableName()
+		{
+			return '${0:table_name}';
+		}
+
+		/**
+		 * @return array validation rules for model attributes.
+		 */
+		public function rules()
+		{
+			return array(
+			);
+		}
+
+		/**
+		 * @return array relational rules.
+		 */
+		public function relations()
+		{
+			return array(
+			);
+		}
+
+		/**
+		 * @return array customized attribute labels (name=&gt;label)
+		 */
+		public function attributeLabels()
+		{
+			return array(
+			);
+		}
+	}
+
+endsnippet
+#------------Yii Controller------------------------------------
+
+#Yii Create controller class
+snippet ycontroller
+	<?php
+
+	/**
+	 * ${1:}
+	 */
+	class ${2:Site}Controller extends ${3:CController}
+	{
+		  public function action${4:Index}()
+		  {
+		      ${0}
+		  }
+
+		// -----------------------------------------------------------
+		// Uncomment the following methods and override them if needed
+		/*
+		public function filters()
+		{
+			// return the filter configuration for this controller, e.g.:
+			return array(
+				'inlineFilterName',
+				array(
+					'class'=>'path.to.FilterClass',
+					'propertyName'=>'propertyValue',
+				),
+			);
+		}
+
+		public function actions()
+		{
+			// return external action classes, e.g.:
+			return array(
+				'action1'=>'path.to.ActionClass',
+				'action2'=>array(
+					'class'=>'path.to.AnotherActionClass',
+					'propertyName'=>'propertyValue',
+				),
+			);
+		}
+		*/
+	}
+endsnippet
+
+##Yii Create controller action method
+snippet yact
+	public function action${1:Index}(${2:params})
+	{
+		${0}
+	}
+
+endsnippet
+
+###########################################################################
+#                            TextMate Snippets                            #
+###########################################################################
+
+global !p
+def x(snip):
+	if snip.ft.startswith("x"):
+		snip.rv = '/'
+	else:
+		snip.rv = ""
+endglobal
+
+############
+# Doctypes #
+############
+snippet doctype "DocType XHTML 1.0 Strict" b
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+endsnippet
+
+snippet doctype "DocType XHTML 1.0 Transitional" b
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+endsnippet
+
+snippet doctype "DocType XHTML 1.1" b
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+endsnippet
+
+snippet doctype "HTML - 4.0 Transitional (doctype)" b
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd">
+
+endsnippet
+
+snippet doctype "HTML - 5.0 (doctype)" b
+<!DOCTYPE html>
+
+endsnippet
+
+#############
+# Shortcuts #
+#############
+snippet down "Down (down)"
+&#x2193;
+endsnippet
+
+snippet enter "Enter (enter)"
+&#x2305;
+endsnippet
+
+snippet escape "Escape (escape)"
+&#x238B;
+endsnippet
+
+snippet shift "Shift (shift)"
+&#x21E7;
+endsnippet
+
+snippet tab "Tab (tab)"
+&#x21E5;
+endsnippet
+
+snippet up "Up (up)"
+&#x2191;
+endsnippet
+
+snippet return "Return (return)"
+&#x21A9;
+endsnippet
+
+snippet right "Right (right)"
+&#x2192;
+endsnippet
+
+snippet left "Left (left)"
+&#x2190;
+endsnippet
+
+snippet option "Option (option)"
+&#x2325;
+endsnippet
+
+#######################
+# Conditional inserts #
+#######################
+snippet ! "IE Conditional Comment: Internet Explorer 5_0 only"
+<!--[if IE 5.0]>${1:IE Conditional Comment: Internet Explorer 5.0 only }<![endif]-->$0
+endsnippet
+
+snippet ! "IE Conditional Comment: Internet Explorer 5_5 only"
+<!--[if IE 5.5000]>${1:IE Conditional Comment: Internet Explorer 5.5 only }<![endif]-->$0
+endsnippet
+
+snippet ! "IE Conditional Comment: Internet Explorer 5_x"
+<!--[if lt IE 6]>${1:IE Conditional Comment: Internet Explorer 5.x      }<![endif]-->$0
+endsnippet
+
+snippet ! "IE Conditional Comment: Internet Explorer 6 and below"
+<!--[if lte IE 6]>${1:IE Conditional Comment: Internet Explorer 6 and below }<![endif]-->$0
+endsnippet
+
+snippet ! "IE Conditional Comment: Internet Explorer 6 only"
+<!--[if IE 6]>${1:IE Conditional Comment: Internet Explorer 6 only   }<![endif]-->$0
+endsnippet
+
+snippet ! "IE Conditional Comment: Internet Explorer 7+"
+<!--[if gte IE 7]>${1:IE Conditional Comment: Internet Explorer 7 and above }<![endif]-->$0
+endsnippet
+
+snippet ! "IE Conditional Comment: Internet Explorer"
+<!--[if IE]>${1:       IE Conditional Comment: Internet Explorer          }<![endif]-->$0
+endsnippet
+
+snippet ! "IE Conditional Comment: NOT Internet Explorer"
+<!--[if !IE]><!-->${1:  IE Conditional Comment: NOT Internet Explorer      }<!-- <![endif]-->$0
+endsnippet
+
+#############
+# HTML TAGS #
+#############
+snippet input "Input with Label" w
+<label for="${2:${1/[[:alpha:]]+|( )/(?1:_:\L$0)/g}}">$1</label><input type="${3:text/submit/hidden/button}" name="${4:$2}" value="$5"${6: id="${7:$2}"}`!p x(snip)`>
+
+endsnippet
+
+snippet input "XHTML   <input>" w
+<input type="${1:text/submit/hidden/button}" name="${2:some_name}" value="$3"${4: id="${5:$2}"}`!p x(snip)`>
+endsnippet
+
+
+snippet opt "Option" w
+<option${1: value="${2:option}"}>${3:$2}</option>
+endsnippet
+
+snippet select "Select Box" w
+<select name="${1:some_name}" id="${2:$1}"${3:${4: multiple}${5: onchange="${6:}"}${7: size="${8:1}"}}>
+	<option${9: value="${10:option1}"}>${11:$10}</option>
+	<option${12: value="${13:option2}"}>${14:$13}</option>${15:}
+	$0
+</select>
+endsnippet
+
+
+snippet textarea "XHTML   <textarea>" w
+<textarea name="${1:Name}" rows="${2:8}" cols="${3:40}">$0</textarea>
+endsnippet
+
+snippet mailto "XHTML <a mailto: >" w
+<a href="mailto:${1:joe@example.com}?subject=${2:feedback}">${3:email me}</a>
+endsnippet
+
+snippet base "XHTML <base>" w
+<base href="$1"${2: target="$3"}`!p x(snip)`>
+endsnippet
+
+snippet img "XHTML <img>" w
+<img src="${1:imgsrc}">
+endsnippet
+
+snippet body "XHTML <body>"
+<body id="${1:`!p
+snip.rv = snip.fn and 'Hallo' or 'Nothin'
+`}"${2: onload="$3"}>
+	$0
+</body>
+endsnippet
+
+snippet div "XHTML <div>" w
+<div`!p snip.rv=' id="' if t[1] else ""`${1:name}`!p snip.rv = '"' if t[1] else ""``!p snip.rv=' class="' if t[2] else ""`${2:name}`!p snip.rv = '"' if t[2] else ""`>
+	$0
+</div>
+endsnippet
+
+snippet form "XHTML <form>" w
+<form action="${1:`!p
+snip.rv = (snip.basename or 'unnamed') + '_submit'
+`}" method="${2:get}" accept-charset="utf-8">
+	$0
+
+	<p><input type="submit" value="Continue →"`!p x(snip)`></p>
+</form>
+endsnippet
+
+snippet h1 "XHTML <h1>" w
+<h1 id="${1/[\w\d]+|( )/(?1:_:\L$0\E)/g}">${1}</h1>
+endsnippet
+
+snippet head "XHTML <head>"
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8"`!p x(snip)`>
+	<title>${1:`!p snip.rv = snip.basename or "Page Title"`}</title>
+	$0
+</head>
+endsnippet
+
+snippet link "XHTML <link>" w
+<link rel="${1:stylesheet}" href="${2:/css/master.css}" type="text/css" media="${3:screen}" title="${4:no title}" charset="${5:utf-8}"`!p x(snip)`>
+endsnippet
+
+snippet meta "XHTML <meta>" w
+<meta name="${1:name}" content="${2:content}"`!p x(snip)`>
+endsnippet
+
+snippet scriptsrc "XHTML <script src...>" w
+<script src="$1" type="text/javascript" charset="${3:utf-8}"></script>
+endsnippet
+
+snippet script "XHTML <script>" w
+<script type="text/javascript" charset="utf-8">
+	$0
+</script>
+endsnippet
+
+snippet style "XHTML <style>" w
+<style type="text/css" media="screen">
+	$0
+</style>
+endsnippet
+
+snippet table "XHTML <table>" w
+<table border="${1:0}"${2: cellspacing="${3:5}" cellpadding="${4:5}"}>
+	<tr>
+		<th>${5:Header}</th>
+	</tr>
+	<tr>
+		<td>${0:Data}</td>
+	</tr>
+</table>
+endsnippet
+
+snippet a "Link" w
+<a href="${1:http://www.${2:url.com}}"${3: target="_blank"}>${4:Anchor Text}</a>
+endsnippet
+
+snippet p "paragraph" w
+<p>$0</p>
+endsnippet
+
+snippet li "list item" w
+<li>$0</li>
+endsnippet
+
+snippet ul "unordered list" w
+<ul>
+$0
+</ul>
+endsnippet
+
+snippet td "table cell" w
+<td>$0</td>
+endsnippet
+
+snippet tr "table row" w
+<tr>$0</tr>
+endsnippet
+
+snippet title "XHTML <title>" w
+<title>${1:`!p snip.rv = snip.basename or "Page Title"`}</title>
+endsnippet
+
+snippet fieldset "Fieldset" w
+<fieldset id="${1/[\w\d]+|( )/(?1:_:\L$0\E)/g}" ${2:class="${3:}"}>
+	<legend>$1</legend>
+	$0
+</fieldset>
+endsnippet
+
+snippet movie "Embed QT movie (movie)" b
+<object width="$2" height="$3" classid="clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B" codebase="http://www.apple.com/qtactivex/qtplugin.cab">
+	<param name="src" value="$1"`!p x(snip)`>
+	<param name="controller" value="$4"`!p x(snip)`>
+	<param name="autoplay" value="$5"`!p x(snip)`>
+	<embed src="${1:movie.mov}"
+		width="${2:320}" height="${3:240}"
+		controller="${4:true}" autoplay="${5:true}"
+		scale="tofit" cache="true"
+		pluginspage="http://www.apple.com/quicktime/download/"
+	`!p x(snip)`>
+</object>
+endsnippet
+
+snippet html5 "HTML5 Template"
+<!DOCTYPE html>
+<html>
+<head>
+	<title>${1}</title>
+	<meta charset="utf-8" />
+</head>
+<body>
+	<header>
+		${2}
+	</header>
+	<footer>
+		${4}
+	</footer>
+</body>
+</html>
+endsnippet
+
+snippet remindLine "line comment for reminding" !b
+//---------------$1 start---------------
+$2
+//---------------$1 end---------------
+endsnippet
+
+snippet echoDiv "echo div with id" !b
+echo "<div id='$1'>";
+$2
+echo "</div>";
+endsnippet
+# vim:ft=snippets:

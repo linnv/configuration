@@ -1,0 +1,1512 @@
+# Snippets for Go
+extends all
+
+# when to abbriviate and when not?
+# b doesn't work here, because it ignores whitespace
+# optional local name?
+snippet /^import/ "Import declaration" r
+import (
+	"${1:package}"
+)
+endsnippet
+
+snippet /^package/ "Package declaration" r
+// Package $1 provides ...
+package ${1:main}
+endsnippet
+
+# Mostly converted from: https://github.com/AlanQuatermain/go-tmbundle
+snippet /^cons/ "Constants declaration" r
+const (
+	${1:constant}${2/(.+)/ /}${2:type} = ${0:value}
+)
+endsnippet
+
+snippet /^con/ "Constant declaration" r
+const ${1:name}${2/(.+)/ /}${2:type} = ${0:value}
+endsnippet
+
+snippet iota "Iota constant generator" b
+const (
+	${1:constant}${2/(.+)/ /}${2:type} = iota
+)
+endsnippet
+
+snippet struct "Struct declaration" b
+type ${1:Struct} struct {
+	${0:${VISUAL}}
+}
+endsnippet
+
+snippet interface "Interface declaration" b
+type ${1:Interface} interface {
+	${0:${VISUAL}}
+}
+endsnippet
+
+# statements
+snippet for "For loop" !b
+for ${1:condition}${1/(.+)/ /}{
+	${0:${VISUAL}}
+}
+endsnippet
+
+snippet forr "For range loop" !b
+for ${2:name} := range ${1:collection} {
+	${0:${VISUAL}}
+}
+endsnippet
+
+snippet if "If statement" !b
+if ${1:condition}${1/(.+)/ /}{
+	${0:${VISUAL}}
+}
+endsnippet
+
+snippet switch "Switch statement" !b
+switch ${1:expression}${1/(.+)/ /}{
+case${0}
+}
+endsnippet
+
+snippet select "Select statement" !b
+select {
+case${0}
+}
+endsnippet
+
+snippet case "Case clause" !b
+case ${1:condition}:
+	${0:${VISUAL}}
+endsnippet
+
+snippet default "Default clause" !b
+default:
+	${0:${VISUAL}}
+endsnippet
+
+# functions
+snippet /^main/ "Main function" r
+func main() {
+	${0:${VISUAL}}
+}
+endsnippet
+
+snippet /^meth/ "Method" r
+func (${1:receiver} ${2:type}) ${3:name}(${4:params})${5:type} {
+	${0:${VISUAL}}
+}
+endsnippet
+
+snippet func "Function" b
+//$1 implements ...
+func ${1:name}(${2:params})${3:type} {
+	$4
+}
+endsnippet
+
+# types and variables
+snippet map "Map type" !b
+map[${1:keytype}]${2:valtype}
+endsnippet
+
+snippet : "Variable declaration :=" !b
+${1:name} := ${0:value}
+endsnippet
+
+snippet var "Variable declaration" !b
+var ${1:name}${2/(.+)/ /}${2:type}${3: = ${0:value}}
+endsnippet
+
+snippet vars "Variables declaration" !b
+var (
+	${1:name}${2/(.+)/ /}${2:type}${3: = ${0:value} }
+)
+endsnippet
+
+snippet json "JSON field"
+\`json:"${1:displayName}"\`
+endsnippet
+
+snippet gf "go func(){}()" !b
+go func(){
+	$1
+}()$2
+endsnippet
+# vim:ft=snippets:
+snippet httpHandler "http handler function" !b
+
+func $1Handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "new handler")
+	$2
+}
+
+endsnippet
+
+snippet httpHandlerReadFile "http handler function read a file and output the content" !b
+
+func $1Handler(w http.ResponseWriter, r *http.Request) {
+	var filename string
+	if r.URL.Path == "/" {
+		filename = httpRoot + "/index.html"
+	} else {
+		filename = httpRoot + r.URL.Path
+
+	}
+	fileext := filepath.Ext(filename)
+	content, err := ioutil.ReadFile(filename)
+	if err != nil {
+		// fmt.Fprintln(w, "404 Not Found!\n")
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	var contype string
+	switch fileext {
+	case ".html", "htm":
+		contype = "text/html"
+	case ".js":
+		contype = "application/javascript"
+	case ".css":
+		contype = "text/css"
+	case ".png":
+		contype = "image/png"
+	case ".jpg":
+		contype = "image/jpg"
+	case ".git":
+		contype = "image/git"
+	default:
+		contype = "text/plain"
+
+	}
+	# fmt.Printf("ext %s,contype = %s\n", fileext, contype)
+	w.Header().Set("Content-Type", contype)
+	fmt.Fprintf(w, "%s", content)
+	$2
+}
+
+endsnippet
+
+snippet iferrLogw "if err!" !b
+if err !=nil{
+	logx.Warnf("err: %+v\n", err)
+}$1
+endsnippet
+
+snippet iferrWrite "if err!" !b
+if err !=nil{
+	this.writeError(err.Error())
+	return
+}$1
+endsnippet
+
+snippet iferrWriteHttp "if err!" !b
+if err != nil {
+	w.Write([]byte(err.Error()))
+	return
+}$1
+endsnippet
+
+snippet ifErrReturn "if err!" !b
+if err !=nil{
+	return
+}$1
+endsnippet
+
+snippet ifErrReturnLine "if err!" !b
+if err:=$1;err !=nil{
+	return err
+}$2
+endsnippet
+
+snippet iferrPanic "if err!" !b
+if err !=nil{
+	panic(err.Error())
+}$1
+endsnippet
+
+snippet logf "log.Printf" !b
+//@toDelete
+log.Printf("$1: %+v\n",$1)
+endsnippet
+
+snippet logfNo "log.Printf" !b
+log.Printf("$1: %+v\n",$1)
+endsnippet
+
+snippet fmtpf "fmt.Printf" !b
+//@toDelete
+fmt.Printf("$1: %+v\n",$1)
+endsnippet
+
+snippet fmtpfNo@ "fmt.Printf no comment" !b
+fmt.Printf("$1: %+v\n",$1)
+endsnippet
+
+snippet fmtRaw "fmt.Println" !b
+//@toDelete
+fmt.Printf("$1\n")
+endsnippet
+
+snippet fmtpwork "fmt.Print" !b
+//@toDelete
+fmt.Printf("$1: works\n")
+endsnippet
+
+snippet mainfmt "basic main" !b
+// Package main provides ...
+package main
+
+import (
+	"fmt"
+)
+
+func main() {
+	fmt.Println($1)
+	$2
+}
+endsnippet
+
+snippet test "test function" !b
+func Test${1:name}(t *testing.T) {
+	${2}
+}
+${0}
+endsnippet
+
+snippet testfuncConvey "test funciton using convey" !b
+func Test$1(t *testing.T) {
+		Convey("$2", t, func() {
+		$1()
+		So($3)
+		t.Log("$2 :good")
+	})
+}
+endsnippet
+
+snippet checkErr "check errror" !b
+	checkErr(err)
+endsnippet
+
+snippet printlnPause "info for pause" !b
+println("------$1 pause \n========================\n")
+endsnippet
+
+
+snippet printlnStart "log start" !b
+println("------$1 start\n========================\n",$2)
+endsnippet
+
+snippet printlnEnd "log end" !b
+println("------$1 end\n========================\n",$2)
+endsnippet
+
+snippet commentStart "comment for starting" !b
+//<<-------------------------$1 start-----------
+endsnippet
+
+snippet commentEnd "comment for ending" !b
+//---------------------------$1 end----------->>
+endsnippet
+
+snippet commentStartEnd "comment for starting and ending" !b
+//<<-------------------------$1 start-----------
+//---------------------------$1 end----------->>
+endsnippet
+
+snippet printlnSE "log start and  end" !b
+	println("<<<$1Demo start---------------------------")
+		$2
+	println("-----------------------------$1Demo end>>>")
+endsnippet
+
+snippet println "fmt.Println" !b
+	fmt.Println($1)
+endsnippet
+
+
+snippet sfunc "struc function" !b
+func ($1 ${2:structName})${3:funcName}(${4:parameters})${6:(${5:return})} {
+	$7	
+}
+
+endsnippet
+snippet sfuncPointer "struc function pointer type" !b
+func ($1 *${2:structName})${3:funcName}(${4:parameters})${6:(${5:return})} {
+	if ($1==nil){
+		return 
+	}
+	$7	
+}
+
+endsnippet
+
+#utilities
+snippet spliteStrToStrArray "split string to string array by symbel like space , . etc" !b
+func StrToStringArray(str, spileType string) []string {
+	fmt.Printf("before %+v len:%d\n", str, len(str))
+	tmpArray := strings.Split(strings.Trim(str, " "), spileType)
+	var result = make([]string, 0, len(tmpArray))
+	for _, v := range tmpArray {
+		if len(strings.Trim(v, " ")) != 0 { //skip empty string
+			v = strings.Trim(v, " ")
+			result = append(result, v)
+		}
+	}
+	fmt.Printf("after%+v len:%d\n", result, len(result))
+	return result
+}
+endsnippet
+
+snippet sbon "string bson" !b
+${0:$1}	string \`bson:"$1"\`
+$2
+endsnippet
+
+snippet int64Bson "string bson" !b
+${0:$1}	int64 \`bson:"$1"\`
+endsnippet
+
+snippet intBson "int bson" !b
+${0:$1}	int \`bson:"$1"\`
+endsnippet
+
+snippet floatBson "float32 bson" !b
+${0:$1}	float32\`bson:"$1"\`
+endsnippet
+
+snippet float64Bson "float64 bson" !b
+${0:$1}	float64 \`bson:"$1"\`
+endsnippet
+
+snippet boolBson "bool bson" !b
+${0:$1}	bool \`bson:"$1"\`
+endsnippet
+
+snippet mapBson "map bson" !b
+${0:$1}	map[$2]$3\`bson:"$1"\`
+endsnippet
+
+snippet sjon "string json" !b
+${0:$1}	string \`json:"$1"\`
+$2
+endsnippet
+
+snippet DoneChannel "done channel" !b
+Done    chan struct{}
+endsnippet
+
+snippet structJon "struc json" !b
+${0:$1}	*$1\`json:"$1"\`
+$2
+endsnippet
+
+snippet int64json "string bson" !b
+${0:$1}	int64 \`json:"$1"\`
+$2
+endsnippet
+
+snippet intjson "int bson" !b
+${0:$1}	int \`json:"$1"\`
+$2
+endsnippet
+
+snippet floatjson "float32 bson" !b
+${0:$1}	float32\`json:"$1"\`
+$2
+endsnippet
+
+snippet float64json "float64 bson" !b
+${0:$1}	float64 \`json:"$1"\`
+$2
+endsnippet
+
+snippet booljson "bool bson" !b
+${0:$1}	bool \`json:"$1"\`
+$2
+endsnippet
+
+snippet mapjson "map bson" !b
+${0:$1}	map[$2]$3\`json:"$1"\`
+$2
+endsnippet
+
+snippet printUnil "print demo" !b
+if $1!= nil {
+	println("$1 involed")
+}
+endsnippet
+
+snippet forrkv "For range loop" !b
+for k,v := range ${1:collection} {
+//@toDelete
+	fmt.Printf("%+v: %+v\n",k,v)
+}
+endsnippet
+
+snippet LogxCheckErr "check err in logx" !b
+logx.CheckErr(err)
+endsnippet
+
+snippet panicErr "panic if err occurs" !b
+logx.PanicErr(err)
+endsnippet
+
+snippet Logxdebugfln "logx printf new line" !b
+logx.Debugfln("$1: %+v", $1)
+endsnippet
+
+snippet LogxdebugflnCtx "logx printf new line" !b
+logx.Debugfln(ctx.GetCurLogCtx() +" $1: %+v", $1)
+endsnippet
+
+snippet Logxdebugf "logx printf" !b
+logx.Debugf("$1: %+v\n", $1)
+endsnippet
+
+snippet Logxwarnfln "logx warnfln" !b
+logx.Warnf("$1: %+v\n", $1)
+endsnippet
+
+snippet LogxwarnflnCtx "logx warnfln" !b
+logx.Warnf(ctx.GetCurLogCtx() +" $1: %+v\n", $1)
+endsnippet
+
+snippet LogxdebugfString "logx printf" !b
+logx.Debugf("$1: %s\n", $1)
+endsnippet
+
+# snippet Logdebugf "logx printf" !b
+# log.Debugf("$1: %+v\n", $1)
+# endsnippet
+
+snippet Logxdebugln "logx println" !b
+logx.Debugln($1)
+endsnippet
+#
+# snippet LogPrintf "log printf" !b
+# log.Printf("$1: %+v\n", $1)
+# endsnippet
+#
+# snippet LogPrintfWorks "log printf" !b
+# log.Println("$1: works")
+# endsnippet
+#
+# snippet logef "log error printf" !b
+# log.Errorf("$1: %+v\n",$1)
+# endsnippet
+
+snippet pt "println()" !b
+println("$1")
+endsnippet
+
+snippet fd "function for demo" !b
+func $1Demo() {
+	println("<<<$1Demo start---------------------------")
+		$2
+	println("-----------------------------$1Demo end>>>")
+	return
+}
+endsnippet
+
+snippet todo "TODO" !b
+//@TODO $1
+endsnippet
+
+snippet todoDelelte "toDelete" !b
+//@toDelete
+endsnippet
+
+snippet toMap "Description" !b
+
+func (list $1List) ToMap() (m map[$2]*$1) {
+	m = make(map[$2]*$1, len(list))
+	for _, item := range list {
+		m[item.Id] =item
+	}
+	return
+}
+endsnippet
+
+snippet bmf "benchmark func" !b
+func Benchmark${1:XXX}XXXFuncs(b *testing.B) {
+	$2
+}
+endsnippet
+snippet cse "comment at start and end " !b
+//------------------$1 start----------------
+$2
+//------------------$1 end------------------
+endsnippet
+
+snippet flag "get parameters from CMD" !b
+	${1:name}:= flag.String("${2:paramter name}", "${3:default value}", "${4:description}")
+	flag.Parse()
+
+	if !flag.Parsed() {
+		os.Stderr.Write([]byte("ERROR: logging before flag.Parse"))
+		return
+	}
+endsnippet
+
+snippet lock "lock and unlock" !b
+	$1.Lock()
+	defer $1.Unlock()
+endsnippet
+
+
+#sunteng
+snippet logErrofandReturn "log error and return" !b
+if err != nil {
+	logger.Errorf("查询%s出错：%s", "$1", err.Error())
+	this.writeError(this.locale("query_fail"))
+	return
+}
+endsnippet
+snippet deleteRecover "delete and recovery method" !b
+
+func (this *$1) Delete() {
+	if !this.HasPermission("$2.delete") {
+		this.writeError(this.locale("no_permission"))
+		return
+	}
+
+	ids := this.intArrayQuery("ids")
+	err := $2.DeleteByIds(ids, this.userBson())
+	if err != nil {
+		logger.Noticef("$3删除失败: %s", err.Error())
+		this.writeError(this.locale("delete_fail"))
+		return
+	}
+
+	notify.Do(constant.NotifyType$4, constant.ActionDel, ids...)
+	this.writeSuccess(this.locale("delete_success"))
+}
+
+func (this *$1) Recover() {
+	if !this.HasPermission("$2.recover") {
+		this.writeError(this.locale("no_permission"))
+		return
+	}
+
+	ids := this.intArrayQuery("ids")
+	err := $2.DeleteByIds(ids, this.userBson())
+	if err != nil {
+		logger.Noticef("$3还原失败: %s", err.Error())
+		this.writeError(this.locale("recover_fail"))
+		return
+	}
+
+	notify.Do(constant.NotifyType$4, constant.ActionAdd, ids...)
+	this.writeSuccess(this.locale("recover_success"))
+}
+endsnippet
+
+snippet deleteByIds "delete by ids" !b
+func DeleteByIds(ids []int, extraQuery ...bson.M) error {
+	query := bson.M{"_id": bson.M{"$in": ids}}
+	query = models.MergeQuery(query, extraQuery...)
+	return mdb.UpdateAll($1_COLLECTION, query, bson.M{"$set": bson.M{"IsDeleted": true, "UpdateTime": time.Now().Unix()}})
+}
+endsnippet
+
+snippet ifQeuryErrLog "log when query fail" !b
+	if err != nil {
+		logger.Errorf("查询${1:{广告位}失败", err.Error())
+		return
+	}
+endsnippet
+
+snippet checkAndSetStatus "sumStatus" !b
+	if this.ChildStatus.$1 == constant.Status$2 {
+		this.Status = this.ChildStatus.$1
+		return this.ChildStatus.$1
+	}
+endsnippet
+
+snippet upgradeInterfaceOfMBV "instance of upgrade in mbv" !b
+
+// <<-------------------------$1 start-----------
+type $1List struct {
+	$1s []*$1
+	done []int
+	fail []int
+}
+
+func ($2 *$1List) PrintUpgradeResult() {
+	log.Printf("$1 id:%v  upgrade successfully, id:%v upgrade fail\n", $2.done, $2.fail)
+}
+
+func ($2 *$1List) GetCollection() string {
+	return  $4
+}
+
+func ($2 *$1List) CheckAndSetObject() {
+	for _, v := range $2.$1s {
+		if v.ChildStatus == nil {
+			v.NewChildStatus()
+		}
+		v.SumAndSetStatus()
+	}
+}
+
+func ($2 *$1List) GetObjects(extraQuery ...bson.M) (err error) {
+	$2.$1s = []*$1{}
+	query := bson.M{"IsDeleted": false}
+	query = models.MergeQuery(query, extraQuery...)
+	err = mdb.GetDb().WithC($2.GetCollection(), func(c *mgo.Collection) error {
+		return c.Find(query).All(&$2.$1s)
+	})
+	if debug {
+		for k, v := range $2.$1s {
+			log.Printf("get $1 object%+v: %+v\n", k, v)
+		}
+	}
+	return
+}
+
+func ($2 *$1List) UpgradeAllObject() {
+	$2.done = make([]int, 0, len($2.$1s))
+	$2.fail = make([]int, 0, len($2.$1s))
+	for _, v := range $2.$1s {
+		err := mdb.GetDb().WithC($2.GetCollection(), func(c *mgo.Collection) error {
+			return c.UpdateId(v.Id, v)
+		})
+		if err != nil {
+			if debug {
+				log.Printf("uprade $1%vobject error: %s\n", v.Id, err.Error())
+			}
+			$2.fail = append($2.fail, v.Id)
+		}
+		$2.done = append($2.done, v.Id)
+	}
+}
+
+type $1 struct {
+
+}
+
+type $1ChildStatus struct {
+	Archived int `bson:"Archived"`
+}
+
+func ($3 *$1) NewChildStatus() {
+	$3.ChildStatus = &$1ChildStatus{
+		Archived: constant.StatusOrigin,
+	}
+}
+
+func ($3 *$1) SumAndSetStatus() int {
+	if $3.ChildStatus.Archived == constant.StatusArchived {
+		$3.Status = $3.ChildStatus.Archived
+		return $3.ChildStatus.Archived
+	}
+	if $3.ChildStatus.Draft == constant.StatusDraft {
+		$3.Status = $3.ChildStatus.Draft
+		return a.ChildStatus.Draft
+	}
+	$3.Status = constant.StatusRunning
+	return constant.StatusRunning
+}
+
+//---------------------------$1 end----------->>
+endsnippet
+
+snippet waitGroup "sync.WaitGroup " !b
+	var wg sync.WaitGroup
+	runtime.GOMAXPROCS(2)
+	wg.Add($1) 
+	wg.Wait()
+endsnippet
+
+snippet bElement "bid element" !b
+	BL_ELEM_$1  = append([]byte(\`$1\`), BL_DIV_ELEM)  //$1
+endsnippet
+
+snippet bidLogWriteStringSlice "bid log write string slice" !b
+	this.bidLog.WriteStringSlice(bidlog.BL_ELEM_$1,v.$2)
+endsnippet
+
+snippet bidLogWriteString "bid log write string" !b
+	this.bidLog.WriteString(bidlog.BL_ELEM_$1,v.$2)
+endsnippet
+
+
+snippet bidLogWriteInt "bid log write string" !b
+	this.bidLog.WriteInt(bidlog.BL_ELEM_$1, int64(v.$2))
+endsnippet
+
+snippet bsonIn "bson in" !b
+	bson.M{"$1":bson.M{"$in":$2}}
+endsnippet
+
+snippet bsonQuery "bson,M{}" !b
+	bson.M{"$1":"$2"}
+endsnippet
+#this.bidLog.WriteInt(bidlog.BL_ELEM_$1, int64(this.req$2))
+# this.bidLog.WriteString(bidlog.BL_ELEM_$1, this.req$2)
+#------sunteng end----
+
+snippet iflen< "if lenghti less than 1" !b
+	if len($1) < 1 {
+		this.writeError(this.locale("archived_fail"))
+		return
+	}
+endsnippet
+
+snippet iflen> "if lenghti graet than 0" !b
+	if len($1) > 0 {
+		return
+	}
+endsnippet
+
+snippet append "append slice" !b
+$1=append($1,$2)
+endsnippet
+
+snippet printSliceDetail "cap len and all element in a slice" !b
+	//@todoDelelte
+	fmt.Printf("$1: %+v,cap($1):%d,len($1):%d arrd:%v \n",$1,cap($1),len($1),&$1[0])
+endsnippet
+
+snippet printSliceDetailNoTodo "cap len and all element in a slice withou todo for comment" !b
+	fmt.Printf("$1: %+v,cap($1):%d,len($1):%d arrd:%v \n",$1,cap($1),len($1),&$1[0])
+endsnippet
+
+snippet stdOutStr "use std out to println string" !b
+os.Stdout.Write(append([]byte("$1"), '\n'))
+endsnippet
+
+snippet printlBinary "output binary format of number" !b
+fmt.Printf("$1: %v\n", strconv.FormatInt(int64($1), 2))
+endsnippet
+
+snippet funDemo "function demo" !b
+func ${1:name}Demo(${2:params})${3:type} {
+println("//<<-------------------------$1Demo start-----------")
+	start := time.Now()
+	$4
+	fmt.Printf("$1Demo costs  %d millisecons actually %v\n",time.Since(start).Nanoseconds()/1000000,time.Since(start))
+println("//---------------------------$1Demo end----------->>")
+}
+endsnippet
+
+snippet timeComsume "time usage" !b
+start${1:name} := time.Now()
+fmt.Printf("[time usage]$1 costs  %d millisecons actually %v\n",time.Since(start$1).Nanoseconds()/1000000,time.Since(start))
+endsnippet
+
+snippet makeInt "make int slice" !b
+	$1:=make([]int, 0,len($2))
+endsnippet
+
+snippet makestring "make string slice" !b
+	$1:=make([]string, 0,len($2))
+endsnippet
+
+snippet makebyte "make byte slice" !b
+	$1:=make([]byte, 0,len($2))
+endsnippet
+
+snippet makeSlice "safely make a slice" !b
+func makeSlice(n int) []byte {
+	// If the make fails, give a known error.
+	defer func() {
+		if recover() != nil {
+			panic(ErrTooLarge)
+		}
+	}()
+	return make([]byte, n)
+}
+endsnippet
+
+snippet funinit "init()" !b
+func init() {
+	$1
+}
+endsnippet
+
+snippet for-select "for select for channel" !b
+for {
+	select {
+	case $2<-$1:
+		$3
+	}
+}
+endsnippet
+
+snippet macs "make a simple comment" !b
+/*
+ *Description:
+ 	$0
+ *Datatime:
+	`date +%Y`-`date +%m`-`date +%d` `date +%H`:`date +%M`:`date +%S`
+*/
+endsnippet
+
+snippet xxLen "length variable" !b
+$1Len:=len($1)
+endsnippet
+
+snippet lenXx "length of variable" !b
+len$1:=len($1)
+endsnippet
+
+snippet tmpcc "" !b
+row["$1"] = chargeList[i].$1
+$2
+endsnippet
+
+snippet ip127 "127ip" !b
+127.0.0.1
+endsnippet
+
+snippet funcChan "create a chan and monitor it,in a function " !b
+func ${1:funcName}(${2:parameters}) chan<- ${3:channel type} {
+	chans := make(chan $3)
+	go func() {
+		for line := range chans {
+			${4:do something with channel}
+		}
+	}()
+	return chans
+}
+endsnippet
+
+# sunteng  start
+snippet logdebug "log.Debugf" !b
+//@toDelete
+log.Debug("$1: %+v\n",$1)
+endsnippet
+
+snippet tmmacro "new macro predefine" !b
+	macro.Name = "$1"
+	macro.Type = "$1"
+	PreDefineMacros = append(PreDefineMacros, macro)
+endsnippet
+# sunteng  end
+
+snippet normalTest "normal test case" !b
+{"normal",args{$1},$2},
+endsnippet
+
+snippet edgeTest "edge test case" !b
+{"edge",args{$1},$2},
+endsnippet
+
+snippet calcMem "calculate memory consumption" !b
+func calcMem(name string, load func()) {
+	m := new(runtime.MemStats)
+
+	// before
+	runtime.GC()
+	runtime.ReadMemStats(m)
+	before := m.HeapAlloc
+
+	load()
+
+	// after
+	runtime.GC()
+	runtime.ReadMemStats(m)
+	after := m.HeapAlloc
+	println("   "+name+":", after-before, "Bytes")
+}
+endsnippet
+
+snippet signalHandler "Description" !b
+sigChan := make(chan os.Signal, 2)
+exit := make(chan struct{})
+signal.Notify(sigChan, syscall.SIGHUP, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGKILL, syscall.SIGTERM, syscall.SIGSTOP)
+log.Print("use c-c to exit: \n")
+<-sigChan
+endsnippet
+
+snippet readBodyClient "read htth body at client side" !b
+// should check res before closing  body
+if resp != nil {
+	defer resp.Body.Close()
+}
+greeting, err := ioutil.ReadAll(res.Body)
+if err != nil {
+	log.Fatal(err)
+}
+endsnippet
+
+snippet readBodyServer "read htth body at server side" !b
+if req.Body == nil {
+	http.Error(w, "Please send a request body", 400)
+	return
+}
+err := json.NewDecoder(req.Body).Decode(&u)
+if err != nil {
+	http.Error(w, err.Error(), 400)
+	return
+}
+}
+endsnippet
+
+snippet webControllerREST "RESTful route" !b
+func ($1 *$2) Get() {
+}
+
+func ($1 *$2) Put() {
+}
+
+func ($1 *$2) Delete() {
+}
+endsnippet
+
+snippet httpListener "listen http server and shutdown gracefully" !b
+flagPort := flag.String("p", "9091", "listen port")
+flag.Parse()
+
+port := ":" + *flagPort
+server:=http.Server{
+	Addr:    port,
+	Handler:http.DefaultServeMux,
+}
+go func() {
+	if err:=server.ListenAndServe();err!=nil{
+		if err == http.ErrServerClosed {
+		} else {
+			panic(err)
+		}
+	}
+}()
+
+sigChan := make(chan os.Signal, 2)
+signal.Notify(sigChan, os.Interrupt, os.Kill)
+log.Print("http server listen on port ", port)
+log.Print("use c-c to exit: \n")
+<-sigChan
+server.Shutdown(nil)
+endsnippet
+
+snippet newRandSource "rand souce" !b
+r := rand.New(rand.NewSource(time.Now().Unix()))
+endsnippet
+
+snippet httphandlerFunc "one http handler with uri" !b
+http.HandleFunc("/$1", func(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, $2)
+})
+endsnippet
+
+
+snippet randString "generate a random string" !b
+
+const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789"
+const (
+	letterIdxBits = 6                    // 6 bits to represent a letter index
+	letterIdxMask = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
+	letterIdxMax  = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
+)
+
+var srcLogin = rand.NewSource(time.Now().UnixNano())
+
+func RandString(src rand.Source, n int) string {
+	b := make([]byte, n)
+	for i, cache, remain := n-1, src.Int63(), letterIdxMax; i >= 0; {
+		if idx := int(cache & letterIdxMask); idx < len(letterBytes) {
+			b[i] = letterBytes[idx]
+			i--
+		}
+		cache >>= letterIdxBits
+		remain--
+	}
+
+	return string(b)
+}
+endsnippet
+
+snippet midHTTP "midware for http; serveHTTP" !b
+type midHTTP struct {
+}
+
+func (m *midHTTP) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	http.DefaultServeMux.ServeHTTP(w, r)
+}
+endsnippet
+
+
+snippet readBodyJson "read http request body json" !b
+var jsonReq $1
+decoder := json.NewDecoder(req.Body)
+if err = decoder.Decode(&jsonReq); err != nil {
+	return err, nil
+}
+req.Body.Close()
+endsnippet
+
+snippet httpPost "post by new http client" !b
+buf := bytes.NewBuffer(bs)
+httpClient := http.Client{
+	Timeout: time.Second * 10,
+}
+resp, err := httpClient.Post("http://$1", "application/json", buf)
+if err != nil {
+	panic(err.Error())
+}
+endsnippet
+
+snippet timeTicker "ticker" !b
+ticker := time.NewTicker(time.Second * 30)
+for {
+	select {
+	// case <-c.exit:
+	// 	return
+	case <-ticker.C:
+		$1
+	}
+}
+endsnippet
+
+snippet selectExit "select channel exit and others" !b
+for {
+	select {
+	case <-aj.exit:
+		return
+	case t := <-$1:
+		$2
+	}
+}
+endsnippet
+
+
+snippet serverDir "static dir server" !b
+dirHandler := http.FileServer(http.Dir("$1"))
+http.Handle("/", dirHandler)
+port := ":9081"
+server := http.Server{
+	Addr:    port,
+	Handler: http.DefaultServeMux,
+}
+go func() {
+	if err := server.ListenAndServe(); err != nil {
+		if err == http.ErrServerClosed {
+		} else {
+			panic(err)
+		}
+	}
+}()
+
+sigChan := make(chan os.Signal, 2)
+signal.Notify(sigChan, os.Interrupt, os.Kill)
+log.Print("http server listen on port ", port)
+log.Print("use c-c to exit: \n")
+<-sigChan
+endsnippet
+
+snippet newRandSource "rand souce" !b
+r := rand.New(rand.NewSource(time.Now().Unix()))
+endsnippet
+
+snippet httphandlerFunc "one http handler with uri" !b
+http.HandleFunc("/$1", func(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, $2)
+})
+endsnippet
+
+
+snippet randString "generate a random string" !b
+
+const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789"
+const (
+	letterIdxBits = 6                    // 6 bits to represent a letter index
+	letterIdxMask = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
+	letterIdxMax  = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
+)
+
+var srcLogin = rand.NewSource(time.Now().UnixNano())
+
+func RandString(src rand.Source, n int) string {
+	b := make([]byte, n)
+	for i, cache, remain := n-1, src.Int63(), letterIdxMax; i >= 0; {
+		if idx := int(cache & letterIdxMask); idx < len(letterBytes) {
+			b[i] = letterBytes[idx]
+			i--
+		}
+		cache >>= letterIdxBits
+		remain--
+	}
+
+	return string(b)
+}
+endsnippet
+
+snippet midHTTP "midware for http; serveHTTP" !b
+type midHTTP struct {
+}
+
+func (m *midHTTP) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	http.DefaultServeMux.ServeHTTP(w, r)
+}
+endsnippet
+
+
+snippet readBodyJson "read http request body json" !b
+var jsonReq $1
+decoder := json.NewDecoder(req.Body)
+if err = decoder.Decode(&jsonReq); err != nil {
+	return err, nil
+}
+req.Body.Close()
+endsnippet
+
+snippet httpPost "post by new http client" !b
+buf := bytes.NewBuffer(bs)
+httpClient := http.Client{
+	Timeout: time.Second * 10,
+}
+resp, err := httpClient.Post("http://$1", "application/json", buf)
+if err != nil {
+	panic(err.Error())
+}
+endsnippet
+
+snippet timeTicker "ticker" !b
+ticker := time.NewTicker(time.Second * 30)
+for {
+	select {
+	// case <-c.exit:
+	// 	return
+	case <-ticker.C:
+		$1
+	}
+}
+endsnippet
+
+snippet selectExit "select channel exit and others" !b
+for {
+	select {
+	case <-aj.exit:
+		return
+	case t := <-$1:
+		$2
+	}
+}
+endsnippet
+
+
+snippet serveDir "static dir server" !b
+dirHandler := http.FileServer(http.Dir("$1"))
+http.Handle("/", dirHandler)
+port := ":9081"
+server := http.Server{
+	Addr:    port,
+	Handler: http.DefaultServeMux,
+}
+go func() {
+	if err := server.ListenAndServe(); err != nil {
+		if err == http.ErrServerClosed {
+		} else {
+			panic(err)
+		}
+	}
+}()
+
+sigChan := make(chan os.Signal, 2)
+signal.Notify(sigChan, os.Interrupt, os.Kill)
+log.Print("http server listen on port ", port)
+log.Print("use c-c to exit: \n")
+<-sigChan
+server.Shutdown(nil)
+endsnippet
+
+snippet serveDirGin "static dir server using gin framework" !b
+	dir := flag.String("d", "./", "dir to serve")
+	flag.Parse()
+	if !flag.Parsed() {
+		os.Stderr.Write([]byte("ERROR: logging before flag.Parse"))
+		return
+	}
+
+	port := ":9081"
+	routers := gin.Default()
+	// curl xxx:9081/
+	routers.Use(static.Serve("/", static.LocalFile(*dir, true)))
+
+	// curl xxx:9081/a
+	// routers.Use(static.Serve("/a", static.LocalFile(*dir, true)))
+
+	server := http.Server{
+		Addr:    port,
+		Handler: routers,
+	}
+	go func() {
+		if err := server.ListenAndServe(); err != nil {
+			if err == http.ErrServerClosed {
+			} else {
+				panic(err)
+			}
+		}
+	}()
+
+	sigChan := make(chan os.Signal, 2)
+	signal.Notify(sigChan, os.Interrupt, os.Kill)
+	log.Print("http server listen on port ", port)
+	log.Print("use c-c to exit: \n")
+	<-sigChan
+	server.Shutdown(nil)
+
+endsnippet
+snippet LogErr "log error" !b
+("err:%s",err)
+endsnippet
+
+snippet LOGerror "log error qn" !b
+Log.E("$1 ,error:%s",err)
+endsnippet
+
+
+snippet ifERR "if xx ;err" !b
+if err:=$1; err !=nil{
+	return
+}
+endsnippet
+
+snippet contenttypeJson "content type json" !b
+"application/json"
+endsnippet
+
+snippet exitchan "exit channel" !b
+exit := make(chan struct{})
+endsnippet
+
+snippet ifrecover "if err recover " !b
+defer func() {
+	if err := recover(); err != nil {
+		logx.Debugf("panic err: %+v\n", err)
+		return
+	}
+}()
+endsnippet
+
+snippet PostError "post error" !b
+("post url:%s data:%s error %s",${1:url},${2:data},err)
+endsnippet
+
+snippet qnLogI "qn log debug" !b
+Log.I("$1 %v",$2)
+endsnippet
+
+snippet ReqResp "struct request and response" !b
+type Req$1 struct {
+	
+}
+
+type Resp$1 struct {
+	
+}
+endsnippet
+
+snippet qnLogErr "Description" !b
+if err != nil {
+	Log.E("$1 err %s", err)
+	return
+}
+endsnippet
+
+snippet qnLogInfo "Description" !b
+Log.I("$1 debug:%s", err)
+endsnippet
+
+snippet timeFormat "unix second to str" !b
+time.Now().Format("20060102 15:04:05")
+endsnippet
+
+snippet iflengthLessTrimSpace "trim and check length less than" !b
+if len(strings.TrimSpace($1)) < 1 {
+$1
+}
+endsnippet
+
+snippet fileServerLimitDirButUseAbs "access file using absolute path, and limit access to other upper dir" !b
+package main
+
+import (
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"strings"
+)
+
+func main() {
+	const httpRoot = "$1"
+	dirHandler := http.FileServer(http.Dir(httpRoot))
+	handf := func(w http.ResponseWriter, r *http.Request) {
+		if !strings.HasPrefix(r.URL.Path, httpRoot) || strings.HasSuffix(r.URL.Path, "/") {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		r.URL.Path = strings.TrimPrefix(r.URL.Path, httpRoot)
+		dirHandler.ServeHTTP(w, r)
+	}
+
+	http.HandleFunc("/", handf)
+
+	port := ":9081"
+	server := http.Server{
+		Addr:    port,
+		Handler: http.DefaultServeMux,
+	}
+	go func() {
+		if err := server.ListenAndServe(); err != nil {
+			if err == http.ErrServerClosed {
+			} else {
+				panic(err)
+			}
+		}
+	}()
+
+	sigChan := make(chan os.Signal, 2)
+	signal.Notify(sigChan, os.Interrupt, os.Kill)
+	log.Print("http server listen on port ", port)
+	log.Print("use c-c to exit: \n")
+	<-sigChan
+	server.Shutdown(nil)
+}
+endsnippet
+
+snippet iferrFailTest "if error panic on testing" !b
+if err !=nil{
+	t.Fatal(err.Error())
+}
+endsnippet
+
+snippet emptyWarning "if nil warnf" !b
+if $1 == nil {
+	logx.Warnf("$1 empty or nil \n")
+	return
+}
+
+endsnippet
+
+snippet setItem "sfun set item" !b
+func (cl *ChatLog) Set$1(id string) {
+	if id != "" {
+		cl.$1 = id
+	}
+}
+endsnippet
+
+
+snippet HttpDumpResponse "dump http response" !b
+bsResp, err := httputil.DumpResponse(resp, true)
+if err != nil {
+	logx.Warnf("bsResp: %s\n", bsResp)
+	return err
+}
+endsnippet
+
+snippet emptyWarn "empty pointer warning" !b
+logx.Warnf("empty pointer: %s\n","$1")
+endsnippet
+
+snippet CreateFileAll "create file and all dirs not exist" !b
+dir := path.Dir(saveFileAbs)
+fi, err := os.Lstat(dir)
+if err != nil {
+	os.MkdirAll(dir, 0666)
+	logx.Warnf("err: %+v\n", err)
+} else {
+	if !fi.IsDir() {
+		os.MkdirAll(dir, 0666)
+	}
+}
+dst, err := os.Create(saveFileAbs)
+if err != nil {
+	logx.Warnf("err: %+v\n", err)
+	return err
+}
+endsnippet
+
+snippet httpPostDebug "http post struct " !b
+reqUrl := "http://127.0.0.1:8080"
+reqDataStruct := ReqMsgQn{}
+respStruct := RespMsgQn{}
+
+postdata, err := json.Marshal(reqDataStruct)
+if err != nil {
+	logx.Warnf("err: %+v\n", err)
+	return err
+}
+
+req, err := http.NewRequest("POST", reqUrl, bytes.NewReader(postdata))
+if err != nil {
+	logx.Warnf("err: %+v\n", err)
+	return err
+}
+req.Header.Set("Content-Type", "application/json")
+
+client := &http.Client{
+	Timeout: time.Second * 10,
+}
+resp, err := client.Do(req)
+if err != nil {
+	logx.Warnf("err: %+v\n", err)
+	return err
+}
+
+bs, _ := httputil.DumpRequest(req, true)
+bsResp, _ := httputil.DumpResponse(resp, true)
+logx.Debugf("req %s \n resp: %s", bs, bsResp)
+
+if err := json.NewDecoder(resp.Body).Decode(&respStruct); err != nil {
+	logx.Warnf("err: %+v\n", err)
+	return err
+}
+resp.Body.Close()
+
+return nil
+
+endsnippet
+
+snippet httpDumpReqResp "dump request and response" !b
+bsResp, err := httputil.DumpResponse(resp, true)
+if err != nil {
+	logx.Warnf("bsResp: %s\n", bsResp)
+	return
+}
+bsReq, err := httputil.DumpRequest(req, true)
+if err != nil {
+	logx.Warnf("bsResp: %s\n", bsResp)
+	return
+}
+logx.Debugf("bsReq: %s\n bsResp:%s", bsReq, bsResp)
+endsnippet
+
+snippet httpGet "http get and dump request and response" !b
+httpClient := http.Client{
+	Timeout: time.Second * 10,
+}
+parameters := url.Values{}
+parameters.Set("askAllRobot", "True")
+serverAddr := "http://127.0.0.1:8086/$1"
+reqUrl := serverAddr + "?" + parameters.Encode()
+resp, err := httpClient.Get(reqUrl)
+if err != nil {
+	logx.Warnf("err: %+v\n", err)
+	return
+}
+
+bsResp, err := httputil.DumpResponse(resp, true)
+if err != nil {
+	logx.Warnf("bsResp: %s\n", bsResp)
+	return
+}
+logx.Debugf("bsReq: %s\n bsResp:%s", reqUrl, bsResp)
+endsnippet
+
+snippet str2bytes "convert from string to bytes with no cost" !b
+func unsafeStrToBytes(s string) []byte {
+	sh := (*reflect.StringHeader)(unsafe.Pointer(&s))
+	bh := reflect.SliceHeader{
+		Data: sh.Data,
+		Len:  sh.Len,
+		Cap:  sh.Len,
+	}
+	return *(*[]byte)(unsafe.Pointer(&bh))
+}
+endsnippet

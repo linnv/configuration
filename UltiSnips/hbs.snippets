@@ -1,0 +1,25 @@
+snippet if "{{if}}" !b
+{{if $1 $2 }}
+endsnippet
+
+snippet ifobject "#if" !b
+{{#if $1}}
+	$2
+{{/if}}
+endsnippet
+
+snippet ifelseobject "#if else" !b
+{{#if $1}}
+	$2
+{{else}}
+	$3
+{{/if}}
+endsnippet
+
+snippet elifseobject "#if elseif" !b
+{{#if $1}}
+	$2
+{{else if $3}}
+	$4
+{{/if}}
+endsnippet

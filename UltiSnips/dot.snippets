@@ -1,0 +1,28 @@
+snippet newgraph "create a new graphy" !b
+digraph G {
+	ranksep = 0.8;
+	fontsize = "24";
+	labelloc = "t";
+	$1
+}
+endsnippet
+
+snippet newItem "new node" !b
+$1[label="$1",shape=${2:circle}];
+endsnippet
+
+snippet connectNode "connect nodes while assign label" !b
+$1->$2[label="$3"];
+$4
+endsnippet
+snippet label "new label"
+[label="$1"];
+endsnippet
+
+snippet subgraph "create a subgraph" !b
+subgraph cluster_$1{
+	graph [style="bold", color="lightblue",label="$1"];
+	node [shape=box,style=bold,color=royalblue];
+	$2
+	}
+endsnippet

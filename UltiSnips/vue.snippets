@@ -1,0 +1,37 @@
+snippet vifdiv "vue if" !b
+<div v-if="$1">
+$2 
+</div>
+endsnippet
+
+snippet velsediv "vue else" !b
+<div v-else>
+$1 
+</div>
+endsnippet
+
+snippet axiosPost "post of axios" !b
+var structData={
+    $1
+}
+const data=JSON.stringify(structData)
+this.$axios.post('$2',data).then(function (res){
+    console.log(res)
+    if (res.status==200) {
+	$3
+    }
+}).catch( function (err){
+    console.log(err)
+})
+endsnippet
+
+snippet axiosGet "Get of axios" !b
+this.$axios.get('$1').then(function (res){
+    console.log(res)
+    if (res.status==200) {
+   	$2 
+    }
+}).catch( function (err){
+    console.log(err)
+})
+endsnippet

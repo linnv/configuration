@@ -1,0 +1,134 @@
+snippet newCommand "new to be compiled" !b
+
+$(o${1}):$(s$1) $(h$1)
+	$(COMPILER) $(FLASGS) $(FIX) -c $(s$1) -o $(o$1)
+
+endsnippet
+
+snippet newFile "new command to execute compiling" !b
+
+s${1:}=${2}.cpp
+h$1=$2.h
+o$1=$2.o
+endsnippet
+
+snippet newNode "new to be compiled" !b
+
+s${1:}=${2}.cpp
+h$1=$2.h
+o$1=$2.o
+$(o$1):$(s$1)
+	$(COMPILER) $(FLASGS) $(FIX) -c $(s$1) -o $(o$1)
+
+endsnippet
+
+snippet makeTemplate "use for writing a new makefile " !b
+
+COMPILER=g++
+FLASGS= -Wall -O
+
+FIX= -std=c++11 -lmysqlcppconn
+
+d=MainExecution
+s=main.cpp
+o=main.o
+
+OBJS=$(o) 
+
+$(d):$(OBJS)
+	$(COMPILER) $(OBJS) -o $(d)  $(FIX)
+
+$(o):$(s)
+	$(COMPILER) $(FLASGS) $(FIX) -c $(s) -o $(o) 
+
+.phony:clean
+clean:
+	rm -f $(d) *.o
+
+run:
+	./$(d)
+endsnippet
+
+snippet newVariable "${}"
+${$1}$2
+endsnippet
+
+snippet basicTestgo "basic template for golang" !b
+CURDIR := $(shell pwd)
+
+GO        := go
+GOBUILD   := GOPATH=$(GOPATH) CGO_ENABLED=0 $(GO) build $(BUILD_FLAG)
+GOTEST    := GOPATH=$(GOPATH) CGO_ENABLED=1 $(GO) test -p 3
+
+all: build
+
+BUILDDIR=$(CURDIR)/example
+build: 
+	@mkdir -p $(BUILDDIR)
+	$(GOBUILD) -v -o $(BUILDDIR)/example_main $(CURDIR)/$1.go
+
+linux: 
+	@mkdir -p $(BUILDDIR)
+	env GOOS="linux" GOHOSTARCH="amd64" $(GOBUILD) -v -o $(BUILDDIR)/example_main $(CURDIR)/$1.go
+	
+clean: 
+	@rm $(BUILDDIR)/example_*
+endsnippet
+
+snippet basicManhelpgo "basic manhelp of linnv  template for golang" !b
+CURDIR := $(shell pwd)
+
+GO        := go
+GOBUILD   := GOPATH=$(GOPATH) CGO_ENABLED=0 $(GO) build $(BUILD_FLAG)
+GOTEST    := GOPATH=$(GOPATH) CGO_ENABLED=1 $(GO) test -p 3
+
+LDFLAGS += -X "github.com/linnv/manhelp.Version=$(shell git describe --tags --dirty)"
+LDFLAGS += -X "github.com/linnv/manhelp.BuildTime=$(shell date -u '+%Y-%m-%d %I:%M:%S')"
+LDFLAGS += -X "github.com/linnv/manhelp.Branch=$(shell git rev-parse --abbrev-ref HEAD)"
+LDFLAGS += -X "github.com/linnv/manhelp.GitHash=$(shell git rev-parse HEAD)"
+
+all: build
+
+BUILDDIR=$(CURDIR)/example
+build: 
+	@mkdir -p $(BUILDDIR)
+	$(GOBUILD) -ldflags '$(LDFLAGS)' -o $(BUILDDIR)/example_main $(CURDIR)/$1.go
+
+clean: 
+	@rm $(BUILDDIR)/example_*
+
+endsnippet
+
+snippet manhelpgo "basic manhelp of linnv  template for golang" !b
+.phony:rm
+CURDIR := $(shell pwd)
+
+GO        := go
+GOBUILD   := GOPATH=$(GOPATH) CGO_ENABLED=0 $(GO) build $(BUILD_FLAG)
+GOTEST    := GOPATH=$(GOPATH) CGO_ENABLED=1 $(GO) test -p 3
+
+LDFLAGS += -X "github.com/linnv/manhelp.Version=$(shell git describe --tags --dirty)"
+LDFLAGS += -X "github.com/linnv/manhelp.BuildTime=$(shell date -u '+%Y-%m-%d %I:%M:%S')"
+LDFLAGS += -X "github.com/linnv/manhelp.Branch=$(shell git rev-parse --abbrev-ref HEAD)"
+LDFLAGS += -X "github.com/linnv/manhelp.GitHash=$(shell git rev-parse HEAD)"
+
+all: help
+
+help: ## Prints help for targets with comments
+	@grep -E '^[a-zA-Z._-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+BUILDDIR=$(CURDIR)/bin
+main:  ## build the main file
+	@mkdir -p $(BUILDDIR)
+	$(GOBUILD) -ldflags '$(LDFLAGS)' -o $(BUILDDIR)/$@ $(CURDIR))/$@.go
+
+clean: ## delete ./bin
+	@rm -rf $(BUILDDIR)
+
+endsnippet
+
+snippet rm  "make rm" !b
+.phony:rm
+rm:
+	rm -f $1 *.o
+endsnippet
