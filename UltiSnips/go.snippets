@@ -471,6 +471,22 @@ snippet LogxwarnflnCtx "logx warnfln" !b
 logx.Warnf(ctx.GetCurLogCtx() +" $1: %+v\n", $1)
 endsnippet
 
+snippet Logxerrorfln "logx errorfln" !b
+logx.Errorf("$1: %+v\n", $1)
+endsnippet
+
+snippet LogxerrorflnCtx "logx errorfln" !b
+logx.Errorf(ctx.GetCurLogCtx() +" $1: %+v\n", $1)
+endsnippet
+
+snippet LogxwarnflnCtxSess "logx warnfln" !b
+logx.Warnf(s.CtxLog() +" $1: %+v\n", $1)
+endsnippet
+
+snippet LogxerrorflnCtxSess "logx errorfln for sess" !b
+logx.Errorf(s.CtxLog() +" $1: %+v\n", $1)
+endsnippet
+
 snippet LogxdebugfString "logx printf" !b
 logx.Debugf("$1: %s\n", $1)
 endsnippet
@@ -915,7 +931,7 @@ endsnippet
 snippet signalHandler "Description" !b
 sigChan := make(chan os.Signal, 2)
 exit := make(chan struct{})
-signal.Notify(sigChan, syscall.SIGHUP, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGKILL, syscall.SIGTERM, syscall.SIGSTOP)
+signal.Notify(sigChan, syscall.SIGHUP, syscall.SIGINT, syscall.SIGQUIT,  syscall.SIGTERM)
 log.Print("use c-c to exit: \n")
 <-sigChan
 endsnippet
@@ -974,7 +990,7 @@ go func() {
 }()
 
 sigChan := make(chan os.Signal, 2)
-signal.Notify(sigChan, os.Interrupt, os.Kill)
+signal.Notify(sigChan, syscall.SIGHUP, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM)
 log.Print("http server listen on port ", port)
 log.Print("use c-c to exit: \n")
 <-sigChan
@@ -1258,9 +1274,15 @@ Log.E("$1 ,error:%s",err)
 endsnippet
 
 
-snippet ifERR "if xx ;err" !b
+snippet ifErrReturn "if xx ;err" !b
 if err:=$1; err !=nil{
 	return
+}
+endsnippet
+
+snippet ifErrLog "if xx ;err" !b
+if err:=$1; err !=nil{
+	logx.Errorf("err: %+v\n", err)
 }
 endsnippet
 
@@ -1509,4 +1531,56 @@ func unsafeStrToBytes(s string) []byte {
 	}
 	return *(*[]byte)(unsafe.Pointer(&bh))
 }
+endsnippet
+
+snippet NewInstancePointer "new instance of pointer type" !b
+//New$1 implements ...
+func New$1()*$1 {
+	one:=&$1{
+	}
+	return  one
+}
+
+endsnippet
+
+snippet waitgroupGoroutine "waitgroup goroutine " !b
+var wg sync.WaitGroup
+wg.Add(2)
+go func() {
+	defer wg.Done()
+	$1	
+	return 
+}()
+wg.Wait()
+endsnippet
+snippet objectPool "go pool for resuing object" !b
+var slicePool *sync.Pool
+
+func initPool(sliceLen int) {
+	slicePool = &sync.Pool{
+		New: func() interface{} {
+			fmt.Println("Returning new slice")
+			newslice := make([]int64, sliceLen)
+			return newslice
+		},
+	}
+}
+endsnippet
+
+snippet ifnil "if xx !=nil" !b
+if $1 !=nil{
+	$1
+}
+endsnippet
+
+snippet logNil "logx nil" !b
+logx.Warnf(ctx.GetCurLogCtx()+" nil:[%s]\n", "$1")
+endsnippet
+
+snippet nowNanoTimeStr "current time nano seconds string" !b
+nowStr := strconv.FormatInt(int64(now.UnixNano()), 10)
+endsnippet
+
+snippet nowTime "current time" !b
+now := time.Now()
 endsnippet
