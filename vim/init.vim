@@ -1,3 +1,4 @@
+set encoding=utf-8
 set ff=unix
 set ruler "display the current row and column on the right_bottom corner 
 set relativenumber
@@ -24,6 +25,9 @@ hi LineNr ctermbg=white ctermfg=black
 " hi LineNr ctermbg=white ctermfg=red
 hi VertSplit ctermbg=black ctermfg=white
 
+set hlsearch
+" set backspace=indent,eol,start
+
 " ignorecase and smartcase together make Vim deal with case-sensitive search intelligently. If you search for an all-lowercase string your search will be case-insensitive, but if one or more characters is uppercase the search will be case-sensitive. Most of the time this does what you want.
 set ignorecase
 set smartcase
@@ -32,7 +36,10 @@ set showmode
 set showcmd
 set gdefault
 
-set colorcolumn=85
+set cursorline
+set cursorcolumn
+
+" set colorcolumn=85
 set wrap
 set mouse=a
 
@@ -46,29 +53,38 @@ set laststatus=2   " Always show the statusline
 au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
 
 " ====================plugin manager=================
-call plug#begin('~/.config/nvim/plugged')
+call plug#begin('~/.nvim/plugged')
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 Plug 'scrooloose/nerdtree'
+let NERDTreeIgnore=['node_modules$[[dir]]']
 " enable line numbers
 let NERDTreeShowLineNumbers=1
 " make sure relative line numbers are used
 autocmd FileType nerdtree setlocal relativenumber
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-"""""""""""""""""""""""""""""<code completion> start""""""""""""""""""""""""""""""""""
-Plug 'Valloric/YouCompleteMe',{'do': './install.py --tern-completer  --clang-completer'}
+"""""""""""""""""""""""""""""<code completion go-vim> start""""""""""""""""""""""""""""""""""
+"conflict with ycm 2019-12-16 11:00:44
+" Plug 'govim/govim'
+"""""""""""""""""""""""""""""<code completion go-vim> end""""""""""""""""""""""""""""""""""
 
+"""""""""""""""""""""""""""""<code completion> start""""""""""""""""""""""""""""""""""
+" Plug 'Valloric/YouCompleteMe',{'do': './install.py --clang-completer --tern-completer'}
+Plug 'Valloric/YouCompleteMe',{'do': './install.py --gocode-completer --rust-completer --tern-completer  --clang-completer --force-sudo'}
+
+" let g:ycm_filetype_blacklist = {'go':1}
 let g:ycm_filetype_blacklist = {}
 let g:ycm_auto_trigger = 1
 let g:ycm_min_num_of_chars_for_completion = 2
 let g:ycm_key_list_select_completion = ['<c-j>','<Down>']
 let g:ycm_key_list_previous_completion= ['<c-k>','<Up>']
 let g:ycm_key_invoke_completion = '<c-z>'
-let g:ycm_python_binary_path = 'python2.7'
-let g:ycm_confirm_extra_conf = 0
-let g:ycm_global_ycm_extra_conf ='~/.config/nvim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py' 
-nmap <M-g> :YcmCompleter GoToDefinitionElseDeclaration <C-R>=expand("<cword>")<CR><CR>  
+" let g:ycm_python_binary_path = 'python2.7'
+" let g:ycm_confirm_extra_conf = 0
+" nmap <M-g> :YcmCompleter GoToDefinitionElseDeclaration <C-R>=expand("<cword>")<CR><CR>  
 Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
+
+Plug 'mdempsky/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' }
 """""""""""""""""""""""""""""<code completion> end""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""<code snippets> start""""""""""""""""""""""""""""""""""
@@ -77,8 +93,13 @@ let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger = "<c-l>"
 let g:UltiSnipsJumpBackwardTrigger="<c-h>"
 let g:UltiSnipsEditSplit="vertical"
+
+"set runtimepath^=~/.config/nvim
 "use absolute path 
-let g:UltiSnipsSnippetsDir = '~/.config/nvim/UltiSnips'
+
+let g:UltiSnipsSnippetStorageDirectoryForUltiSnipsEdit = '/home/jialin/sync-same-path/configuration/UltiSnips'
+let g:UltiSnipsSnippetDirectories=["/home/jialin/sync-same-path/configuration/UltiSnips","UltiSnips"]
+
 """""""""""""""""""""""""""""<code snippets> end""""""""""""""""""""""""""""""""""""
 
 "for js
@@ -86,12 +107,18 @@ Plug 'ternjs/tern_for_vim'
 Plug 'pangloss/vim-javascript'
 Plug 'posva/vim-vue'
 Plug 'othree/html5.vim'
+
+"rust
+Plug 'rust-lang/rust.vim'
+
 "auto format js html
-au BufNewFile,BufRead *.vue set filetype=html
+" au BufNewFile,BufRead *.vue set filetype=html
 autocmd BufWritePre *.{js,html,htm,vue} :normal migg=G`izz
 " autocmd BufWritePre *.{js,html,htm} :normal ggVG=
 
 " Markdown
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown']} "call 'call mkdp#util#install()' mannually
+
 autocmd BufNewFile,BufRead *.{md,mkd,mkdn,mark*}  nested setlocal filetype=markdown
 
 "for django
@@ -106,36 +133,40 @@ Plug 'neomake/neomake'
 autocmd! BufWritePost * Neomake
 " autocmd BufWritePost * Neomake
 let g:neomake_open_list=2
-let g:neomake_go_enabled_makers = [ 'go', 'gometalinter' ]
-let g:neomake_go_gometalinter_maker = {
-  \ 'args': [
-  \   '--tests',
-  \   '--enable-gc',
-  \   '--concurrency=3',
-  \   '--fast',
-  \   '-D', 'gocyclo',
-  \   '-D', 'gotype',
-  \   '-D', 'dupl',
-  \   '-D', 'golint',
-  \   '-E', 'interfacer',
-  \   '-E', 'goconst',
-  \   '-E', 'aligncheck',
-  \   '-E', 'unconvert',
-  \   '-E', 'errcheck',
-  \   '-E', 'misspell',
-  \   '-E', 'unused',
-  \   '%:p:h',
-  \ ],
-  \ 'append_file': 0,
-  \ 'errorformat':
-  \   '%E%f:%l:%c:%trror: %m,' .
-  \   '%W%f:%l:%c:%tarning: %m,' .
-  \   '%E%f:%l::%trror: %m,' .
-  \   '%W%f:%l::%tarning: %m'
-  \ }
+let g:neomake_go_enabled_makers = [ 'go', 'golangci_lint' ]
+" let g:neomake_go_gometalinter_maker = {
+"   \ 'args': [
+"   \   '--tests',
+"   \   '--enable-gc',
+"   \   '--concurrency=3',
+"   \   '--fast',
+"   \   '-D', 'gocyclo',
+"   \   '-D', 'gotype',
+"   \   '-D', 'dupl',
+"   \   '-D', 'golint',
+"   \   '-D', 'ineffassign',
+"   \   '-E', 'interfacer',
+"   \   '-E', 'goconst',
+"   \   '-E', 'aligncheck',
+"   \   '-E', 'unconvert',
+"   \   '-E', 'errcheck',
+"   \   '-E', 'misspell',
+"   \   '-E', 'unused',
+"   \   '-D', 'vet',
+"   \   '-D', 'vetshadow',
+"   \   '%:p:h',
+"   \ ],
+"   \ 'append_file': 0,
+"   \ 'errorformat':
+"   \   '%E%f:%l:%c:%trror: %m,' .
+"   \   '%W%f:%l:%c:%tarning: %m,' .
+"   \   '%E%f:%l::%trror: %m,' .
+"   \   '%W%f:%l::%tarning: %m'
+"   \ }
 " vue is treated as html file but tidy does'nt reconize vue syntax, so
 " disabled tidy for vue safty
 let g:neomake_html_enabled_makers = []
+let g:neomake_css_enabled_makers = []
 
 "tags lister method menu
 Plug 'majutsushi/tagbar'
@@ -153,6 +184,8 @@ let g:tagbar_type_markdown = {
 "shortcut for comment,e.g. gcc
 Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-surround'
+Plug 'tpope/vim-abolish'
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "json
@@ -161,6 +194,9 @@ Plug 'tpope/vim-surround'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "power search tool
 Plug 'mileszs/ack.vim'
+if executable('ag')
+  let g:ackprg = 'ag --vimgrep'
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "show git diff when edicting
@@ -169,8 +205,11 @@ let g:gitgutter_signs = 1
 let g:gitgutter_highlight_lines = 0
 
 """""""""""""""""""""""""""""<golang tool chain> start""""""""""""""""""""""""""""""""""
-Plug 'fatih/vim-go'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 let g:go_fmt_command = 'goimports'    "auto insert package
+let g:go_def_mode='gopls'
+let g:go_info_mode='gopls'
+" let g:go_def_mode='godef'
 "horizon
 au FileType go nmap <Leader>h <Plug>(go-def-split) 
 au FileType go nmap <Leader>v <Plug>(go-def-vertical)
@@ -198,6 +237,10 @@ function! LightLineFilename()
   " return expand('%:p')
   return expand('%')
 endfunction
+
+" set dropdown to match solarized light
+highlight Pmenu ctermfg=254 ctermbg=33
+highlight PmenuSel ctermfg=235 ctermbg=39 cterm=bold
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "input stat switch between normal mode and insert mode automatically
 Plug 'CodeFalling/fcitx-vim-osx'
@@ -218,7 +261,7 @@ let g:airline_powerline_fonts = 1
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 Plug 'editorconfig/editorconfig-vim'
-
+" let g:EditorConfig_exec_path ='~/.config/nvim/plugged/editorconfig-vim/plugin/editorconfig-core-py'
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Plug 'justinmk/vim-sneak'
 
@@ -235,11 +278,17 @@ Plug 'editorconfig/editorconfig-vim'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+Plug 'cespare/vim-toml'
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 Plug 'buoto/gotests-vim'
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-Plug 'hotoo/pangu.vim'
-autocmd BufWritePre *.markdown,*.md,*.text,*.txt,*.wiki,*.cnx call PanGuSpacing()
+" Plug 'hotoo/pangu.vim'
+" autocmd BufWritePre *.markdown,*.md,*.text,*.txt,*.wiki,*.cnx call PanGuSpacing()
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Plug 'chase/vim-ansible-yaml'
+" add yaml stuffs
+au! BufNewFile,BufReadPost *.{yaml,yml} set filetype=yaml foldmethod=indent
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 Plug 'altercation/vim-colors-solarized'
 set background=light
@@ -254,27 +303,35 @@ set background=light
 let g:vimrc_author='Jialin Wu' 
 let g:vimrc_email='win27v@gmail.com' 
 let g:vimrc_homepage='https://jialinwu.com'
-
+"
 call plug#end()
+
+" Optional, configure as-you-type completions
+set completeopt=menu,menuone,preview,noselect,noinsert
+
+" let g:ale_completion_enabled = 1
 
 " ====================leader key=================
  "Set mapleader
 let mapleader = "\<Space>"
 
 "show file edicted recently 
-set runtimepath^=~/.config/nvim/bundle/ctrlp.vim
+" set runtimepath^=~/.config/nvim/bundle/ctrlp.vim
 nnoremap <silent> <leader>r :CtrlPMRU<cr>
 " map <silent> <leader>t :CtrlPMixed<cr>
 " map <silent> <leader>t :CtrlP<cr>
 
 "list file in current directory
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-set rtp+=/Users/Jialin/.fzf
+set rtp+=/Users/jialin/.fzf
 nnoremap <silent> <leader>f :FZF<cr>
 
 "Fast opening nerdtree 
 nnoremap <silent> <leader>nt :NERDTree<cr>
 
+"exit without saving
+map <silent> <leader>q :q!<cr>
+map <silent> <leader>1q :qa!<cr>
 "Save and exit
 map <silent> <leader>x :x<cr>
 "select all
@@ -282,6 +339,8 @@ map <silent> <leader>a ggvGV<cr>
 
 "exit without saving
 map <silent> <leader>q :q!<cr>
+"exit all windows without saving
+map <silent> <leader>qa :qa!<cr>
 
 map <silent> <leader>b :NERDTreeFromBookmark 
 
@@ -388,7 +447,7 @@ nnoremap ' ;
 nnoremap " ,
 
 "split window
-nnoremap <leader>2w <C-w>v<C-w>l
+nnoremap <neader>2w <C-w>v<C-w>l
 
 "visul for html tab
 nnoremap <leader>zv Vat
@@ -400,28 +459,23 @@ inoremap <M-w> <ESC>:w<cr>
 "use jj to exit back to normal mode
 inoremap lk <ESC>
 
+"open dir of nerd-tree on current file
+map <Leader>cd :NERDTree %:p:h<CR>
+
 "Save file edicting
 nnoremap <silent> <leader>w :w<cr>
-"""""""""""""""""""""""""""""<for nvim configuration> start""""""""""""""""""""""""""""""""""
+
 "Fast editing of edictor configuration
-map <silent> <leader>ee :e ~/.config/nvim/init.vim<cr>
-autocmd! bufwritepost init.vim source ~/.config/nvim/init.vim
+map <silent> <leader>ee :e ~/.nvimrc<cr>
+autocmd! bufwritepost .nvim.rc source ~/.nvimrc
 
 hi Directory ctermfg=Blue
 " hi Directory ctermfg=lightBlue
 " hi Directory ctermfg=grey
 
-let g:python_host_prog='/usr/bin/python2.7'
-let g:python3_host_prog='/usr/local/bin/python3'
-" let g:python_host_prog='/usr/bin/python3'
-let g:python_host_skip_check = 1
-
-" fixed by run cmd in terminal `infocmp $TERM | sed 's/kbs=^[hH]/kbs=\\177/' > $TERM.ti 
-" tic $TERM.ti`
-    " if !has('nvim')
-    "     set ttymouse=xterm2
-    " endif
-    " if has('nvim')
-    "  	nmap <BS> <C-W>h
-    " endif
-"""""""""""""""""""""""""""""<for nvim configuration> end""""""""""""""""""""""""""""""""""""
+let g:python3_host_prog='/usr/bin/python3'
+let g:ycm_rust_src_path = $RUST_SRC_PATH
+"let g:python_host_prog='/usr/local/opt/python2/libexec/bin/python'
+" let g:python3_host_prog='/usr/local/opt/python3/libexec/bin/python'
+nnoremap <Leader>] :YcmCompleter GoTo<CR>
+"let g:python_host_skip_check = 1
