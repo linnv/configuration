@@ -387,8 +387,7 @@ ${0:$1}	map[$2]$3\`bson:"$1"\`
 endsnippet
 
 snippet sjon "string json" !b
-${0:$1}	string \`json:"$1"\`
-$2
+${0:$1}	string \`json:"$1" gorm:"comment:$2"\`
 endsnippet
 
 snippet DoneChannel "done channel" !b
@@ -801,14 +800,24 @@ func ${1:name}Demo(${2:params})${3:type} {
 println("//<<-------------------------$1Demo start-----------")
 	start := time.Now()
 	$4
-	fmt.Printf("$1Demo costs  %d millisecons actually %v\n",time.Since(start).Nanoseconds()/1000000,time.Since(start))
+	fmt.Printf("$1Demo elapsed  %d millisecons actually %v\n",time.Since(start).Nanoseconds()/1000000,time.Since(start))
 println("//---------------------------$1Demo end----------->>")
 }
 endsnippet
 
 snippet timeComsume "time usage" !b
 start${1:name} := time.Now()
-fmt.Printf("[time usage]$1 costs  %d millisecons actually %v\n",time.Since(start$1).Nanoseconds()/1000000,time.Since(start))
+fmt.Printf("[time usage]$1 elapsed  %d millisecons actually %v\n",time.Since(start$1).Nanoseconds()/1000000,time.Since(start$1))
+endsnippet
+
+snippet timeComsumeBiggerLog "time usage on condition to log" !b
+start${1:name} := time.Now()
+defer func() {
+	oneTime := time.Since(start$1)
+	if oneTime.Nanoseconds()/1000000 > 100 {
+		basicLog.Warnf("[time usage]$1 elapsed  %d millisecons actually %v\n", oneTime.Nanoseconds()/1000000, oneTime)
+	}
+}()
 endsnippet
 
 snippet makeInt "make int slice" !b
@@ -1001,12 +1010,6 @@ snippet newRandSource "rand souce" !b
 r := rand.New(rand.NewSource(time.Now().Unix()))
 endsnippet
 
-snippet httphandlerFunc "one http handler with uri" !b
-http.HandleFunc("/$1", func(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, $2)
-})
-endsnippet
-
 
 snippet randString "generate a random string" !b
 
@@ -1044,7 +1047,7 @@ func (m *midHTTP) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 endsnippet
 
 
-snippet readBodyJson "read http request body json" !b
+snippet readBodyJsonByDecoder "read http request body json by decoder " !b
 var jsonReq $1
 decoder := json.NewDecoder(req.Body)
 if err = decoder.Decode(&jsonReq); err != nil {
@@ -1273,13 +1276,6 @@ snippet LOGerror "log error qn" !b
 Log.E("$1 ,error:%s",err)
 endsnippet
 
-
-snippet ifErrReturn "if xx ;err" !b
-if err:=$1; err !=nil{
-	return
-}
-endsnippet
-
 snippet ifErrLog "if xx ;err" !b
 if err:=$1; err !=nil{
 	logx.Errorf("err: %+v\n", err)
@@ -1413,6 +1409,14 @@ func (cl *ChatLog) Set$1(id string) {
 }
 endsnippet
 
+snippet HttpDumpRequest "dump http request" !b
+bsReq, errHttp := httputil.DumpRequest(req, true)
+if errHttp != nil {
+	ctxlog.Errorf("errHttp %s", errHttp)
+	return
+}
+ctxlog.Warnf("bsReq: %s", bsReq)
+endsnippet
 
 snippet HttpDumpResponse "dump http response" !b
 bsResp, err := httputil.DumpResponse(resp, true)
@@ -1493,9 +1497,15 @@ if err != nil {
 }
 bsReq, err := httputil.DumpRequest(req, true)
 if err != nil {
-	logx.Warnf("bsResp: %s\n", bsResp)
+	logx.Warnf("bsResp: %s\n", bsReq)
 	return
 }
+logx.Debugf("bsReq: %s\n bsResp:%s", bsReq, bsResp)
+endsnippet
+
+snippet httpDumpReqRespSimple "simple dump request and response" !b
+bsReq, _ := httputil.DumpRequest(req, true)
+bsResp, _ := httputil.DumpResponse(resp, true)
 logx.Debugf("bsReq: %s\n bsResp:%s", bsReq, bsResp)
 endsnippet
 
@@ -1577,10 +1587,330 @@ snippet logNil "logx nil" !b
 logx.Warnf(ctx.GetCurLogCtx()+" nil:[%s]\n", "$1")
 endsnippet
 
-snippet nowNanoTimeStr "current time nano seconds string" !b
+snippet nowNanoTimeStr "current time nano seconds string use as time id" !b
 nowStr := strconv.FormatInt(int64(now.UnixNano()), 10)
 endsnippet
 
-snippet nowTime "current time" !b
-now := time.Now()
+snippet nowTime "current time instance" !b
+oneNow := time.Now()
+endsnippet
+
+snippet jsonMarshal "get bs from entity" !b
+bs, err := json.MarshalIndent($1, "", "\t")
+if err != nil {
+	logx.Errorf("err: %+v\n", err)
+}
+endsnippet
+
+snippet deferFlushLogx "flush logx" !b
+defer logx.Flush()
+endsnippet
+
+
+snippet jsonUnmarshal "unmarshal" !b
+err := json.Unmarshal(bs, &$1)
+if err != nil {
+	logx.Errorf("err: %+v\n", err)
+}
+endsnippet
+
+snippet readBodyJsonDebug "read http request body json read all for debug  " !b
+var jsonReq $1
+bs, err := ioutil.ReadAll(r.Body)
+logx.Debugfln(" raw req bs [%s]\n", bs)
+if err != nil {
+	err = errors.Wrapf(err, " body:%v", bs)
+	logx.Errorf(" getReq err %v bs [%s]\n", err, bs)
+	c.AbortWithStatusJSON(401, err)
+	return
+}
+err = json.Unmarshal(bs, &jsonReq)
+if err != nil {
+	err = errors.Wrapf(err, " body:%s", bs)
+	logx.Errorf("err: %+v\n", err)
+	c.AbortWithStatusJSON(401, err)
+}
+$2
+endsnippet
+
+snippet urlencode "url encode" !b
+url.QueryEscape("$1")
+endsnippet
+
+snippet urldecode "url decode" !b
+url.QueryUnescape("$1")
+endsnippet
+
+snippet httpServerTest "test http handler" !b
+defer logx.Flush()
+ts := httptest.NewServer(http.HandlerFunc($1))
+defer ts.Close()
+res, err := http.Get(ts.URL)
+if err != nil {
+	log.Fatal(err)
+}
+bb, err := ioutil.ReadAll(res.Body)
+res.Body.Close()
+logx.Debugf("bs: %s\n", bb)
+endsnippet
+
+snippet jobs2goroutinesworkers "distribute jobs to goroutines" !b
+func ComsumeSliceByMutlGoroutines(slice []int, oneLengthPerRoutine int) {
+	sliceLen := len(slice)
+	routineCount := sliceLen / oneLengthPerRoutine
+	if sliceLen%oneLengthPerRoutine != 0 {
+		routineCount++
+	}
+
+	logx.Debugf("sliceLen: %d by %d goroutines\n", sliceLen, routineCount)
+	oneGo := func(s []int, goIndex int) {
+		for i := 0; i < len(s); i++ {
+			logx.Debugf("goindex:%d ,s[%d]: %d\n", goIndex, i, s[i])
+		}
+	}
+
+	for i := 0; i < routineCount; i++ {
+		//[start,end) for one goroutine
+		start := i * oneLengthPerRoutine
+		end := (i + 1) * oneLengthPerRoutine
+		if end > sliceLen {
+			end = sliceLen
+		}
+		go oneGo(slice[start:end], i)
+	}
+}
+endsnippet
+
+snippet genDocFromTags "gen markdown table from tags" !b
+func (f *Flow) GenDoc() {
+	val := reflect.ValueOf(f).Elem()
+	// "|字段名|类型|说明|"
+	// "|----|----|----|"
+	// "|%s|%s|%s|"
+	const tpl = "|%s|%s|%s|\n"
+	var ret string
+	ret += "|字段名|类型|说明|\n"
+	ret += "|----|----|----|\n"
+	for i := 0; i < val.NumField(); i++ {
+		typeField := val.Type().Field(i)
+		tag := typeField.Tag
+		fieldTypeStr := typeField.Type.Name()
+		if fieldTypeStr == "" {
+			fieldTypeStr = "object"
+		}
+		name := tag.Get("json")
+		if name == "-" {
+			continue
+		}
+		ret += fmt.Sprintf(tpl, name, fieldTypeStr, strings.TrimPrefix(tag.Get("gorm"), "comment:"))
+	}
+	fmt.Printf("ret: \n%s\n", ret)
+}
+endsnippet
+
+snippet newStartSpanAtFunc "star one span from ctx" !b
+var span opentracing.Span
+if parentSpan := opentracing.SpanFromContext(ctxGo); parentSpan != nil {
+	span = opentracing.StartSpan("$1", opentracing.ChildOf(parentSpan.Context()))
+	defer span.Finish()
+}
+endsnippet
+snippet metricHttpTplPrometheus "meric code for http of prometheus" b
+ReqCounter$1 = prometheus.NewCounterVec(
+	prometheus.CounterOpts{
+		Namespace: "rfe",
+		Name:      "req_counter_$2",
+		Help:      "$3请求数",
+	}, []string{LblType})
+ReqCounter$1Failed = prometheus.NewCounterVec(
+	prometheus.CounterOpts{
+		Namespace: "rfe",
+		Name:      "req_counter_$2_failed",
+		Help:      "$3失败请求数",
+	}, []string{LblType})
+ReqHistogram$1 = prometheus.NewHistogram(
+	prometheus.HistogramOpts{
+		Namespace: "rfe",
+		Name:      "req_duration_$2_seconds",
+		Help:      "$3数据请求耗时秒",
+		Buckets:   prometheus.ExponentialBuckets(0.001, 2, 13), // 1ms ~ 16s~inf , 2^16*0.001 seconds
+	})
+endsnippet
+	
+snippet tickerStruct "ticker struct" !b
+type $1 struct {
+	exit chan struct{} `json:"exit " gorm:"comment:"`
+}
+
+//New$1 implements ...
+func New$1(exit chan struct{}) *$1 {
+	one := &$1{
+		exit: exit,
+	}
+	return one
+}
+
+func (instance *$1) Run(exit chan struct{}) {
+	innerLog := logx.NewPrefixLogx("Uploader", logx.Log)
+	innerLog.Debugln("start:$1")
+	ticker := time.NewTicker(time.Second * 1)
+	defer func() {
+		innerLog.Debugln("exit:$1")
+		logx.Flush()
+	}()
+	for {
+		select {
+		case <-instance.exit:
+			return
+		case <-ticker.C:
+			//@TODO()
+		}
+	}
+}
+endsnippet
+
+snippet prefixLogLogx "new prefix log on logx" !b
+innerLog := logx.NewPrefixLogx($1, logx.Log)
+endsnippet
+
+snippet DirFiles "get file list of dir" !b
+func DirFiles(oneDirName string) []string {
+	_, err := os.Stat(oneDirName)
+	if err != nil {
+		logx.Errorf("err: %+v\n", err)
+		return nil
+	}
+
+	var files []string
+	prefix := "${1:aiwaterlog}"
+	err = filepath.Walk(oneDirName, func(path string, info os.FileInfo, err error) error {
+		if !info.IsDir() {
+			if strings.HasPrefix(info.Name(), prefix) {
+				files = append(files, path)
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		logx.Errorf("err: %+v\n", err)
+	}
+	return files
+}
+endsnippet
+
+snippet ReadlineFile "read line one by one of file" !b
+func ReadlineFile(oneFilename string) error {
+	file, err := os.Open(oneFilename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	// optionally, resize scanner's capacity for lines over 64K, see next example
+	const maxCapacity = 1024 * 1024 * 3 // your required line length
+	buf := make([]byte, maxCapacity)
+	scanner.Buffer(buf, maxCapacity)
+	count := 0
+	for scanner.Scan() {
+		oneLine := scanner.Text()
+		if len(oneLine) < 1 {
+			continue
+		}
+		count++
+		logx.Debugf("oneLine: %s\n", oneLine)
+	}
+	logx.Debugf("[%s] handle %d lines\n", oneFilename, count)
+
+	if err := scanner.Err(); err != nil {
+		if err != io.EOF {
+			return err
+		}
+	}
+	return nil
+}
+endsnippet
+
+snippet loopFuncMarkStartExit "loop by tick and log on start and exit" !b
+func (sd *$1) LoopCheckLeaderIP() {
+	defer func() {
+		logx.Debugf("exit $1\n")
+	}()
+	logx.Debugf("start $1\n")
+
+	ticker := time.NewTicker(time.Second * 1)
+	for {
+		select {
+		case <-sd.exit:
+			return
+		case <-ticker.C:
+		$2
+		}
+	}
+}
+endsnippet
+
+snippet timeNowUnixSecond "time on unix seconds" !b
+timeNowUnixSecond := time.Now().Unix()
+endsnippet
+
+snippet innerlogError "innerLog errorfln" !b
+innerLog.Warnfln("err %s", err)
+endsnippet
+
+snippet stringBuilder "string builder" !b
+sb := strings.Builder{}
+for _, id := range ids {
+	_, _ = sb.WriteString(id)
+}
+retSb := sb.String()
+return retSb
+endsnippet
+
+snippet redisErrorInt "error int check" !b
+if errInt == libredis.ErrorRedis {
+			logx.Warnf("redis error : %+v\n", errInt )
+}
+endsnippet
+
+snippet justone "Description" b
+oeoefe
+
+endsnippet
+
+snippet gofunc "go func" b
+go func() {
+	defer wg.Done()
+}()
+endsnippet
+
+snippet clogDebugf "cLogdebugf" !b
+c.Log.Debugf("%s\n",$1)
+endsnippet
+
+snippet deferfunc "defer func " !b
+defer func() {
+	$1
+}()
+endsnippet
+
+snippet metricTime "metric time histogram" !b
+start$1 := time.Now()
+defer func() {
+	metric.ReqSmocServeHistogram.Observe(time.Since(start$1).Seconds())
+}()
+endsnippet
+snippet ctxgo "context " !b
+ctx := context.Background()
+endsnippet
+
+snippet CounterWithValue "metric counter of promethues with value " !b
+metric.$1.WithLabelValues(metric.$1).Inc()
+endsnippet
+
+snippet HistogramMetric "histogram metrics" !b
+start$1 := time.Now()
+defer func() {
+	metric.$2.Observe(time.Since(start$1).Seconds())
+}()
 endsnippet

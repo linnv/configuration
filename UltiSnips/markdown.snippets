@@ -55,16 +55,16 @@ snippet img "Image"
 endsnippet
 
 # sunteng
-snippet apiDoc "api doc including request and response" !b
-### $1
-- request,POST,json:
-	\`\`\`
-	$2
-	\`\`\`
-- response,json:
-	\`\`\`
-	\`\`\`
-endsnippet
+# snippet apiDoc "api doc including request and response" !b
+# ### $1
+# - request,POST,json:
+# 	\`\`\`
+# 	$2
+# 	\`\`\`
+# - response,json:
+# 	\`\`\`
+# 	\`\`\`
+# endsnippet
 
 snippet travelNotice "somthing you should know brefore starting a journey" !b
 #### 费用
@@ -81,7 +81,7 @@ endsnippet
 snippet docApi "doc template for http api" !b
 ## $!
 ### URI
-/$2, POST
+/$2, http, POST
 
 e.g:
 \`\`\`
@@ -140,4 +140,8 @@ snippet ReadMeTemplate "one read sample" !b
 ### Prerequisites
 
 ### Config and Run
+endsnippet
+
+snippet centerh2 "aligne h2 to  center" !b
+<center><h2>$1</h2></center>
 endsnippet

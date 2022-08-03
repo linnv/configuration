@@ -200,3 +200,35 @@ endsnippet
 snippet esMapping "mapping of index " !b
 curl -X GET "localhost:9200/$1/_mapping?pretty=true""
 endsnippet
+
+snippet bashSwichOS "switch on OS" !b
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     
+	    ips=$(ip a)
+	    machine=Linux;;
+    Darwin*)    
+	    ips=$(ifconfig)
+	    machine=Mac;;
+    CYGWIN*)    machine=Cygwin;;
+    MINGW*)     machine=MinGw;;
+    *)          machine="UNKNOWN:${unameOut}"
+esac
+
+snippet forLoopExitSignal "keep doing until receive exit c-c signal" !b
+#!/bin/bash
+trap "exit" INT
+while :
+do
+	$1
+    sleep 1s
+done
+
+endsnippet
+
+snippet foriIterator "i 1..100" !b
+for i in {1..100} ; do
+	#curl http://127.0.0.1:8186/version
+	sleep 1s
+done
+endsnippet
