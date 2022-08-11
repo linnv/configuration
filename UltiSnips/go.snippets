@@ -1914,3 +1914,40 @@ defer func() {
 	metric.$2.Observe(time.Since(start$1).Seconds())
 }()
 endsnippet
+
+snippet readlineFromFile "readline from file to run cmd" !b
+func readCallLogFromFile(filePath string) {
+	logx.Debugfln("start read file: %v", filePath)
+	f, err := os.Open(filePath)
+	defer f.Close()
+	if err != nil {
+		logx.Errorfln("open file[%s] err: %+v", filePath, err)
+		return
+	}
+
+	buf := bufio.NewReader(f)
+	defer buf.Reset(f)
+	var line []byte
+	for {
+		tmpLine, isPrefix, err := buf.ReadLine()
+		if err != nil {
+			if err == io.EOF {
+				logx.Debugfln("read file[%s] end", filePath)
+				return
+			}
+
+			logx.Errorfln("read file[%s] line err: %+v", filePath, err)
+			return
+		}
+
+			if len(strings.TrimSpace(string(line))) <= 0 {
+				logx.Debugfln("skip null log")
+				line = nil
+				continue
+			}
+
+	$1
+	}
+}
+
+endsnippet
