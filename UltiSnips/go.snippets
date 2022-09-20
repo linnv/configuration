@@ -1751,11 +1751,11 @@ func New$1(exit chan struct{}) *$1 {
 }
 
 func (instance *$1) Run(exit chan struct{}) {
-	innerLog := logx.NewPrefixLogx("Uploader", logx.Log)
-	innerLog.Debugln("start:$1")
+	innerLog := logx.NewPrefixLogx("$1 ", logx.Log)
+	innerLog.Debugln("start")
 	ticker := time.NewTicker(time.Second * 1)
 	defer func() {
-		innerLog.Debugln("exit:$1")
+		innerLog.Debugln("exit")
 		logx.Flush()
 	}()
 	for {
