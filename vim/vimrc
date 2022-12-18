@@ -41,7 +41,7 @@ set laststatus=2   " Always show the statusline
 au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
 
 " ====================plugin manager=================
-call plug#begin('~/.nvim/plugged')
+call plug#begin('~/.vim/plugged')
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 Plug 'scrooloose/nerdtree'
 let NERDTreeIgnore=['node_modules$[[dir]]']
@@ -53,7 +53,7 @@ autocmd FileType nerdtree setlocal relativenumber
 
 
 """""""""""""""""""""""""""""<code completion> start""""""""""""""""""""""""""""""""""
-Plug 'Valloric/YouCompleteMe',{'do': './install.py --gocode-completer --tern-completer --rust-completer  --clang-completer'}
+Plug 'Valloric/YouCompleteMe',{'do': './install.py --gocode-completer --rust-completer  --clang-completer'}
 
 let g:ycm_filetype_blacklist = {}
 let g:ycm_auto_trigger = 1
@@ -74,11 +74,10 @@ let g:UltiSnipsJumpForwardTrigger = "<c-l>"
 let g:UltiSnipsJumpBackwardTrigger="<c-h>"
 let g:UltiSnipsEditSplit="vertical"
 
-"set runtimepath^=~/.config/nvim
 "use absolute path 
-let g:UltiSnipsSnippetStorageDirectoryForUltiSnipsEdit = '~/.config/nvim/MySnippets'
-let g:UltiSnipsSnippetDirectories=["MySnippets","UltiSnips"]
-let g:UltiSnipsSnippetsDir = '~/.config/nvim'
+let g:UltiSnipsSnippetStorageDirectoryForUltiSnipsEdit = '/Users/jialinwu/git/configuration/UltiSnips'
+let g:UltiSnipsSnippetDirectories=["UltiSnips"]
+let g:UltiSnipsSnippetsDir = '/Users/jialinwu/git/configuration/UltiSnips'
 """""""""""""""""""""""""""""<code snippets> end""""""""""""""""""""""""""""""""""""
 
 "for js
@@ -355,8 +354,8 @@ map <Leader>cd :NERDTree %:p:h<CR>
 nnoremap <silent> <leader>w :w<cr>
 
 "Fast editing of edictor configuration
-map <silent> <leader>ee :e ~/.nvimrc<cr>
-autocmd! bufwritepost .nvim.rc source ~/.nvimrc
+map <silent> <leader>ee :e ~/.vimrc<cr>
+autocmd! bufwritepost .vim.rc source ~/.vimrc
 
 hi Directory ctermfg=Blue
 
