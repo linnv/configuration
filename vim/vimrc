@@ -76,8 +76,8 @@ let g:UltiSnipsEditSplit="vertical"
 
 "use absolute path 
 let g:UltiSnipsSnippetStorageDirectoryForUltiSnipsEdit = '/Users/jialinwu/git/configuration/UltiSnips'
-let g:UltiSnipsSnippetDirectories=["UltiSnips"]
-let g:UltiSnipsSnippetsDir = '/Users/jialinwu/git/configuration/UltiSnips'
+let g:UltiSnipsSnippetDirectories=["UltiSnips","/Users/jialinwu/git/configuration/UltiSnips"]
+let g:UltiSnipsSnippetsDir = "/Users/jialinwu/git/configuration/UltiSnips"
 """""""""""""""""""""""""""""<code snippets> end""""""""""""""""""""""""""""""""""""
 
 "for js

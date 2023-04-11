@@ -97,8 +97,9 @@ let g:UltiSnipsEditSplit="vertical"
 "set runtimepath^=~/.config/nvim
 "use absolute path 
 
-let g:UltiSnipsSnippetStorageDirectoryForUltiSnipsEdit = '/home/jialin/sync-same-path/configuration/UltiSnips'
-let g:UltiSnipsSnippetDirectories=["/home/jialin/sync-same-path/configuration/UltiSnips","UltiSnips"]
+let g:UltiSnipsSnippetStorageDirectoryForUltiSnipsEdit = '/Users/jialinwu/git/configuration/UltiSnips'
+let g:UltiSnipsSnippetDirectories=["UltiSnips","/Users/jialinwu/git/configuration/UltiSnips"]
+let g:UltiSnipsSnippetsDir = "/Users/jialinwu/git/configuration/UltiSnips"
 
 """""""""""""""""""""""""""""<code snippets> end""""""""""""""""""""""""""""""""""""
 
