@@ -1,5 +1,7 @@
 if status is-interactive
     # Commands to run in interactive sessions can go here
+    atuin init fish | source
+    starship init fish | source
 end
 
 #use ltime to show last cmd time-elapsed
@@ -24,9 +26,6 @@ end
 # alias cdwindownload='cd /mnt/c/Users/jialinwu/Downloads'
 # alias cdwintmp='cd /mnt/c/Users/jialinwu/tmpwin'
 # alias cdds='cd /mnt/c/Users/jialinwu/Sync'
-# # alias vim='nvim'
-# alias nv='nvim'
-# alias vim='nvim'
 # alias gitp="git pull origin"
 # alias git merge="git merge --no--ff"
 alias gpo='git push origin'
@@ -42,9 +41,13 @@ alias cdgo="cd ~/go/src"
 alias gcmsg="git commit -m"
 alias gco="git checkout"
 alias gb="git branch"
-# alias vim="nvim"
+
+alias nvim "no_proxy=127.0.0.1,localhost,gitlab.qnzsai.com http_proxy=http://100.108.162.74:8015 https_proxy=http://100.108.162.74:8015 command nvim"
+alias nv='nvim'
+alias vim='nvim'
+
+# alias vim="/opt/homebrew/bin/vim"
 alias glog="git log --oneline --decorate --graph"
 alias gloga="git log --oneline --decorate --graph --all"
 
-alias vim="/usr/local/bin/vim"
-/usr/local/bin/starship init fish | source
+alias grep="/opt/homebrew/Cellar/grep/3.11/bin/ggrep"
