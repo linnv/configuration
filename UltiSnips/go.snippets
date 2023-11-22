@@ -1711,12 +1711,15 @@ func (f *Flow) GenDoc() {
 endsnippet
 
 snippet newStartSpanAtFunc "star one span from ctx" !b
-var span opentracing.Span
-if parentSpan := opentracing.SpanFromContext(ctxGo); parentSpan != nil {
-	span = opentracing.StartSpan("$1", opentracing.ChildOf(parentSpan.Context()))
-	defer span.Finish()
-}
+ctxGo, span := gTracer.Start(ctxGo, util.GetFuncName())
+defer span.End()
 endsnippet
+
+snippet newSpanStartAtFunc "star one span from ctx" !b
+ctxGo, span := gTracer.Start(ctxGo, util.GetFuncName())
+defer span.End()
+endsnippet
+
 snippet metricHttpTplPrometheus "meric code for http of prometheus" b
 ReqCounter$1 = prometheus.NewCounterVec(
 	prometheus.CounterOpts{
@@ -1956,4 +1959,19 @@ endsnippet
 
 snippet ctxGoqn "ctx with sn "
 ctxGo := context.WithValue(context.Background(), "sn", ctx.Sess.FsSessionID)
+endsnippet
+
+snippet botLogf "bot log" !b
+b.LogxPrintf(constant.DEBUG_LEVEL, "$1 %+v\n",$1)
+endsnippet
+
+
+
+snippet ctxlogwithid "ctx log with id" !b
+logx.Debugf("%s: %s\n", ctxGo.Value(constant.CtxKeyLogID),$1)
+endsnippet
+
+
+snippet ctxlogAddIdBot "ctx log with id" !b
+ctxGo = context.WithValue(ctxGo, constant.CtxKeyLogID, b.Sn)
 endsnippet
