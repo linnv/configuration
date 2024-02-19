@@ -1590,7 +1590,7 @@ logx.Warnf(ctx.GetCurLogCtx()+" nil:[%s]\n", "$1")
 endsnippet
 
 snippet nowNanoTimeStr "current time nano seconds string use as time id" !b
-nowStr := strconv.FormatInt(int64(now.UnixNano()), 10)
+nowStr := strconv.FormatInt(int64(time.Now().UnixNano()), 10)
 endsnippet
 
 snippet nowTime "current time instance" !b
@@ -1776,6 +1776,10 @@ endsnippet
 
 snippet prefixLogLogx "new prefix log on logx" !b
 innerLog := logx.NewPrefixLogx($1, logx.Log)
+endsnippet
+
+snippet prefixLogWithIdSn "new prefix log with sn on logx" !b
+innerLog := logx.NewPrefixLogx(fmt.Sprintf("%s", ctxGo.Value("sn")), logx.Log)
 endsnippet
 
 snippet DirFiles "get file list of dir" !b
@@ -1974,4 +1978,8 @@ endsnippet
 
 snippet ctxlogAddIdBot "ctx log with id" !b
 ctxGo = context.WithValue(ctxGo, constant.CtxKeyLogID, b.Sn)
+endsnippet
+
+snippet spanSetStatusError "span.SetStatus(codes.Error, err.Error())" !b
+span.SetStatus(codes.Error, err.Error())
 endsnippet
