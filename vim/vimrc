@@ -95,8 +95,8 @@ autocmd BufWritePre *.{js,html,htm,vue} :normal migg=G`izz
 " Markdown
 " markdown preview for Graph Visualization
 "Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
-Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown']} "call 'call mkdp#util#install()' mannually
-autocmd BufNewFile,BufRead *.{md,mkd,mkdn,mark*}  nested setlocal filetype=markdown
+" Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown']} "call 'call mkdp#util#install()' mannually
+" autocmd BufNewFile,BufRead *.{md,mkd,mkdn,mark*}  nested setlocal filetype=markdown
 
 "for django
 au BufNewFile,BufRead *.hj set filetype=htmldjango
@@ -201,6 +201,19 @@ Plug 'chase/vim-ansible-yaml'
 au! BufNewFile,BufReadPost *.{yaml,yml} set filetype=yaml foldmethod=indent
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Plug 'Exafunction/codeium.vim', { 'branch': 'main' }
+" let g:codeium_no_map_tab
+let g:codeium_disable_bindings = 1
+
+imap <script><silent><nowait><expr> <C-g> codeium#Accept()
+imap <C-;>   <Cmd>call codeium#CycleCompletions(1)<CR>
+imap <C-,>   <Cmd>call codeium#CycleCompletions(-1)<CR>
+imap <C-x>   <Cmd>call codeium#Clear()<CR>
+
+set statusline+=\{…\}%3{codeium#GetStatusString()}
+"
+
 Plug 'altercation/vim-colors-solarized'
 set background=light
 let g:vimrc_author='Jialin Wu' 
@@ -359,4 +372,6 @@ autocmd! bufwritepost .vim.rc source ~/.vimrc
 
 hi Directory ctermfg=Blue
 
-let g:python3_host_prog='/usr/local/bin/python3'
+"let g:python3_host_prog='/usr/local/bin/python3'
+let g:python3_host_prog='/opt/homebrew/bin/python3'
+let g:tagbar_ctags_bin='/opt/homebrew/bin/ctags'
