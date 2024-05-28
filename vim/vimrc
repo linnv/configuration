@@ -375,3 +375,11 @@ hi Directory ctermfg=Blue
 "let g:python3_host_prog='/usr/local/bin/python3'
 let g:python3_host_prog='/opt/homebrew/bin/python3'
 let g:tagbar_ctags_bin='/opt/homebrew/bin/ctags'
+
+"git clone --depth 1 https://github.com/lifepillar/vim-solarized8.git
+packadd! solarized8
+" Important!!
+if has('termguicolors')
+	set termguicolors
+endif
+colorscheme solarized8
