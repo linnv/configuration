@@ -214,7 +214,7 @@ endsnippet
 
 snippet ifErrLogReturnLine "if err!" !b
 if err$1:=$2;err$1 !=nil{
-	logx.Errorf("err$1: %s\n",err$1 )
+	c.ZapLog.Error("$1")
 	return err$1
 }$3
 endsnippet
@@ -1295,7 +1295,7 @@ endsnippet
 snippet ifrecover "if err recover " !b
 defer func() {
 	if err := recover(); err != nil {
-		logx.Debugf("panic err: %+v\n", err)
+		logx.Debugf("panic err: %+v stack %s\n", err, debug.Stack())
 		return
 	}
 }()
@@ -1982,4 +1982,10 @@ endsnippet
 
 snippet spanSetStatusError "span.SetStatus(codes.Error, err.Error())" !b
 span.SetStatus(codes.Error, err.Error())
+endsnippet
+
+snippet testfiledirpath "get current test file dir abs path" b
+_, currentFilename, _, _ := runtime.Caller(0)
+currentDir := filepath.Dir(currentFilename)
+//path.Join(currentDir, "testdata/nowavheader-stereo.pcm")
 endsnippet
