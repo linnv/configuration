@@ -1,4 +1,4 @@
-# cat > ~/.config/nvim/init.vim
+" cat > ~/.config/nvim/init.vim
 set encoding=utf-8
 set ff=unix
 set ruler "display the current row and column on the right_bottom corner 
