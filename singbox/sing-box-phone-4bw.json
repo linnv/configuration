@@ -1,6 +1,6 @@
 {
 	"log": {
-		"level": "warn",
+		"level": "info",
 		"timestamp":false
 	},
 	"experimental": {
@@ -40,6 +40,13 @@
 			{
 				"tag": "google",
 				"address": "tls://8.8.4.4"
+			},
+			{
+				"tag": "nextdns_proxy",
+				"address": "https://dns.nextdns.io/119637",
+				"address_resolver": "local",
+				"strategy": "prefer_ipv4",
+				"detour": "✈️ Proxy"
 			},
 			{
 				"tag": "local",
@@ -476,9 +483,7 @@
 				"outbound": "🎯 direct"
 			}
 		],
-		"final": "✈️ Proxy",
+		"final": "🎯 direct",
 		"auto_detect_interface": true
 	}
 }
-
-
