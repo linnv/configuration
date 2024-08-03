@@ -4,7 +4,7 @@
 NETWORK_SERVICE="Ethernet"  # Change this to your network service (e.g., "Ethernet" or "Wi-Fi")
 PROXY_HOST="127.0.0.1"  # Change this to your HTTP proxy host
 PROXY_PORT="8014"  # Change this to your HTTP proxy port
-BYPASS_FILE="$HOME/git/configuration/macos/.http_proxy_bypass_domains.txt"  # File to store bypass domains
+BYPASS_FILE="$HOME/git/configuration/macos/.socks_proxy_bypass_domains.txt"  # File to store bypass domains
 
 # Function to display usage
 usage() {
