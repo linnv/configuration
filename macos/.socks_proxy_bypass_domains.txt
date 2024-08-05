@@ -4,11 +4,13 @@
 127.0.0.1
 10.0.30.0/24
 159.75.72.210
+*.qnzsai.com
+*.lanhuapp.com
+*.deepseek.com
+*.alipay.com
 *.apple.com
 *.cctv.com
 *.cctvpic.com
-*.qnzsai.com
-*.deepseek.com
 *.tencent.com
 *.tianya.cn
 *.tmall.com
