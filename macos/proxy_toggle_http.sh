@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Configuration
-NETWORK_SERVICE="Wi-Fi"  # Change this to your network service (e.g., "Ethernet" or "Wi-Fi")
+NETWORK_SERVICES=("Wi-Fi" "Ethernet")  # Add or modify network services as needed
 PROXY_HOST="127.0.0.1"  # Change this to your HTTP proxy host
-PROXY_PORT="8014"  # Change this to your HTTP proxy port
+PROXY_PORT="9015"  # Change this to your HTTP proxy port
 BYPASS_FILE="$HOME/git/configuration/macos/.socks_proxy_bypass_domains.txt"  # File to store bypass domains
 
 # Function to display usage
@@ -21,25 +21,33 @@ usage() {
 # Function to turn HTTP proxy on
 proxy_on() {
     echo "Turning HTTP proxy on..."
-    networksetup -setwebproxy "$NETWORK_SERVICE" "$PROXY_HOST" "$PROXY_PORT"
-    networksetup -setsecurewebproxy "$NETWORK_SERVICE" "$PROXY_HOST" "$PROXY_PORT"
+    for service in "${NETWORK_SERVICES[@]}"; do
+        networksetup -setwebproxy "$service" "$PROXY_HOST" "$PROXY_PORT"
+        networksetup -setsecurewebproxy "$service" "$PROXY_HOST" "$PROXY_PORT"
+    done
     apply_bypass_rules
-    echo "HTTP proxy is now ON."
+    echo "HTTP proxy is now ON for all configured network services."
 }
 
 # Function to turn HTTP proxy off
 proxy_off() {
     echo "Turning HTTP proxy off..."
-    networksetup -setwebproxystate "$NETWORK_SERVICE" off
-    networksetup -setsecurewebproxystate "$NETWORK_SERVICE" off
-    echo "HTTP proxy is now OFF."
+    for service in "${NETWORK_SERVICES[@]}"; do
+        networksetup -setwebproxystate "$service" off
+        networksetup -setsecurewebproxystate "$service" off
+    done
+    echo "HTTP proxy is now OFF for all configured network services."
 }
 
 # Function to show HTTP proxy status
 proxy_status() {
     echo "HTTP Proxy status:"
-    networksetup -getwebproxy "$NETWORK_SERVICE"
-    networksetup -getsecurewebproxy "$NETWORK_SERVICE"
+    for service in "${NETWORK_SERVICES[@]}"; do
+        echo "Service: $service"
+        networksetup -getwebproxy "$service"
+        networksetup -getsecurewebproxy "$service"
+        echo "---"
+    done
 }
 
 # Function to add a bypass domain
@@ -78,10 +86,14 @@ list_bypass() {
 apply_bypass_rules() {
     if [ -f "$BYPASS_FILE" ]; then
         BYPASS_DOMAINS=$(tr '\n' ' ' < "$BYPASS_FILE")
-        networksetup -setproxybypassdomains "$NETWORK_SERVICE" $BYPASS_DOMAINS
-        echo "Bypass rules applied."
+        for service in "${NETWORK_SERVICES[@]}"; do
+            networksetup -setproxybypassdomains "$service" $BYPASS_DOMAINS
+        done
+        echo "Bypass rules applied to all configured network services."
     else
-        networksetup -setproxybypassdomains "$NETWORK_SERVICE" "Empty"
+        for service in "${NETWORK_SERVICES[@]}"; do
+            networksetup -setproxybypassdomains "$service" "Empty"
+        done
         echo "No bypass rules applied."
     fi
 }
