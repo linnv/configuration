@@ -117,13 +117,60 @@
   "password": "jialin"
 		},
 		{
+			"type": "shadowsocks",
+			"tag": "racknerd-7005bd shadowsocks",
+      "server": "23.105.204.193",
+      "server_port": 2043,
+      "method": "aes-128-gcm",
+      "password": "1643fe5f-d26e-4e7b-9c4d-09972290834f",
+			"multiplex": {
+				"enabled": true,
+				"protocol": "h2mux",
+				"max_connections": 8,
+				"min_streams": 16,
+				"padding": true
+			}
+		},
+		{
+			"type": "vless",
+			"tag": "racknerd-7005bd vless-ws-tls",
+      "server": "bwvless.jialinwu.com",
+      "server_port": 2053,
+      "uuid": "1643fe5f-d26e-4e7b-9c4d-09972290834f",
+      "tls": {
+        "enabled": true,
+        "server_name": "bwvless.jialinwu.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        }
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/1643fe5f-d26e-4e7b-9c4d-09972290834f-vless",
+        "headers": {
+          "Host": "bwvless.jialinwu.com"
+        },
+        "max_early_data": 2048,
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      },
+			"multiplex": {
+				"enabled": true,
+				"protocol": "h2mux",
+				"max_streams": 16,
+				"padding": true
+			}
+		},
+		{
 			"type": "selector",
 			"tag": "✈️ Proxy",
 			"outbounds": [
 				"♻️ 自动选择",
 				"direct",
 				"socks8006",
-				"socks8007"
+				"socks8007",
+				"racknerd-7005bd shadowsocks",
+				"racknerd-7005bd vless-ws-tls"
 			]
 		},
 		{
@@ -131,7 +178,9 @@
 			"tag": "♻️ 自动选择",
 			"outbounds": [
 				"socks8006",
-				"socks8007"
+				"socks8007",
+				"racknerd-7005bd shadowsocks",
+				"racknerd-7005bd vless-ws-tls"
 			],
 			"url": "http://www.gstatic.com/generate_204",
 			"interval": "5m",
@@ -144,7 +193,9 @@
 				"♻️ 自动选择",
 				"🎯 direct",
 				"socks8006",
-				"socks8007"
+				"socks8007",
+				"racknerd-7005bd shadowsocks",
+				"racknerd-7005bd vless-ws-tls"
 			]
 		},
 		{
@@ -154,7 +205,9 @@
 				"♻️ 自动选择",
 				"🎯 direct",
 				"socks8006",
-				"socks8007"
+				"socks8007",
+				"racknerd-7005bd shadowsocks",
+				"racknerd-7005bd vless-ws-tls"
 			]
 		},
 		{
@@ -164,7 +217,9 @@
 				"♻️ 自动选择",
 				"🎯 direct",
 				"socks8006",
-				"socks8007"
+				"socks8007",
+				"racknerd-7005bd shadowsocks",
+				"racknerd-7005bd vless-ws-tls"
 			]
 		},
 		{
