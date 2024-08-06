@@ -1,6 +1,6 @@
 {
 	"log": {
-		"level": "info",
+		"level": "debug",
 		"timestamp":false
 	},
 	"experimental": {
@@ -23,15 +23,11 @@
 			"sniff": false
 		},
 		{
-			"type": "tun",
-			"tag": "tun-in",
-			"inet4_address": "172.19.0.1/30",
-			"inet6_address": "fdfe:dcba:9876::1/126",
-			"auto_route": true,
-			"mtu": 1280, 
-			"strict_route": true,
-			"stack": "mixed",
-			"sniff": true
+			"type": "socks",
+			"tag": "socks-in",
+			"listen": "127.0.0.1",
+			"listen_port": 1096,
+			"sniff": false
 		}
 	],
 	"dns": {
@@ -103,49 +99,22 @@
 	},
 	"outbounds": [
 		{
-			"type": "shadowsocks",
-			"tag": "racknerd-7005bd shadowsocks",
-      "server": "23.105.204.193",
-      "server_port": 2043,
-      "method": "aes-128-gcm",
-      "password": "1643fe5f-d26e-4e7b-9c4d-09972290834f",
-			"multiplex": {
-				"enabled": true,
-				"protocol": "h2mux",
-				"max_connections": 8,
-				"min_streams": 16,
-				"padding": true
-			}
+			"type": "socks",
+			"tag": "socks8006",
+  "server": "rnsock5.jialinwu.com",
+  "server_port": 8006,
+  "version": "5",
+  "username": "jialin",
+  "password": "jialin"
 		},
 		{
-			"type": "vless",
-			"tag": "racknerd-7005bd vless-ws-tls",
-      "server": "bwvless.jialinwu.com",
-      "server_port": 2053,
-      "uuid": "1643fe5f-d26e-4e7b-9c4d-09972290834f",
-      "tls": {
-        "enabled": true,
-        "server_name": "bwvless.jialinwu.com",
-        "utls": {
-          "enabled": true,
-          "fingerprint": "chrome"
-        }
-      },
-      "transport": {
-        "type": "ws",
-        "path": "/1643fe5f-d26e-4e7b-9c4d-09972290834f-vless",
-        "headers": {
-          "Host": "bwvless.jialinwu.com"
-        },
-        "max_early_data": 2048,
-        "early_data_header_name": "Sec-WebSocket-Protocol"
-      },
-			"multiplex": {
-				"enabled": true,
-				"protocol": "h2mux",
-				"max_streams": 16,
-				"padding": true
-			}
+			"type": "socks",
+			"tag": "socks8007",
+  "server": "rnsock5.jialinwu.com",
+  "server_port": 8007,
+  "version": "5",
+  "username": "jialin",
+  "password": "jialin"
 		},
 		{
 			"type": "selector",
@@ -153,16 +122,16 @@
 			"outbounds": [
 				"♻️ 自动选择",
 				"direct",
-				"racknerd-7005bd shadowsocks",
-				"racknerd-7005bd vless-ws-tls"
+				"socks8006",
+				"socks8007"
 			]
 		},
 		{
 			"type": "urltest",
 			"tag": "♻️ 自动选择",
 			"outbounds": [
-				"racknerd-7005bd shadowsocks",
-				"racknerd-7005bd vless-ws-tls"
+				"socks8006",
+				"socks8007"
 			],
 			"url": "http://www.gstatic.com/generate_204",
 			"interval": "5m",
@@ -174,8 +143,8 @@
 			"outbounds": [
 				"♻️ 自动选择",
 				"🎯 direct",
-				"racknerd-7005bd shadowsocks",
-				"racknerd-7005bd vless-ws-tls"
+				"socks8006",
+				"socks8007"
 			]
 		},
 		{
@@ -184,8 +153,8 @@
 			"outbounds": [
 				"♻️ 自动选择",
 				"🎯 direct",
-				"racknerd-7005bd shadowsocks",
-				"racknerd-7005bd vless-ws-tls"
+				"socks8006",
+				"socks8007"
 			]
 		},
 		{
@@ -194,8 +163,8 @@
 			"outbounds": [
 				"♻️ 自动选择",
 				"🎯 direct",
-				"racknerd-7005bd shadowsocks",
-				"racknerd-7005bd vless-ws-tls"
+				"socks8006",
+				"socks8007"
 			]
 		},
 		{
@@ -238,7 +207,7 @@
 				"type": "remote",
 				"format": "binary",
 				"url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-category-ads-all.srs",
-				"download_detour": "racknerd-7005bd shadowsocks",
+				"download_detour": "socks8006",
 				"update_interval": "1d"
 			},
 			{
@@ -246,7 +215,7 @@
 				"type": "remote",
 				"format": "binary",
 				"url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-telegram.srs",
-				"download_detour": "racknerd-7005bd shadowsocks",
+				"download_detour": "socks8006",
 				"update_interval": "1d"
 			},
 			{
@@ -254,7 +223,7 @@
 				"type": "remote",
 				"format": "binary",
 				"url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geoip/telegram.srs",
-				"download_detour": "racknerd-7005bd shadowsocks",
+				"download_detour": "socks8006",
 				"update_interval": "1d"
 			},
 			{
@@ -262,7 +231,7 @@
 				"type": "remote",
 				"format": "binary",
 				"url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-youtube.srs",
-				"download_detour": "racknerd-7005bd shadowsocks",
+				"download_detour": "socks8006",
 				"update_interval": "1d"
 			},
 			{
@@ -270,7 +239,7 @@
 				"type": "remote",
 				"format": "binary",
 				"url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-netflix.srs",
-				"download_detour": "racknerd-7005bd shadowsocks",
+				"download_detour": "socks8006",
 				"update_interval": "1d"
 			},
 			{
@@ -278,7 +247,7 @@
 				"type": "remote",
 				"format": "binary",
 				"url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geoip/netflix.srs",
-				"download_detour": "racknerd-7005bd shadowsocks",
+				"download_detour": "socks8006",
 				"update_interval": "1d"
 			},
 			{
@@ -286,7 +255,7 @@
 				"type": "remote",
 				"format": "binary",
 				"url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-openai@ads.srs",
-				"download_detour": "racknerd-7005bd shadowsocks",
+				"download_detour": "socks8006",
 				"update_interval": "1d"
 			},
 			{
@@ -294,7 +263,7 @@
 				"type": "remote",
 				"format": "binary",
 				"url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-openai.srs",
-				"download_detour": "racknerd-7005bd shadowsocks",
+				"download_detour": "socks8006",
 				"update_interval": "1d"
 			},
 			{
@@ -302,7 +271,7 @@
 				"type": "remote",
 				"format": "binary",
 				"url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-apple.srs",
-				"download_detour": "racknerd-7005bd shadowsocks",
+				"download_detour": "socks8006",
 				"update_interval": "1d"
 			},
 			{
@@ -310,7 +279,7 @@
 				"type": "remote",
 				"format": "binary",
 				"url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-google.srs",
-				"download_detour": "racknerd-7005bd shadowsocks",
+				"download_detour": "socks8006",
 				"update_interval": "1d"
 			},
 			{
@@ -318,7 +287,7 @@
 				"type": "remote",
 				"format": "binary",
 				"url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geoip/google.srs",
-				"download_detour": "racknerd-7005bd shadowsocks",
+				"download_detour": "socks8006",
 				"update_interval": "1d"
 			},
 			{
@@ -326,7 +295,7 @@
 				"type": "remote",
 				"format": "binary",
 				"url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-microsoft.srs",
-				"download_detour": "racknerd-7005bd shadowsocks",
+				"download_detour": "socks8006",
 				"update_interval": "1d"
 			},
 			{
@@ -334,7 +303,7 @@
 				"type": "remote",
 				"format": "binary",
 				"url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-geolocation-!cn.srs",
-				"download_detour": "racknerd-7005bd shadowsocks",
+				"download_detour": "socks8006",
 				"update_interval": "1d"
 			},
 			{
@@ -342,7 +311,7 @@
 				"type": "remote",
 				"format": "binary",
 				"url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-private.srs",
-				"download_detour": "racknerd-7005bd shadowsocks",
+				"download_detour": "socks8006",
 				"update_interval": "1d"
 			},
 			{
@@ -350,7 +319,7 @@
 				"type": "remote",
 				"format": "binary",
 				"url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-cn.srs",
-				"download_detour": "racknerd-7005bd shadowsocks",
+				"download_detour": "socks8006",
 				"update_interval": "1d"
 			},
 			{
@@ -358,7 +327,7 @@
 				"type": "remote",
 				"format": "binary",
 				"url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geoip/private.srs",
-				"download_detour": "racknerd-7005bd shadowsocks",
+				"download_detour": "socks8006",
 				"update_interval": "1d"
 			},
 			{
@@ -366,7 +335,7 @@
 				"type": "remote",
 				"format": "binary",
 				"url": "https://raw.githubusercontent.com/Toperlock/sing-box-geosite/main/rule/WeChat.srs",
-				"download_detour": "racknerd-7005bd shadowsocks",
+				"download_detour": "socks8006",
 				"update_interval": "1d"
 			},
 			{
@@ -374,7 +343,7 @@
 				"type": "remote",
 				"format": "binary",
 				"url": "https://raw.githubusercontent.com/Toperlock/sing-box-geosite/main/rule/gfw.srs",
-				"download_detour": "racknerd-7005bd shadowsocks",
+				"download_detour": "socks8006",
 				"update_interval": "1d"
 			},
 			{
@@ -382,7 +351,7 @@
 				"type": "remote",
 				"format": "binary",
 				"url": "https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs",
-				"download_detour": "racknerd-7005bd shadowsocks",
+				"download_detour": "socks8006",
 				"update_interval": "1d"
 			}
 		],
@@ -396,6 +365,15 @@
 				"clash_mode": "Global",
 				"outbound": "✈️ Proxy"
 			},
+			 {
+			"ip_is_private": true,
+			"outbound": "🎯 direct"
+			 },
+			      { "ip_cidr": "10.0.30.0/24", "outbound": "🎯 direct" },
+			      { "ip_cidr": "100.0.0.0/8", "outbound": "🎯 direct" },
+			      { "ip_cidr": "192.168.1.0/16", "outbound": "🎯 direct" },
+			      { "ip_cidr": "172.16.0.0/12", "outbound": "🎯 direct" },
+			      { "ip_cidr": "159.75.72.210", "outbound": "🎯 direct" },
 			{
 				"clash_mode": "Direct",
 				"outbound": "🎯 direct"
@@ -482,7 +460,7 @@
 				"outbound": "🎯 direct"
 			}
 		],
-		"final": "🎯 direct",
+		"final": "✈️ Proxy",
 		"auto_detect_interface": true
 	}
 }

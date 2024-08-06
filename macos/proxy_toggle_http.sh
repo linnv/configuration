@@ -3,7 +3,8 @@
 # Configuration
 NETWORK_SERVICES=("Wi-Fi" "Ethernet")  # Add or modify network services as needed
 PROXY_HOST="127.0.0.1"  # Change this to your HTTP proxy host
-PROXY_PORT="9015"  # Change this to your HTTP proxy port
+# PROXY_PORT="9015"  # Change this to your HTTP proxy port
+PROXY_PORT="1095"  # Change this to your HTTP proxy port
 BYPASS_FILE="$HOME/git/configuration/macos/.socks_proxy_bypass_domains.txt"  # File to store bypass domains
 
 # Function to display usage
