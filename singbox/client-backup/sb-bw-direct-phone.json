@@ -103,6 +103,24 @@
 	},
 	"outbounds": [
 		{
+			"type": "socks",
+			"tag": "socks8006",
+  "server": "23.105.204.193",
+  "server_port": 8006,
+  "version": "5",
+  "username": "jialin",
+  "password": "jialin"
+		},
+		{
+			"type": "socks",
+			"tag": "socks8007",
+  "server": "23.105.204.193",
+  "server_port": 8007,
+  "version": "5",
+  "username": "jialin",
+  "password": "jialin"
+		},
+		{
 			"type": "shadowsocks",
 			"tag": "racknerd-7005bd shadowsocks",
       "server": "23.105.204.193",
@@ -153,6 +171,8 @@
 			"outbounds": [
 				"♻️ 自动选择",
 				"direct",
+				"socks8006",
+				"socks8007",
 				"racknerd-7005bd shadowsocks",
 				"racknerd-7005bd vless-ws-tls"
 			]
@@ -161,6 +181,8 @@
 			"type": "urltest",
 			"tag": "♻️ 自动选择",
 			"outbounds": [
+				"socks8006",
+				"socks8007",
 				"racknerd-7005bd shadowsocks",
 				"racknerd-7005bd vless-ws-tls"
 			],
@@ -174,6 +196,8 @@
 			"outbounds": [
 				"♻️ 自动选择",
 				"🎯 direct",
+				"socks8006",
+				"socks8007",
 				"racknerd-7005bd shadowsocks",
 				"racknerd-7005bd vless-ws-tls"
 			]
@@ -184,6 +208,8 @@
 			"outbounds": [
 				"♻️ 自动选择",
 				"🎯 direct",
+				"socks8006",
+				"socks8007",
 				"racknerd-7005bd shadowsocks",
 				"racknerd-7005bd vless-ws-tls"
 			]
@@ -194,6 +220,8 @@
 			"outbounds": [
 				"♻️ 自动选择",
 				"🎯 direct",
+				"socks8006",
+				"socks8007",
 				"racknerd-7005bd shadowsocks",
 				"racknerd-7005bd vless-ws-tls"
 			]
