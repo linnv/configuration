@@ -420,6 +420,22 @@
 				"domain_keyword": [ "qnzs" ],
 				"outbound": "🎯 direct"
 			},
+      {
+        "ip_cidr": "10.0.30.0/24",
+        "outbound": "🎯 direct"
+      },
+      {
+        "ip_cidr": "100.0.0.0/8",
+        "outbound": "🎯 direct"
+      },
+      {
+        "ip_cidr": "192.168.1.0/16",
+        "outbound": "🎯 direct"
+      },
+      {
+        "ip_cidr": "159.75.72.210",
+        "outbound": "🎯 direct"
+      },
 			{
 				"clash_mode": "Global",
 				"outbound": "✈️ Proxy"

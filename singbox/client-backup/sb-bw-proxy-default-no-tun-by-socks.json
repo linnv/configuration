@@ -421,10 +421,6 @@
         "outbound": "🎯 direct"
       },
       {
-        "clash_mode": "Global",
-        "outbound": "✈️ Proxy"
-      },
-      {
         "ip_is_private": true,
         "outbound": "🎯 direct"
       },
@@ -441,12 +437,12 @@
         "outbound": "🎯 direct"
       },
       {
-        "ip_cidr": "172.16.0.0/12",
+        "ip_cidr": "159.75.72.210",
         "outbound": "🎯 direct"
       },
       {
-        "ip_cidr": "159.75.72.210",
-        "outbound": "🎯 direct"
+        "clash_mode": "Global",
+        "outbound": "✈️ Proxy"
       },
       {
         "clash_mode": "Direct",
