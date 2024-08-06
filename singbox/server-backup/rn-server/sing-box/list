@@ -1,0 +1,264 @@
+*******************************************
+┌────────────────┐
+│                │
+│     [31m[01mV2rayN[0m     │
+│                │
+└────────────────┘
+[32m[01m
+----------------------------
+ss://YWVzLTEyOC1nY206ODg5NDRkMjAtZDk5Zi00NjdkLWJjYzEtZTEwYzliMWExZjMwQDE5Mi4zLjI0OC4xOTA6MjA4Mg==#racknerd-7005bd%20shadowsocks
+----------------------------
+vmess://eyAidiI6ICIyIiwgInBzIjogInJhY2tuZXJkLTcwMDViZCB2bWVzcy13cyIsICJhZGQiOiAidGltZS5jbG91ZGZsYXJlLmNvbSIsICJwb3J0IjogIjgwIiwgImlkIjogIjg4OTQ0ZDIwLWQ5OWYtNDY3ZC1iY2MxLWUxMGM5YjFhMWYzMCIsICJhaWQiOiAiMCIsICJzY3kiOiAibm9uZSIsICJuZXQiOiAid3MiLCAidHlwZSI6ICJub25lIiwgImhvc3QiOiAic2luZ2JveC5qaWFsaW53dS5jb20iLCAicGF0aCI6ICIvODg5NDRkMjAtZDk5Zi00NjdkLWJjYzEtZTEwYzliMWExZjMwLXZtZXNzIiwgInRscyI6ICIiLCAic25pIjogIiIsICJhbHBuIjogIiIgfQ==
+
+# 请在 Cloudflare 绑定 [192.3.248.190] 的域名为 [singbox.jialinwu.com], 并设置 origin rule 为 [2083]
+----------------------------
+vless://88944d20-d99f-467d-bcc1-e10c9b1a1f30@time.cloudflare.com:443?encryption=none&security=tls&sni=singbox.jialinwu.com&type=ws&host=singbox.jialinwu.com&path=%2F88944d20-d99f-467d-bcc1-e10c9b1a1f30-vless%3Fed%3D2048#racknerd-7005bd%20vless-ws-tls
+
+# 请在 Cloudflare 绑定 [192.3.248.190] 的域名为 [singbox.jialinwu.com], 并设置 origin rule 为 [2087][0m
+
+*******************************************
+┌────────────────┐
+│                │
+│  [31m[01mShadowRocket[0m  │
+│                │
+└────────────────┘
+----------------------------
+[33m[01m
+ss://YWVzLTEyOC1nY206ODg5NDRkMjAtZDk5Zi00NjdkLWJjYzEtZTEwYzliMWExZjMwQDE5Mi4zLjI0OC4xOTA6MjA4Mg==#racknerd-7005bd%20shadowsocks
+
+----------------------------
+vmess://bm9uZTo4ODk0NGQyMC1kOTlmLTQ2N2QtYmNjMS1lMTBjOWIxYTFmMzBAdGltZS5jbG91ZGZsYXJlLmNvbTo4MA==?remarks=racknerd-7005bd%20vmess-ws&obfsParam=singbox.jialinwu.com&path=/88944d20-d99f-467d-bcc1-e10c9b1a1f30-vmess&obfs=websocket&alterId=0
+
+# 请在 Cloudflare 绑定 [192.3.248.190] 的域名为 [singbox.jialinwu.com], 并设置 origin rule 为 [2083]
+
+----------------------------
+vless://YXV0bzo4ODk0NGQyMC1kOTlmLTQ2N2QtYmNjMS1lMTBjOWIxYTFmMzBAdGltZS5jbG91ZGZsYXJlLmNvbTo0NDM=?remarks=racknerd-7005bd%20vless-ws-tls&obfsParam=singbox.jialinwu.com&path=/88944d20-d99f-467d-bcc1-e10c9b1a1f30-vless?ed=2048&obfs=websocket&tls=1&peer=singbox.jialinwu.com&allowInsecure=1
+
+# 请在 Cloudflare 绑定 [192.3.248.190] 的域名为 [singbox.jialinwu.com], 并设置 origin rule 为 [2087]
+[0m
+
+*******************************************
+┌────────────────┐
+│                │
+│   [31m[01mClash Meta[0m   │
+│                │
+└────────────────┘
+----------------------------
+
+[32m[01m  - {name: "racknerd-7005bd shadowsocks", type: ss, server: 192.3.248.190, port: 2082, cipher: aes-128-gcm, password: 88944d20-d99f-467d-bcc1-e10c9b1a1f30, smux: { enabled: true, protocol: 'h2mux', padding: true, max-connections: '8', min-streams: '16', statistic: true, only-tcp: false } }
+
+  - {name: "racknerd-7005bd vmess-ws", type: vmess, server: time.cloudflare.com, port: 80, uuid: 88944d20-d99f-467d-bcc1-e10c9b1a1f30, udp: true, tls: false, alterId: 0, cipher: none, skip-cert-verify: true, network: ws, ws-opts: { path: "/88944d20-d99f-467d-bcc1-e10c9b1a1f30-vmess", headers: {Host: singbox.jialinwu.com} }, smux: { enabled: true, protocol: 'h2mux', padding: true, max-connections: '8', min-streams: '16', statistic: true, only-tcp: false } }
+
+  # 请在 Cloudflare 绑定 [192.3.248.190] 的域名为 [singbox.jialinwu.com], 并设置 origin rule 为 [2083]
+
+  - {name: "racknerd-7005bd vless-ws-tls", type: vless, server: time.cloudflare.com, port: 443, uuid: 88944d20-d99f-467d-bcc1-e10c9b1a1f30, udp: true, tls: true, servername: singbox.jialinwu.com, network: ws, skip-cert-verify: true, ws-opts: { path: "/88944d20-d99f-467d-bcc1-e10c9b1a1f30-vless", headers: {Host: singbox.jialinwu.com}, max-early-data: 2048, early-data-header-name: Sec-WebSocket-Protocol }, smux: { enabled: true, protocol: 'h2mux', padding: true, max-connections: '8', min-streams: '16', statistic: true, only-tcp: false } }
+
+  # 请在 Cloudflare 绑定 [192.3.248.190] 的域名为 [singbox.jialinwu.com], 并设置 origin rule 为 [2087][0m
+
+*******************************************
+┌────────────────┐
+│                │
+│    [31m[01mNekoBox[0m     │
+│                │
+└────────────────┘
+[33m[01m
+----------------------------
+ss://YWVzLTEyOC1nY206ODg5NDRkMjAtZDk5Zi00NjdkLWJjYzEtZTEwYzliMWExZjMw@192.3.248.190:2082#racknerd-7005bd shadowsocks
+----------------------------
+vmess://eyJhZGQiOiJ0aW1lLmNsb3VkZmxhcmUuY29tIiwiYWlkIjoiMCIsImhvc3QiOiJzaW5nYm94LmppYWxpbnd1LmNvbSIsImlkIjoiODg5NDRkMjAtZDk5Zi00NjdkLWJjYzEtZTEwYzliMWExZjMwIiwibmV0Ijoid3MiLCJwYXRoIjoiLzg4OTQ0ZDIwLWQ5OWYtNDY3ZC1iY2MxLWUxMGM5YjFhMWYzMC12bWVzcyIsInBvcnQiOiI4MCIsInBzIjoicmFja25lcmQtNzAwNWJkIHZtZXNzLXdzIiwic2N5Ijoibm9uZSIsInNuaSI6IiIsInRscyI6IiIsInR5cGUiOiIiLCJ2IjoiMiJ9
+
+# 请在 Cloudflare 绑定 [192.3.248.190] 的域名为 [singbox.jialinwu.com], 并设置 origin rule 为 [2083]
+----------------------------
+vless://88944d20-d99f-467d-bcc1-e10c9b1a1f30@time.cloudflare.com:443?security=tls&sni=singbox.jialinwu.com&type=ws&path=/88944d20-d99f-467d-bcc1-e10c9b1a1f30-vless?ed%3D2048&host=singbox.jialinwu.com&encryption=none#racknerd-7005bd%20vless-ws-tls
+
+# 请在 Cloudflare 绑定 [192.3.248.190] 的域名为 [singbox.jialinwu.com], 并设置 origin rule 为 [2087][0m
+
+*******************************************
+┌────────────────┐
+│                │
+│    [31m[01mSing-box[0m    │
+│                │
+└────────────────┘
+----------------------------
+
+[32m[01m{
+  "outbounds": [
+    {
+      "type": "shadowsocks",
+      "tag": "racknerd-7005bd shadowsocks",
+      "server": "192.3.248.190",
+      "server_port": 2082,
+      "method": "aes-128-gcm",
+      "password": "88944d20-d99f-467d-bcc1-e10c9b1a1f30",
+      "multiplex": {
+        "enabled": true,
+        "protocol": "h2mux",
+        "max_connections": 8,
+        "min_streams": 16,
+        "padding": true,
+        "brutal": {
+          "enabled": true,
+          "up_mbps": 1000,
+          "down_mbps": 1000
+        }
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": "racknerd-7005bd vmess-ws",
+      "server": "time.cloudflare.com",
+      "server_port": 80,
+      "uuid": "88944d20-d99f-467d-bcc1-e10c9b1a1f30",
+      "transport": {
+        "type": "ws",
+        "path": "/88944d20-d99f-467d-bcc1-e10c9b1a1f30-vmess",
+        "headers": {
+          "Host": "singbox.jialinwu.com"
+        }
+      },
+      "multiplex": {
+        "enabled": true,
+        "protocol": "h2mux",
+        "max_streams": 16,
+        "padding": true,
+        "brutal": {
+          "enabled": true,
+          "up_mbps": 1000,
+          "down_mbps": 1000
+        }
+      }
+    },
+    {
+      "type": "vless",
+      "tag": "racknerd-7005bd vless-ws-tls",
+      "server": "time.cloudflare.com",
+      "server_port": 443,
+      "uuid": "88944d20-d99f-467d-bcc1-e10c9b1a1f30",
+      "tls": {
+        "enabled": true,
+        "server_name": "singbox.jialinwu.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        }
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/88944d20-d99f-467d-bcc1-e10c9b1a1f30-vless",
+        "headers": {
+          "Host": "singbox.jialinwu.com"
+        },
+        "max_early_data": 2048,
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      },
+      "multiplex": {
+        "enabled": true,
+        "protocol": "h2mux",
+        "max_streams": 16,
+        "padding": true,
+        "brutal": {
+          "enabled": true,
+          "up_mbps": 1000,
+          "down_mbps": 1000
+        }
+      }
+    }
+  ]
+}
+
+
+  # 请在 Cloudflare 绑定 [192.3.248.190] 的域名为 [singbox.jialinwu.com], 并设置 origin rule 为 [2083]
+  # 请在 Cloudflare 绑定 [192.3.248.190] 的域名为 [singbox.jialinwu.com], 并设置 origin rule 为 [2087]
+
+  各客户端配置文件路径: /etc/sing-box/subscribe/
+ 完整模板可参照:
+ https://t.me/ztvps/100
+ https://github.com/chika0801/sing-box-examples/tree/main/Tun[0m
+
+
+*******************************************
+
+[33m[01mIndex:
+http://192.3.248.190:25940/88944d20-d99f-467d-bcc1-e10c9b1a1f30/
+
+QR code:
+http://192.3.248.190:25940/88944d20-d99f-467d-bcc1-e10c9b1a1f30/qr
+
+V2rayN 订阅:
+http://192.3.248.190:25940/88944d20-d99f-467d-bcc1-e10c9b1a1f30/v2rayn[0m
+
+[33m[01mNekoBox 订阅:
+http://192.3.248.190:25940/88944d20-d99f-467d-bcc1-e10c9b1a1f30/neko[0m
+
+[33m[01mClash 订阅:
+http://192.3.248.190:25940/88944d20-d99f-467d-bcc1-e10c9b1a1f30/clash
+http://192.3.248.190:25940/88944d20-d99f-467d-bcc1-e10c9b1a1f30/clash2
+
+sing-box for pc 订阅:
+http://192.3.248.190:25940/88944d20-d99f-467d-bcc1-e10c9b1a1f30/sing-box-pc
+
+sing-box for cellphone 订阅:
+http://192.3.248.190:25940/88944d20-d99f-467d-bcc1-e10c9b1a1f30/sing-box-phone
+
+SFI / SFA / SFM 订阅:
+http://192.3.248.190:25940/88944d20-d99f-467d-bcc1-e10c9b1a1f30/sing-box2
+
+ShadowRocket 订阅:
+http://192.3.248.190:25940/88944d20-d99f-467d-bcc1-e10c9b1a1f30/shadowrocket[0m
+
+*******************************************
+
+[32m[01m 自适应 Clash / V2rayN / NekoBox / ShadowRocket / SFI / SFA / SFM 客户端:
+模版 1:
+http://192.3.248.190:25940/88944d20-d99f-467d-bcc1-e10c9b1a1f30/auto
+
+模版 2:
+http://192.3.248.190:25940/88944d20-d99f-467d-bcc1-e10c9b1a1f30/auto2
+
+ 订阅 QRcode:
+模版 1:
+https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=http://192.3.248.190:25940/88944d20-d99f-467d-bcc1-e10c9b1a1f30/auto
+
+模版 2:
+https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=http://192.3.248.190:25940/88944d20-d99f-467d-bcc1-e10c9b1a1f30/auto2[0m
+
+[33m[01m模版 1:[0m
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+█ ▄▄▄▄▄ █▀ █▀▀▀  ▀▀ █ ▄██▄█ ▄▄▄▄▄ █
+█ █   █ █▀ ▄ ███▀█▀█▄▀█▀▄ █ █   █ █
+█ █▄▄▄█ █▀█ █▄▀▄▀█▀ ▀▄▄▄███ █▄▄▄█ █
+█▄▄▄▄▄▄▄█▄█▄█ █ █ █▄▀▄█ ▀ █▄▄▄▄▄▄▄█
+█▄▄   █▄▄▄ ▄█▄█▀ ▄▄█▀▀ ██▀▄▀ █ ▀▄██
+█▄   ▀█▄   ▀ ▄▄▄█▄▄▀▀▀█▀ ▀▀▀▀▄▄▀ ▀█
+█▄▄ ▀ ▄▄▀█▄▀▄▀▄▄▄▄█▀█▄ ███▄█▄ █ ▄██
+█▀█▀▄ █▄▀▀▀██▀▄▀▄▀   ▄█▀▀▀▀▀ ▄▄█ ▀█
+█▀▀▀██▄▄█▄▄▀█▄▄▀ ████▄ ▀▀ █▄▀▄█▀▄██
+██▄ ██▄▄█▀▀█ ▄▄▀▄▄▄▀ ▄▀▀▀▀█▀▀▄▀██ █
+█ ▄▀ ▀▄▄█▄█ ▄ ██ ▄▄ █▀ ▄▀ ▄ ▄ ▄▀▄██
+█ █ ▄  ▄ █  █  █▄▄▄▀▀▀▀▀ ▀▀▀ ▄▀█▄██
+█▄█▄██▄▄█▀▄▄▀█▄   ▄▄█  ▄█ ▄▄▄ ▄▀▄██
+█ ▄▄▄▄▄ █▄█  ▄▄▄▄▀▄▀ █▀▄█ █▄█ ▄▀▄▀█
+█ █   █ █  ▄█▄█▀  ▄▄██ ▄▀▄▄▄  ▄ ▀▄█
+█ █▄▄▄█ █  ▀▀█▄ ██▄▄▀▄▀▀▀ ▄█▄▀▄█▀▀█
+█▄▄▄▄▄▄▄█▄█████▄▄▄█▄██████▄▄▄█▄▄▄██
+
+[33m[01m模版 2:[0m
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+█ ▄▄▄▄▄ █▀█ █▄▀  ▀▀ █ ▄██▄█ ▄▄▄▄▄ █
+█ █   █ █▀▀▀█ ██▀█▀█▄▀█▀▄ █ █   █ █
+█ █▄▄▄█ █▀ █▀▀▀▄▀█▀ ▀▄▄▄███ █▄▄▄█ █
+█▄▄▄▄▄▄▄█▄▀ ▀▄█ █ █▄▀▄█ ▀ █▄▄▄▄▄▄▄█
+█▄   ▄█▄▄ ▄▀▄▀█▀ ▄▄█▀▀ ██▀▄▀ █ ▀▄██
+█▄▄▄▀▀ ▄███▄█▀▄▄█▄▄▀▀▀█▀ ▀▀▀▀▄▄▀ ▀█
+█▄▀▄▄▄█▄▀█▄▄█▄▄▄▄▄█▀█▄ ███▄█▄ █ ▄██
+██▀█ ██▄█▄ ▄ ▄▄▀▄▀   ▄█▀▀▀▀▀ ▄▄█ ▀█
+█▄▄ █▄▀▄▀█▀ ▄ ▄▀ ████▄ ▀▀ █▄▀▄█▀▄██
+█▄ █▄  ▄▀▀ ▀█ ▄▀▄▄▄▀ ▄▀▀▀▀█▀▀▄▀██ █
+█▀▀█▀▄▄▄████▀ ██ ▄▄ █▀ ▄▀ ▄ ▄ ▄▀ ██
+█ █▄█▄█▄▀▄ ▀▀▀ █▄▄▄▀▀▀▀▀ ▀▀▀ ▄▀█▄██
+█▄█▄██▄▄▄ ██▀█▄   ▄▄█  ▄█ ▄▄▄ ▄▀▄██
+█ ▄▄▄▄▄ █▄▄▀ ▄▄▄▄▀▄▀ █▀▄█ █▄█ ▄▀▄▀█
+█ █   █ █ ▄▀█▄█▀  ▄▄██ ▄▀▄▄▄  ▄ ▀▄█
+█ █▄▄▄█ █ ▄█▀█▄ ██▄▄▀▄▀▀▀ ▄█▄▀▄█▀▀█
+█▄▄▄▄▄▄▄█▄█▄███▄▄▄█▄██████▄▄▄█▄▄▄██
+

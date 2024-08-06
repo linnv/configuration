@@ -1,0 +1,8 @@
+{
+    "experimental": {
+        "cache_file": {
+            "enabled": true,
+            "path": "/etc/sing-box/cache.db"
+        }
+    }
+}

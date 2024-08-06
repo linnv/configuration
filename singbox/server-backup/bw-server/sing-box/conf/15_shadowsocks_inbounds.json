@@ -1,0 +1,23 @@
+{
+    "inbounds":[
+        {
+            "type":"shadowsocks",
+            "sniff":true,
+            "sniff_override_destination":true,
+            "tag":"bwvlesw-jialinwu shadowsocks",
+            "listen":"::",
+            "listen_port":2043,
+            "method":"aes-128-gcm",
+            "password":"1643fe5f-d26e-4e7b-9c4d-09972290834f",
+            "multiplex":{
+                "enabled":true,
+                "padding":true,
+                "brutal":{
+                    "enabled":false,
+                    "up_mbps":1000,
+                    "down_mbps":1000
+                }
+            }
+        }
+    ]
+}
