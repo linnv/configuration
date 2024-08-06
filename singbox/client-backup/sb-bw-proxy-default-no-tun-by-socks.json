@@ -258,6 +258,14 @@
   "route": {
     "rule_set": [
       {
+        "tag": "CATEGORY-ADS",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/category-ads-all.srs",
+        "download_detour": "socks8006",
+        "update_interval": "1d"
+      },
+      {
         "tag": "geosite-category-ads-all",
         "type": "remote",
         "format": "binary",
@@ -421,10 +429,6 @@
         "outbound": "🎯 direct"
       },
       {
-        "ip_is_private": true,
-        "outbound": "🎯 direct"
-      },
-      {
         "ip_cidr": "10.0.30.0/24",
         "outbound": "🎯 direct"
       },
@@ -518,6 +522,14 @@
       {
         "rule_set": "geosite-geolocation-!cn",
         "outbound": "✈️ Proxy"
+      },
+			{
+        "rule_set": "CATEGORY-ADS",
+        "outbound": "block"
+      },
+			{
+        "ip_is_private": true,
+        "outbound": "🎯 direct"
       },
       {
         "rule_set": [
