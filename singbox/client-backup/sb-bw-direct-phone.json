@@ -195,7 +195,7 @@
 			"tag": "📱 Telegram",
 			"outbounds": [
 				"♻️ 自动选择",
-				"🎯 direct",
+				"🎯 Direct",
 				"socks8006",
 				"socks8007",
 				"tag-shadowsocks",
@@ -207,7 +207,7 @@
 			"tag": "▶️ YouTube",
 			"outbounds": [
 				"♻️ 自动选择",
-				"🎯 direct",
+				"🎯 Direct",
 				"socks8006",
 				"socks8007",
 				"tag-shadowsocks",
@@ -228,7 +228,7 @@
 		},
 		{
 			"type": "selector",
-			"tag": "🎯 direct",
+			"tag": "🎯 Direct",
 			"outbounds": [
 				"direct",
 				"block",
@@ -238,7 +238,7 @@
 		},
 		{
 			"type": "selector",
-			"tag": "🛑 block",
+			"tag": "🛑 Block",
 			"outbounds": [
 				"block",
 				"direct",
@@ -425,23 +425,23 @@
 			{
 				"domain": [ "qnzsai.com" ],
 				"domain_keyword": [ "qnzs" ],
-				"outbound": "🎯 direct"
+				"outbound": "🎯 Direct"
 			},
       {
         "ip_cidr": "10.0.30.0/24",
-        "outbound": "🎯 direct"
+        "outbound": "🎯 Direct"
       },
       {
         "ip_cidr": "100.0.0.0/8",
-        "outbound": "🎯 direct"
+        "outbound": "🎯 Direct"
       },
       {
         "ip_cidr": "192.168.1.0/16",
-        "outbound": "🎯 direct"
+        "outbound": "🎯 Direct"
       },
       {
         "ip_cidr": "159.75.72.210",
-        "outbound": "🎯 direct"
+        "outbound": "🎯 Direct"
       },
 			{
 				"clash_mode": "Global",
@@ -449,7 +449,7 @@
 			},
 			{
 				"clash_mode": "Direct",
-				"outbound": "🎯 direct"
+				"outbound": "🎯 Direct"
 			},
 			{
 				"protocol": "dns",
@@ -481,7 +481,7 @@
 						"protocol": "stun"
 					}
 				],
-				"outbound": "block"
+				"outbound": "🎯 Direct"
 			},
 			{
 				"rule_set": [
@@ -503,7 +503,7 @@
 			},
 			{
 				"rule_set": "geosite-openai@ads",
-				"outbound": "block"
+				"outbound": "🎯 Direct"
 			},
 			{
 				"type": "logical",
@@ -524,11 +524,11 @@
 			},
 			{
         "rule_set": "CATEGORY-ADS",
-        "outbound": "block"
+        "outbound": "🎯 Direct"
       },
 			{
         "ip_is_private": true,
-        "outbound": "🎯 direct"
+        "outbound": "🎯 Direct"
       },
 			{
 				"rule_set": [
@@ -538,10 +538,10 @@
 					"geosite-wechat",
 					"geoip-cn"
 				],
-				"outbound": "🎯 direct"
+				"outbound": "🎯 Direct"
 			}
 		],
-		"final": "🎯 direct",
+		"final": "🎯 Direct",
 		"auto_detect_interface": true
 	}
 }
