@@ -138,6 +138,15 @@
   "outbounds": [
     {
       "type": "socks",
+      "tag": "socks1906",
+      "server": "23.105.204.193",
+      "server_port": 1906,
+      "version": "5",
+      "username": "jialin",
+      "password": "jialin"
+    },
+    {
+      "type": "socks",
       "tag": "socks8006",
       "server": "23.105.204.193",
       "server_port": 8006,
@@ -206,6 +215,7 @@
         "♻️ 自动选择",
         "direct",
         "socks8006",
+        "socks1906",
         "socks8007",
         "tag-shadowsocks",
         "tag-less-ws-tls"
@@ -216,6 +226,7 @@
       "tag": "♻️ 自动选择",
       "outbounds": [
         "socks8006",
+        "socks1906",
         "socks8007",
         "tag-shadowsocks",
         "tag-less-ws-tls"
@@ -231,6 +242,7 @@
         "♻️ 自动选择",
         "🎯 Direct",
         "socks8006",
+        "socks1906",
         "socks8007",
         "tag-shadowsocks",
         "tag-less-ws-tls"
@@ -243,6 +255,7 @@
         "♻️ 自动选择",
         "🎯 Direct",
         "socks8006",
+        "socks1906",
         "socks8007",
         "tag-shadowsocks",
         "tag-less-ws-tls"
@@ -255,6 +268,7 @@
         "♻️ 自动选择",
         "🎯 Direct",
         "socks8006",
+        "socks1906",
         "socks8007",
         "tag-shadowsocks",
         "tag-less-ws-tls"

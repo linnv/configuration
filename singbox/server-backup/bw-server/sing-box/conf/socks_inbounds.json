@@ -1,0 +1,16 @@
+{
+  "inbounds": [
+    {
+      "type": "socks",
+      "tag": "bwvlesw-jialinwu socks",
+      "listen": "::",
+      "listen_port": 1906,
+      "users": [
+        {
+          "username": "jialin",
+          "password": "jialin"
+        }
+      ]
+    }
+  ]
+}
