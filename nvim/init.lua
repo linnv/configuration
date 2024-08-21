@@ -98,6 +98,8 @@ vim.cmd [[
   Plug 'rhysd/git-messenger.vim'
   Plug 'tpope/vim-rsi'
 
+  Plug 'ibhagwan/fzf-lua', {'branch': 'main'}
+  Plug 'nvim-tree/nvim-web-devicons'
   call plug#end()
 ]]
 
@@ -342,7 +344,7 @@ vim.api.nvim_set_keymap('i', 'lk', '<ESC>', {noremap = true})
 vim.api.nvim_set_keymap('n', '<Leader>cd', ':NERDTree %:p:h<CR>', {noremap = true})
 
 -- Save file editing
-vim.api.nvim_set_keymap('n', '<leader>w', ':w<cr>', {noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<leader>x', ':w<cr>', {noremap = true, silent = true})
 
 -- Fast editing of editor configuration
 vim.api.nvim_set_keymap('n', '<leader>ee', ':e ~/.config/nvim/init.lua<cr>', {noremap = true, silent = true})
@@ -407,8 +409,36 @@ require('nvim-treesitter.configs').setup({
 				'query', -- for playground
 			}
     })
--- require('nvim-treesitter.configs').setup {
---   -- Add languages to be installed here that you want installed for treesitter
---   ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'help', 'cmake' },
+
+local fzf = require('fzf-lua')
+
+-- Define your workspaces
+local workspaces = {
+  '~/go/src/SmartOutCall',
+  '~/go/src/CowDialog',
+  '~/go/src/AudioProxy',
+  '~/go/src/helper',
+  '~/git/configuration/note'
+}
+
+-- Function to switch workspace
+function _G.switch_workspace()
+  fzf.fzf_exec(workspaces, {
+    actions = {
+      ['default'] = function(selected)
+        -- Expand the path (to handle '~')
+        local expanded_path = vim.fn.expand(selected[1])
+        -- Change the current working directory
+        vim.cmd('cd ' .. expanded_path)
+        print('Switched to workspace: ' .. expanded_path)
+        -- Show files in the selected workspace using fzf-lua
+        fzf.files({ cwd = expanded_path })
+      end
+    }
+  })
+end
+
+-- Set up a keybinding to trigger the workspace switcher
+vim.api.nvim_set_keymap('n', '<leader>w', [[<cmd>lua switch_workspace()<CR>]], { noremap = true, silent = true })
 
 -- End of init.lua
