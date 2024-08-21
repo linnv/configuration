@@ -1,3 +1,4 @@
+
 vim.opt.encoding = "utf-8"
 vim.opt.fileformat = "unix"
 vim.opt.ruler = true
@@ -94,7 +95,6 @@ vim.cmd [[
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
   Plug 'Exafunction/codeium.vim', { 'branch': 'main' }
-  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'rhysd/git-messenger.vim'
   Plug 'tpope/vim-rsi'
 
@@ -233,10 +233,10 @@ vim.g.airline_solarized_bg = 'light'
 
 -- Codeium configuration
 vim.g.codeium_disable_bindings = 1
-vim.api.nvim_set_keymap('i', '<C-g>', 'codeium#Accept()', {expr = true, silent = true})
-vim.api.nvim_set_keymap('i', '<C-;>', '<Cmd>call codeium#CycleCompletions(1)<CR>', {silent = true})
-vim.api.nvim_set_keymap('i', '<C-,>', '<Cmd>call codeium#CycleCompletions(-1)<CR>', {silent = true})
-vim.api.nvim_set_keymap('i', '<C-x>', '<Cmd>call codeium#Clear()<CR>', {silent = true})
+vim.keymap.set('i', '<C-g>', function () return vim.fn['codeium#Accept']() end, { expr = true, silent = true })
+vim.keymap.set('i', '<c-;>', function() return vim.fn['codeium#CycleCompletions'](1) end, { expr = true, silent = true })
+vim.keymap.set('i', '<c-,>', function() return vim.fn['codeium#CycleCompletions'](-1) end, { expr = true, silent = true })
+vim.keymap.set('i', '<c-x>', function() return vim.fn['codeium#Clear']() end, { expr = true, silent = true })
 
 -- Custom keymappings
 vim.api.nvim_set_keymap('n', '<leader>r', ':CtrlPMRU<cr>', {noremap = true, silent = true})
@@ -367,13 +367,13 @@ vim.g.go_fmt_command = 'goimports'
 vim.g.go_def_mode = 'gopls'
 vim.g.go_info_mode = 'gopls'
 
--- Set up nvim-treesitter
-require'nvim-treesitter.configs'.setup {
-  ensure_installed = "all",
-  highlight = {
-    enable = true,
-  },
-}
+-- -- Set up nvim-treesitter
+-- require'nvim-treesitter.configs'.setup {
+--   ensure_installed = "all",
+--   highlight = {
+--     enable = true,
+--   },
+-- }
 
 -- Set up statusline
 vim.opt.statusline = vim.opt.statusline + [[{…}%3{codeium#GetStatusString()}]]
@@ -383,11 +383,32 @@ _G.LightLineFilename = function()
   return vim.fn.expand('%')
 end
 
--- Additional plugin configurations
-vim.g.codeium_disable_bindings = 1
-vim.api.nvim_set_keymap('i', '<C-g>', 'codeium#Accept()', {expr = true, silent = true})
-vim.api.nvim_set_keymap('i', '<C-;>', '<Cmd>call codeium#CycleCompletions(1)<CR>', {silent = true})
-vim.api.nvim_set_keymap('i', '<C-,>', '<Cmd>call codeium#CycleCompletions(-1)<CR>', {silent = true})
-vim.api.nvim_set_keymap('i', '<C-x>', '<Cmd>call codeium#Clear()<CR>', {silent = true})
+-- Sync clipboard between OS and Neovim.
+--  Schedule the setting after `UiEnter` because it can increase startup-time.
+--  Remove this option if you want your OS clipboard to remain independent.
+--  See `:help 'clipboard'`
+vim.schedule(function()
+  vim.opt.clipboard = 'unnamedplus'
+end)
+
+require("nvim-treesitter.install").prefer_git = true
+require('nvim-treesitter.configs').setup({
+    ensure_installed = {
+				-- 'rust',
+				'javascript',
+				'html',
+				'go',
+				'vue',
+				'lua',
+				'css',
+				'cpp',
+				'c',
+				'json',
+				'query', -- for playground
+			}
+    })
+-- require('nvim-treesitter.configs').setup {
+--   -- Add languages to be installed here that you want installed for treesitter
+--   ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'help', 'cmake' },
 
 -- End of init.lua
