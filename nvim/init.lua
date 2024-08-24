@@ -415,11 +415,21 @@ local fzf = require('fzf-lua')
 -- Define your workspaces
 local workspaces = {
   '~/go/src/SmartOutCall',
+  '~/go/src/OutCallBinLog',
+  '~/go/src/MessageProxy',
   '~/go/src/CowDialog',
   '~/go/src/AudioProxy',
   '~/go/src/helper',
   '~/git/configuration/note'
 }
+
+local base_dir = '~/go/src/1'  -- Directory to include its first-level directories
+
+-- Add first-level directories from base_dir to the workspaces list
+local dirs = vim.fn.globpath(base_dir, '*', 0, 1)
+for _, dir in ipairs(dirs) do
+  table.insert(workspaces, dir)
+end
 
 -- Function to switch workspace
 function _G.switch_workspace()
