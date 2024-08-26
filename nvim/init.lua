@@ -92,14 +92,17 @@ vim.cmd [[
   Plug 'sheerun/vim-polyglot'
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-  Plug 'vim-airline/vim-airline'
-  Plug 'vim-airline/vim-airline-themes'
+  Plug 'nvim-lualine/lualine.nvim'
+  Plug 'nvim-tree/nvim-web-devicons'
   Plug 'Exafunction/codeium.vim', { 'branch': 'main' }
   Plug 'rhysd/git-messenger.vim'
   Plug 'tpope/vim-rsi'
 
   Plug 'ibhagwan/fzf-lua', {'branch': 'main'}
   Plug 'nvim-tree/nvim-web-devicons'
+
+  Plug 'dracula/vim', { 'as': 'dracula' }
+
   call plug#end()
 ]]
 
@@ -201,9 +204,6 @@ vim.cmd [[
   highlight PmenuSel ctermfg=235 ctermbg=39 cterm=bold
 ]]
 
--- Airline configuration
-vim.g.airline_powerline_fonts = 1
-
 -- YAML file settings
 vim.api.nvim_create_autocmd({"BufNewFile", "BufReadPost"}, {
   pattern = "*.{yaml,yml}",
@@ -215,11 +215,14 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 -- Color scheme settings
-vim.opt.background = "light"
 if vim.fn.has('termguicolors') == 1 then
   vim.opt.termguicolors = true
 end
+vim.opt.background = "light"
 vim.cmd [[colorscheme solarized8]]
+-- vim.opt.background = "dark"
+-- vim.cmd [[colorscheme dracula]]
+
 
 -- Custom variables
 vim.g.vimrc_author = 'Jialin Wu'
@@ -228,10 +231,6 @@ vim.g.vimrc_homepage = 'https://jialinwu.com'
 
 -- FZF configuration
 vim.opt.rtp:append("/Users/jialinwu/.fzf")
-
--- Airline theme
-vim.g.airline_theme = 'solarized'
-vim.g.airline_solarized_bg = 'light'
 
 -- Codeium configuration
 vim.g.codeium_disable_bindings = 1
@@ -447,6 +446,91 @@ function _G.switch_workspace()
     }
   })
 end
+
+-- status line
+-- solarized_jialinwu config for lualine
+-- Author: JialinWu
+-- MIT license, see LICENSE for more details.
+
+-- stylua: ignore
+local colors = {
+  blue = "#5a80f3",
+  black  = '#080808',
+  white  = '#fdf6e3',
+  red    = '#cb4b16',
+  green='#489926',
+  orange = '#fe8018',
+  grey='#839496'
+
+}
+
+
+local solarized_light_jialinwu_theme = {
+  normal = {
+    a = { fg = colors.white, bg = colors.green },
+    b = { fg = colors.white, bg = colors.blue },
+    c = { fg = colors.white },
+  },
+
+  insert = { a = { fg = colors.white, bg = colors.red } },
+  visual = { a = { fg = colors.black, bg = colors.green } },
+  replace = { a = { fg = colors.black, bg = colors.red } },
+
+  inactive = {
+    a = { fg = colors.white, bg = colors.green },
+    b = { fg = colors.white, bg = colors.grey },
+    c = { fg = colors.white },
+  },
+}
+
+require('lualine').setup {
+  options = {
+    theme = solarized_light_jialinwu_theme,
+    -- theme = 'solarized_light',
+    component_separators = '',
+    section_separators = { left = '', right = '' },
+  },
+  sections = {
+    lualine_a = { { 'mode', separator = { left = '' }, right_padding = 2 } },
+    -- lualine_b = {'branch' ,'filename'},
+    lualine_b = {
+      'branch',
+      'diff',
+      {
+        'diagnostics',
+        source = { 'nvim' },
+        sections = { 'error' },
+        diagnostics_color = { error = { bg = colors.red, fg = colors.white } },
+      },
+      {
+        'diagnostics',
+        source = { 'nvim' },
+        sections = { 'warn' },
+        diagnostics_color = { warn = { bg = colors.orange, fg = colors.white } },
+      },
+      { 'filename', file_status = false, path = 1 },
+      { modified, color = { bg = colors.red } },
+    },
+    lualine_c = {
+      '%=', --[[ add your center compoentnts here in place of this comment ]]
+    },
+    lualine_x = {},
+    lualine_y = { 'searchcount', 'progress','encoding' },
+    lualine_z = {
+      { 'location', separator = { right = '' }, left_padding = 2 },
+    },
+  },
+  inactive_sections = {
+    lualine_a = {},
+    lualine_b = {'branch' ,'filename'},
+    lualine_c = {},
+    lualine_x = {},
+    lualine_y = {},
+    lualine_z = { 'location' },
+  },
+  tabline = {},
+  extensions = {},
+}
 
 -- Set up a keybinding to trigger the workspace switcher
 vim.api.nvim_set_keymap('n', '<leader>w', [[<cmd>lua switch_workspace()<CR>]], { noremap = true, silent = true })
