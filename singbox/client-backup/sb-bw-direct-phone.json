@@ -237,6 +237,20 @@
     },
     {
       "type": "selector",
+      "tag": "🚀 Select",
+      "outbounds": [
+        "♻️ 自动选择",
+        "🎯 Direct",
+        "socks8006",
+        "socks1906",
+        "socks8007",
+        "tag-shadowsocks",
+        "tag-less-ws-tls"
+      ],
+      "default": "🎯 Direct"
+    },
+    {
+      "type": "selector",
       "tag": "📱 Telegram",
       "outbounds": [
         "♻️ 自动选择",

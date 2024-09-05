@@ -362,6 +362,11 @@
 				"outbound": "🎯 direct"
 			},
 			{
+				"domain": [ "zed.dev","visualstudio.com" ],
+				"domain_keyword": [ "zed.dev" ],
+				"outbound": "✈️ Proxy"
+			},
+			{
 				"clash_mode": "Global",
 				"outbound": "✈️ Proxy"
 			},
