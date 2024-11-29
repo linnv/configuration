@@ -29,11 +29,18 @@ background = "0xfdf6e3"
 foreground = "0x586e75"
 
 [font]
-size = 14.0
+size = 15.0
 
 [font.normal]
-family = "JetBrainsMono Nerd Font Mono"
+# family = "PragmataProMonoLiga Nerd Font"
+family = "PragmataPro Mono"
+# family = "IosevkaTerm Nerd Font Mono"
+# family = "IosevkaTermSlab Nerd Font Mono"
+# style = "Bold"
+# family = "JetBrainsMono Nerd Font Mono"
 style = "Regular"
+# style = "Light"
+
 
 [[keyboard.bindings]]
 action = "Paste"
