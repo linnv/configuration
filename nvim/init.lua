@@ -103,6 +103,10 @@ vim.cmd [[
 
   Plug 'dracula/vim', { 'as': 'dracula' }
 
+  Plug 'meain/vim-jsontogo'
+  Plug 'chrisbra/Colorizer'
+
+  Plug 'vimpostor/vim-tpipeline'
   call plug#end()
 ]]
 
@@ -344,6 +348,10 @@ vim.api.nvim_set_keymap('n', '<Leader>cd', ':NERDTree %:p:h<CR>', {noremap = tru
 
 -- Save file editing
 vim.api.nvim_set_keymap('n', '<leader>x', ':w<cr>', {noremap = true, silent = true})
+
+--let Vim’s * (or #) search to act as a “contains” search without adding \< and \> for word boundaries "
+vim.api.nvim_set_keymap('n', '*', 'g*', {noremap = true})
+vim.api.nvim_set_keymap('n', '#', 'g#', {noremap = true})
 
 -- Fast editing of editor configuration
 vim.api.nvim_set_keymap('n', '<leader>ee', ':e ~/.config/nvim/init.lua<cr>', {noremap = true, silent = true})
