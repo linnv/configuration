@@ -1,8 +1,3 @@
-live_config_reload = true
-
-import = [
-    "~/.config/alacritty/themes/themes/solarized_light.toml"
-]
 
 [colors.bright]
 black = "0x002b36"
@@ -33,13 +28,31 @@ size = 15.0
 
 [font.normal]
 # family = "PragmataProMonoLiga Nerd Font"
-family = "PragmataPro Mono"
-# family = "IosevkaTerm Nerd Font Mono"
+# family = "PragmataPro Mono"
+# family = "PragmataPro for Powerline"
+family = "IosevkaTerm Nerd Font Mono"
+# family = "IosevkaTerm Nerd Font Propo"
 # family = "IosevkaTermSlab Nerd Font Mono"
-# style = "Bold"
 # family = "JetBrainsMono Nerd Font Mono"
+
+# family = "Pragmasevka Nerd Font"
+# family = "Pragmasevka"
+
+# style = "Bold"
 style = "Regular"
 # style = "Light"
+
+[font.italic]
+# family = "PragmataProMonoLiga Nerd Font"
+# family = "PragmataPro Mono"
+# family = "PragmataPro for Powerline"
+# family = "IosevkaTerm Nerd Font Mono"
+# family = "IosevkaTerm Nerd Font Propo"
+family = "IosevkaTermSlab Nerd Font Mono"
+# family = "JetBrainsMono Nerd Font Mono"
+# style = "Bold"
+# style = "Regular"
+style = "Italic"
 
 
 [[keyboard.bindings]]
@@ -229,5 +242,25 @@ mods = "Alt"
 [env]
 TERM = "xterm-256color"
 
-[shell]
+[window]
+blur = true
+startup_mode = "Maximized"
+
+[general]
+live_config_reload = true
+
+import = [
+    "~/.config/alacritty/themes/themes/solarized_light.toml"
+]
+
+[cursor.style]
+shape = "Beam"       
+blinking ="Always"
+
+[terminal]
+# decorations = "Full"
+# decorations = "Buttonless"
+# opacity = 0.6
+
+[terminal.shell]
 program = "/opt/homebrew/bin/fish"
