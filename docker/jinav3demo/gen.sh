@@ -1,6 +1,7 @@
+# L
 curl https://api.jina.ai/v1/embeddings \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer jina_61508dd3543e4a3a9e01733f84375c1cR25-XpnQQsoJ4HZX-xewDiSzE0xL" \
+  -H "Authorization: Bearer jina_61508dd3543e4a3a9e01733f84375c1cR25-XpnQQsoJ4HZX-xewDiSzE0x" \
   -d @- <<EOFEOF
   {
     "model": "jina-embeddings-v3",
